@@ -12,7 +12,9 @@ export default defineConfig([
       js.configs.recommended,
       reactHooks.configs['recommended-latest'],
       reactRefresh.configs.vite,
+      'plugin:import/recommended',
     ],
+    plugins: ['import'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -22,8 +24,18 @@ export default defineConfig([
         sourceType: 'module',
       },
     },
+    settings: {
+      'import/resolver': {
+        alias: {
+          map: [['@', './src']],
+          extensions: ['.js', '.jsx'],
+        },
+      },
+    },
     rules: {
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'import/no-unresolved': 'error',
     },
   },
 ])
+
