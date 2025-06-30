@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  phone     String?    @unique
+  password  String
+  role      Role       @default(USER)
+  createdAt DateTime   @default(now())
+
+  legalQuestions LegalQuestion[]
+  farmEntries    FarmEntry[]
+  donations      Donation[]
+  projects       Project[]      @relation("ProjectCreator")
+  notifications  Notification[]
+}
+
+enum Role {
+  USER
+  ADMIN
+  PETANI
+  LEGAL_HELPER
+}
+
+model LegalQuestion {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  question    String
+  aiResponse  String
+  category    String?
+  createdAt   DateTime @default(now())
+}
+
+model FarmEntry {
+  id                   String   @id @default(uuid())
+  user                 User     @relation(fields: [userId], references: [id])
+  userId               String
+  plantType            String
+  location             String
+  plantedAt            DateTime
+  expectedHarvestDate  DateTime?
+  createdAt            DateTime @default(now())
+
+  advices              FarmAdvice[]
+}
+
+model FarmAdvice {
+  id           String     @id @default(uuid())
+  farmEntry    FarmEntry  @relation(fields: [farmEntryId], references: [id])
+  farmEntryId  String
+  type         String     // e.g., watering, weather_alert, etc.
+  adviceText   String
+  createdAt    DateTime   @default(now())
+}
+
+model Project {
+  id            String     @id @default(uuid())
+  creator       User       @relation(name: "ProjectCreator", fields: [creatorId], references: [id])
+  creatorId     String
+  title         String
+  description   String
+  imageUrl      String?
+  targetAmount  Int
+  currentAmount Int        @default(0)
+  deadline      DateTime
+  status        ProjectStatus @default(OPEN)
+  createdAt     DateTime   @default(now())
+
+  donations     Donation[]
+}
+
+enum ProjectStatus {
+  OPEN
+  CLOSED
+  COMPLETED
+}
+
+model Donation {
+  id               String     @id @default(uuid())
+  donor            User       @relation(fields: [donorId], references: [id])
+  donorId          String
+  project          Project    @relation(fields: [projectId], references: [id])
+  projectId        String
+  amount           Int
+  paymentMethod    PaymentMethod
+  paymentStatus    PaymentStatus
+  paymentReference String?
+  proofUrl         String?
+  createdAt        DateTime   @default(now())
+}
+
+enum PaymentMethod {
+  QRIS
+  GOPAY
+  BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  title       String
+  message     String
+  type        NotificationType
+  readStatus  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+enum NotificationType {
+  HUKUM
+  FARM
+  DONATION
+}
