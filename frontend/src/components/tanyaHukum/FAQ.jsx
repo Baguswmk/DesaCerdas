@@ -1,8 +1,11 @@
-import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs"
+import useThemeStore  from '@/store/theme';
 
 const FAQ = () => {
+  const { isDarkMode } = useThemeStore();
+
     return (
         <div className={`mt-8 ${isDarkMode ? 'bg-[#232D42] bg-opacity-70' : 'bg-gray-50'} rounded-lg p-6 shadow-lg`}>
             <h2 className="text-xl font-semibold mb-4">Referensi & FAQ Hukum</h2>

@@ -16,7 +16,7 @@ app.use(cookieParser());
 app.use(helmet());
 
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
   credentials: true,
 }));
 
@@ -28,7 +28,7 @@ const authLimiter = rateLimit({
 
 
 app.use('/api/auth', authLimiter,authRoutes);
-app.use('/api/threads', legalThreadRoutes);
+app.use('/api/legal', legalThreadRoutes);
 
 app.get('/api/csrf-token', csrfMiddleware, (req, res) => {
   res.json({ csrfToken: req.csrfToken() });

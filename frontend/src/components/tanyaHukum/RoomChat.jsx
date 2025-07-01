@@ -1,270 +1,161 @@
-import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
-import {Textarea} from "@/components/ui/textarea";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs";
-import {Avatar, AvatarImage, AvatarFallback} from "@/components/ui/avatar";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Loader2 } from "lucide-react";
+
 import useThemeStore from "@/store/theme";
-import {useState} from "react";
-import useHukumStore from "@/store/tanyahukum";
+import useChatUIStore from "@/store/chatUIStore";
+import useAuthStore from "@/store/auth";
+
+import { useThreadMessages } from "@/hooks/tanyaHukum/useThreadMessages";
+import { useSendMessage } from "@/hooks/tanyaHukum/useSendMessage";
 
 const RoomChat = () => {
-    const [currentMessage, setCurrentMessage] = useState("");
-    const { isDarkMode } = useThemeStore();
-    const { sendMessage } = useHukumStore();
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [localMessages, setLocalMessages] = useState([]);
+  const [limitExceeded, setLimitExceeded] = useState(false); // 🆕 state
+  const messagesEndRef = useRef(null);
 
-    const handleSendMessage = () => {
-        if (currentMessage.trim()) {
-            sendMessage(currentMessage);
-            setCurrentMessage("");
-        }
+  const { isDarkMode } = useThemeStore();
+  const { activeThreadId } = useChatUIStore();
+  const { user } = useAuthStore();
+
+  const { data: messages = [], isLoading: isLoadingMessages } = useThreadMessages(activeThreadId);
+  const sendMessageMutation = useSendMessage();
+
+  const handleSendMessage = () => {
+    const trimmed = currentMessage.trim();
+    if (!trimmed || !activeThreadId || sendMessageMutation.isLoading || limitExceeded) return;
+
+    setCurrentMessage("");
+
+    const optimistic = {
+      id: `temp-${Date.now()}`,
+      sender: "USER",
+      message: trimmed,
+      createdAt: new Date().toISOString(),
     };
+    setLocalMessages((prev) => [...prev, optimistic]);
 
-    return (
-                  <div className="flex">
-           <div className="flex-1 flex flex-col h-[calc(100vh-180px)]">
-            <Card className={`flex-1 ${isDarkMode ? 'bg-[#232D42] bg-opacity-70' : 'bg-gray-50'} border-none shadow-lg overflow-hidden`}>
-                <div className="flex items-center gap-2 mb-4">
-                    <h2 className="text-xl font-semibold">Ajukan Pertanyaan Baru</h2>
-                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        <i className="fas fa-circle text-[#00FF85] text-xs mr-1"></i> AI Aktif
+    sendMessageMutation.mutate(
+      { threadId: activeThreadId, message: trimmed },
+      {
+        onSettled: () => setLocalMessages([]),
+        onError: (err) => {
+          if (err.response?.status === 429) {
+            setLimitExceeded(true); // 🚫 set batas harian
+          } else {
+            alert("Gagal mengirim pesan. Silakan coba lagi.");
+            console.error(err);
+          }
+        },
+      }
+    );
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  useEffect(() => {
+    const container = document.getElementById("scrollkebawah");
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [messages, localMessages, sendMessageMutation.isLoading]);
+
+  return (
+    <div className="flex flex-col h-full">
+      <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+        Riwayat Pertanyaan
+      </h1>
+
+      {/* Chat Content Area */}
+      <div id="scrollkebawah" className="flex-1 overflow-y-auto px-1 pr-3 mb-4" style={{ maxHeight: "calc(100vh - 280px)" }}>
+        <div className="space-y-6">
+          {isLoadingMessages ? (
+            <p className="text-sm text-center text-gray-400">Memuat percakapan...</p>
+          ) : (
+            [...messages, ...localMessages].map((chat, idx) => (
+              <div key={chat.id || idx} className="flex flex-col gap-4">
+                {chat.sender === "USER" ? (
+                  <div className="flex justify-end items-start gap-2">
+                    <div className="flex-1 flex justify-end">
+                      <div className="bg-blue-100 dark:bg-blue-800 text-gray-800 dark:text-white rounded-lg p-4 max-w-[80%]">
+                        <p className="whitespace-pre-line">{chat.message}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 mt-2 block">
+                          {new Date(chat.createdAt).toLocaleString()}
+                        </span>
+                      </div>
                     </div>
-                </div>
-                <Tabs defaultValue="chat" className="w-full">
-                    <TabsList className={`grid w-full grid-cols-2 mb-4 ${isDarkMode ? 'bg-[#1A2332]' : 'bg-gray-100'}`}>
-                        <TabsTrigger value="chat" className="!rounded-button whitespace-nowrap">Chat</TabsTrigger>
-                        <TabsTrigger value="document" className="!rounded-button whitespace-nowrap">Unggah Dokumen</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="chat">
-                        <Textarea
-                            placeholder="Masukkan pertanyaan hukum Anda di sini... Contoh: Bagaimana prosedur pengurusan sertifikat tanah?"
-                            className={`min-h-[200px] mb-4 ${isDarkMode ? 'bg-[#1A2332] border-gray-700' : 'bg-white border-gray-200'}`}
-                            value={currentMessage}
-                            onChange={(e) => setCurrentMessage(e.target.value)} />
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                                <Button variant="outline" className="!rounded-button whitespace-nowrap cursor-pointer">
-                                    <i className="fas fa-paperclip mr-2"></i> Lampirkan File
-                                </Button>
-                            </div>
-                            <Button
-                                onClick={handleSendMessage}
-                                className={`${isDarkMode ? 'bg-[#00FF85] text-black hover:bg-[#00CC6A]' : 'bg-blue-600 text-white hover:bg-blue-700'} !rounded-button whitespace-nowrap cursor-pointer`}
-                            >
-                                <i className="fas fa-paper-plane mr-2"></i> Tanyakan ke AI
-                            </Button>
-                        </div>
-                    </TabsContent>
-                    <TabsContent value="document">
-                        <div className={`border-2 border-dashed ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} rounded-lg p-8 text-center mb-4`}>
-                            <i className="fas fa-file-upload text-4xl mb-3 text-gray-400"></i>
-                            <p className="mb-2">Seret dan lepas dokumen hukum Anda di sini</p>
-                            <p className="text-sm text-gray-500 mb-4">atau</p>
-                            <Button variant="outline" className="!rounded-button whitespace-nowrap cursor-pointer">
-                                Pilih File
-                            </Button>
-                            <p className="text-xs mt-3 text-gray-500">Format yang didukung: PDF, DOCX, JPG (Maks. 10MB)</p>
-                        </div>
-                        <Button
-                            className={`w-full ${isDarkMode ? 'bg-[#00FF85] text-black hover:bg-[#00CC6A]' : 'bg-blue-600 text-white hover:bg-blue-700'} !rounded-button whitespace-nowrap cursor-pointer`}
-                        >
-                            <i className="fas fa-search mr-2"></i> Analisis Dokumen
-                        </Button>
-                    </TabsContent>
-                </Tabs>
-            </Card>
-            {/* Right Column - Chat History */}
-            <Card className={`p-6 ${isDarkMode ? 'bg-[#232D42] bg-opacity-70' : 'bg-gray-50'} border-none shadow-lg`}>
-                <h2 className="text-xl font-semibold mb-4">Riwayat Pertanyaan</h2>
-                <div className="flex flex-col h-[400px]">
-                    <ScrollArea className={`flex-1 pr-4 ${isDarkMode ? 'bg-[#1A2332] rounded-lg p-4' : 'bg-white rounded-lg p-4 border border-gray-100'}`}>
-                        {chatHistory.filter(chat => chat.sessionId === currentSessionId).map((chat) => (
-                            <div key={chat.id} className={`mb-4 ${chat.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                                <div className="flex items-start gap-3 mb-1">
-                                    {chat.sender === 'ai' && (
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src="https://readdy.ai/api/search-image?query=modern%20minimalist%20AI%20assistant%20logo%20with%20blue%20gradient%20and%20simple%20geometric%20shapes%2C%20professional%2C%20clean%20design%2C%20technology%20concept&width=100&height=100&seq=1&orientation=squarish" />
-                                            <AvatarFallback className="bg-blue-600 text-white">AI</AvatarFallback>
-                                        </Avatar>
-                                    )}
-                                    <div className={`flex-1 ${chat.sender === 'user' ? 'order-first' : ''}`}>
-                                        <div
-                                            className={`inline-block rounded-lg px-4 py-2 max-w-[80%] ${chat.sender === 'user'
-                                                ? `${isDarkMode ? 'bg-[#00FF85] text-black' : 'bg-blue-600 text-white'} rounded-tr-none`
-                                                : `${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'} rounded-tl-none`}`}
-                                        >
-                                            <p className="whitespace-pre-line">{chat.message}</p>
-                                            {chat.references && (
-                                                <div className={`mt-2 text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                                    <p className="font-semibold">Referensi:</p>
-                                                    <ul className="list-disc pl-4">
-                                                        {chat.references.map((ref, index) => (
-                                                            <li key={index}>{ref}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                            {chat.timestamp}
-                                        </div>
-                                    </div>
-                                    {chat.sender === 'user' && (
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src="https://readdy.ai/api/search-image?query=modern%20minimalist%20user%20avatar%20silhouette%20with%20blue%20gradient%20background%2C%20professional%2C%20clean%20design&width=100&height=100&seq=2&orientation=squarish" />
-                                            <AvatarFallback className="bg-gray-600 text-white">U</AvatarFallback>
-                                        </Avatar>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </ScrollArea>
-                    <div className={`mt-4 p-4 ${isDarkMode ? 'bg-[#1A2332]' : 'bg-white'} rounded-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                        <div className="flex gap-2">
-                            <Input
-                                value={currentMessage}
-                                onChange={(e) => setCurrentMessage(e.target.value)}
-                                placeholder="Ketik pertanyaan Anda..."
-                                className={`flex-1 ${isDarkMode ? 'bg-[#232D42] border-gray-700' : 'bg-white border-gray-200'}`}
-                                onKeyPress={(e) => {
-                                    if (e.key === 'Enter' && !e.shiftKey) {
-                                        e.preventDefault();
-                                        handleSendMessage();
-                                    }
-                                } } />
-                            <Button
-                                onClick={handleSendMessage}
-                                className={`${isDarkMode ? 'bg-[#00FF85] text-black hover:bg-[#00CC6A]' : 'bg-blue-600 text-white hover:bg-blue-700'} !rounded-button whitespace-nowrap cursor-pointer`}
-                            >
-                                <i className="fas fa-paper-plane"></i>
-                            </Button>
-                        </div>
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src="/user-avatar.png" />
+                      <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+                    </Avatar>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src="/ai-avatar.png" />
+                      <AvatarFallback>AI</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <div className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg p-4 max-w-[80%]">
+                        <p className="whitespace-pre-line">{chat.message}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 mt-2 block">
+                          {new Date(chat.createdAt).toLocaleString()}
+                        </span>
+                      </div>
                     </div>
-                </div>
-            </Card>
-        </div><div className="flex-1 flex flex-col h-[calc(100vh-180px)]">
-                <Card className={`flex-1 ${isDarkMode ? 'bg-[#232D42] bg-opacity-70' : 'bg-gray-50'} border-none shadow-lg overflow-hidden`}>
-                    <div className="flex items-center gap-2 mb-4">
-                        <h2 className="text-xl font-semibold">Ajukan Pertanyaan Baru</h2>
-                        <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            <i className="fas fa-circle text-[#00FF85] text-xs mr-1"></i> AI Aktif
-                        </div>
-                    </div>
-                    <Tabs defaultValue="chat" className="w-full">
-                        <TabsList className={`grid w-full grid-cols-2 mb-4 ${isDarkMode ? 'bg-[#1A2332]' : 'bg-gray-100'}`}>
-                            <TabsTrigger value="chat" className="!rounded-button whitespace-nowrap">Chat</TabsTrigger>
-                            <TabsTrigger value="document" className="!rounded-button whitespace-nowrap">Unggah Dokumen</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="chat">
-                            <Textarea
-                                placeholder="Masukkan pertanyaan hukum Anda di sini... Contoh: Bagaimana prosedur pengurusan sertifikat tanah?"
-                                className={`min-h-[200px] mb-4 ${isDarkMode ? 'bg-[#1A2332] border-gray-700' : 'bg-white border-gray-200'}`}
-                                value={currentMessage}
-                                onChange={(e) => setCurrentMessage(e.target.value)} />
-                            <div className="flex justify-between items-center">
-                                <div className="flex items-center gap-2">
-                                    <Button variant="outline" className="!rounded-button whitespace-nowrap cursor-pointer">
-                                        <i className="fas fa-paperclip mr-2"></i> Lampirkan File
-                                    </Button>
-                                </div>
-                                <Button
-                                    onClick={handleSendMessage}
-                                    className={`${isDarkMode ? 'bg-[#00FF85] text-black hover:bg-[#00CC6A]' : 'bg-blue-600 text-white hover:bg-blue-700'} !rounded-button whitespace-nowrap cursor-pointer`}
-                                >
-                                    <i className="fas fa-paper-plane mr-2"></i> Tanyakan ke AI
-                                </Button>
-                            </div>
-                        </TabsContent>
-                        <TabsContent value="document">
-                            <div className={`border-2 border-dashed ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} rounded-lg p-8 text-center mb-4`}>
-                                <i className="fas fa-file-upload text-4xl mb-3 text-gray-400"></i>
-                                <p className="mb-2">Seret dan lepas dokumen hukum Anda di sini</p>
-                                <p className="text-sm text-gray-500 mb-4">atau</p>
-                                <Button variant="outline" className="!rounded-button whitespace-nowrap cursor-pointer">
-                                    Pilih File
-                                </Button>
-                                <p className="text-xs mt-3 text-gray-500">Format yang didukung: PDF, DOCX, JPG (Maks. 10MB)</p>
-                            </div>
-                            <Button
-                                className={`w-full ${isDarkMode ? 'bg-[#00FF85] text-black hover:bg-[#00CC6A]' : 'bg-blue-600 text-white hover:bg-blue-700'} !rounded-button whitespace-nowrap cursor-pointer`}
-                            >
-                                <i className="fas fa-search mr-2"></i> Analisis Dokumen
-                            </Button>
-                        </TabsContent>
-                    </Tabs>
-                </Card>
-                {/* Right Column - Chat History */}
-                <Card className={`p-6 ${isDarkMode ? 'bg-[#232D42] bg-opacity-70' : 'bg-gray-50'} border-none shadow-lg`}>
-                    <h2 className="text-xl font-semibold mb-4">Riwayat Pertanyaan</h2>
-                    <div className="flex flex-col h-[400px]">
-                        <ScrollArea className={`flex-1 pr-4 ${isDarkMode ? 'bg-[#1A2332] rounded-lg p-4' : 'bg-white rounded-lg p-4 border border-gray-100'}`}>
-                            {chatHistory.filter(chat => chat.sessionId === currentSessionId).map((chat) => (
-                                <div key={chat.id} className={`mb-4 ${chat.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                                    <div className="flex items-start gap-3 mb-1">
-                                        {chat.sender === 'ai' && (
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarImage src="https://readdy.ai/api/search-image?query=modern%20minimalist%20AI%20assistant%20logo%20with%20blue%20gradient%20and%20simple%20geometric%20shapes%2C%20professional%2C%20clean%20design%2C%20technology%20concept&width=100&height=100&seq=1&orientation=squarish" />
-                                                <AvatarFallback className="bg-blue-600 text-white">AI</AvatarFallback>
-                                            </Avatar>
-                                        )}
-                                        <div className={`flex-1 ${chat.sender === 'user' ? 'order-first' : ''}`}>
-                                            <div
-                                                className={`inline-block rounded-lg px-4 py-2 max-w-[80%] ${chat.sender === 'user'
-                                                    ? `${isDarkMode ? 'bg-[#00FF85] text-black' : 'bg-blue-600 text-white'} rounded-tr-none`
-                                                    : `${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'} rounded-tl-none`}`}
-                                            >
-                                                <p className="whitespace-pre-line">{chat.message}</p>
-                                                {chat.references && (
-                                                    <div className={`mt-2 text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                                        <p className="font-semibold">Referensi:</p>
-                                                        <ul className="list-disc pl-4">
-                                                            {chat.references.map((ref, index) => (
-                                                                <li key={index}>{ref}</li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                {chat.timestamp}
-                                            </div>
-                                        </div>
-                                        {chat.sender === 'user' && (
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarImage src="https://readdy.ai/api/search-image?query=modern%20minimalist%20user%20avatar%20silhouette%20with%20blue%20gradient%20background%2C%20professional%2C%20clean%20design&width=100&height=100&seq=2&orientation=squarish" />
-                                                <AvatarFallback className="bg-gray-600 text-white">U</AvatarFallback>
-                                            </Avatar>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </ScrollArea>
-                        <div className={`mt-4 p-4 ${isDarkMode ? 'bg-[#1A2332]' : 'bg-white'} rounded-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                            <div className="flex gap-2">
-                                <Input
-                                    value={currentMessage}
-                                    onChange={(e) => setCurrentMessage(e.target.value)}
-                                    placeholder="Ketik pertanyaan Anda..."
-                                    className={`flex-1 ${isDarkMode ? 'bg-[#232D42] border-gray-700' : 'bg-white border-gray-200'}`}
-                                    onKeyPress={(e) => {
-                                        if (e.key === 'Enter' && !e.shiftKey) {
-                                            e.preventDefault();
-                                            handleSendMessage();
-                                        }
-                                    } } />
-                                <Button
-                                    onClick={handleSendMessage}
-                                    className={`${isDarkMode ? 'bg-[#00FF85] text-black hover:bg-[#00CC6A]' : 'bg-blue-600 text-white hover:bg-blue-700'} !rounded-button whitespace-nowrap cursor-pointer`}
-                                >
-                                    <i className="fas fa-paper-plane"></i>
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </Card>
-            </div>
-            </div>
-    )
-}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+
+          {sendMessageMutation.isLoading && (
+            <div className="text-sm italic text-gray-500 dark:text-gray-400">AI sedang mengetik...</div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+
+      {/* Input Area */}
+      <div className="relative mt-2">
+        <textarea
+          placeholder="Ketik pertanyaan Anda..."
+          value={currentMessage}
+          onChange={(e) => setCurrentMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          rows={1}
+          disabled={limitExceeded}
+          className="w-full resize-none pl-4 pr-12 py-3 border border-gray-300 focus:border-green-500 rounded-lg text-sm dark:bg-gray-800 dark:text-white disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
+        />
+        <Button
+          onClick={handleSendMessage}
+          disabled={sendMessageMutation.isLoading || !currentMessage.trim() || limitExceeded}
+          className="absolute right-1 top-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md px-3 py-1 cursor-pointer flex items-center gap-1"
+          size="sm"
+        >
+          {sendMessageMutation.isLoading ? (
+            <Loader2 className="animate-spin h-4 w-4" />
+          ) : (
+            <i className="fas fa-paper-plane" />
+          )}
+        </Button>
+      </div>
+
+      {/* Batasan info */}
+      <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+        Anda dapat bertanya hingga <strong>20 kali per hari</strong>.{" "}
+        {limitExceeded && <span className="text-red-500">Batas harian Anda telah tercapai.</span>}
+      </div>
+    </div>
+  );
+};
 
 export default RoomChat;

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"; 
 import { loginSchema } from "@/utils/Validator";       
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -14,33 +14,43 @@ import { Button } from "@/components/ui/button";
 import useAuthStore from "@/store/auth";
 import usePageStore from "@/store/page";
 import useThemeStore from "@/store/theme";
+import { loginAPI } from "@/services/auth";
 
 const LoginPage = () => {
-  const { setIsLoggedIn, setShowSuccessMessage } = useAuthStore();
+  const { setIsLoggedIn, setShowSuccessMessage, setUserData } = useAuthStore();
   const { setCurrentPage } = usePageStore();             
-  const { isDarkMode } = useThemeStore();                
-const navigate = useNavigate();
+  const { isDarkMode } = useThemeStore();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+  try {
+    const { user } = await loginAPI(data); 
     setIsLoggedIn(true);
+    setUserData(user);
     setShowSuccessMessage("Login berhasil!");
     setCurrentPage("home");
+    navigate("/");
 
     setTimeout(() => setShowSuccessMessage(""), 3000);
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Login gagal. Email atau password salah.");
+  }
+};
+
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     navigate(`/${page}`);
-  }
-
+  };
 
   return (
     <div
@@ -101,9 +111,10 @@ const navigate = useNavigate();
             </div>
             <Button
               type="submit"
-              className="w-full !rounded-button whitespace-nowrap cursor-pointer"
+              className="w-full !rounded-button"
+              disabled={isSubmitting}
             >
-              Masuk
+              {isSubmitting ? "Masuk..." : "Masuk"}
             </Button>
           </form>
           <div className="mt-6 text-center">
@@ -115,7 +126,7 @@ const navigate = useNavigate();
               Belum punya akun?{" "}
               <button
                 onClick={() => handlePageChange("register")}
-                className="text-blue-600 hover:text-blue-500 cursor-pointer"
+                className="text-blue-600 hover:text-blue-500"
               >
                 Daftar sekarang
               </button>

@@ -1,47 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useThemeStore from "@/store/theme";
-import useHukumStore from "@/store/tanyahukum";
+import useAuthStore from "@/store/auth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/tanyaHukum/Sidebar";
-import FAQ  from "@/components/tanyaHukum/FAQ"
 import RoomChat from "@/components/tanyaHukum/RoomChat";
 
 const TanyaHukumPage = () => {
   const { isDarkMode } = useThemeStore();
-  const [currentQuestion, setCurrentQuestion] = useState("");
-
-  const {
-    questions,
-    isLoading,
-    fetchQuestions,
-    askQuestion,
-    error,
-  } = useHukumStore();
+  const { isLoggedIn, autoLogin, user } = useAuthStore();
+  const navigate = useNavigate();
+  useEffect(() => {
+    autoLogin();
+  }, [autoLogin]);
 
   useEffect(() => {
-    fetchQuestions();
-  }, [fetchQuestions]); 
-
-  const handleAskQuestion = async () => {
-    const trimmedQuestion = currentQuestion.trim();
-    if (!trimmedQuestion) return;
-    await askQuestion(trimmedQuestion);
-    setCurrentQuestion("");
-  };
+    if (!isLoggedIn) {
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
-    <div className={`min-h-screen pt-20 pb-10 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <Header/>
-      <Sidebar/>
-<FAQ/>
-<RoomChat/>
-      <Footer/>
+    <div
+      className={`min-h-screen pt-20 pb-10 ${
+        isDarkMode ? "bg-gray-900" : "bg-gray-50"
+      }`}
+    >
+      <Header />
+
+      {/* Layout utama */}
+      <div className="flex px-4 gap-4 max-w-7xl mx-auto">
+        {/* Sidebar kiri */}
+        <div className="w-full md:w-1/3 lg:w-1/4">
+          <Sidebar />
+        </div>
+
+        {/* Room chat kanan */}
+        <div className={`flex-1 p-6 overflow-hidden`}>
+          <RoomChat />
+        </div>
+      </div>
+
+      <Footer />
     </div>
   );
 };

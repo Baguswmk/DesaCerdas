@@ -1,17 +1,23 @@
-import axios from 'axios';
+// utils/openaiClient.js
+import axios from "axios";
 
 export const sendToAI = async (messages) => {
   try {
-    const response = await axios.post('http://localhost:8000/ask', {
+    const payload = {
       messages: messages.map((msg) => ({
-        role: msg.sender.toLowerCase(),
+        role: msg.sender === "USER" ? "user" : "assistant",
         content: msg.message,
       })),
-    });
+    };
 
-    return response.data.answer || 'Maaf, tidak bisa menjawab saat ini.';
+    console.log(">> Kirim ke AI:", JSON.stringify(payload, null, 2));
+
+    const response = await axios.post("http://127.0.0.1:8000/ask", payload);
+
+    console.log(">> Jawaban dari AI:", response.data);
+    return response.data.answer;
   } catch (err) {
-    console.error('AI Error:', err.message);
-    return 'Maaf, terjadi kesalahan dalam menjawab pertanyaan Anda.';
+    console.error("❌ Gagal dari sendToAI:", err.message);
+    throw err;
   }
 };

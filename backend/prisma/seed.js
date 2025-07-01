@@ -4,132 +4,145 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Seed Users
-  const hashedPassword = await bcrypt.hash('password123', 10);
-  const users = await Promise.all(
-    ['Asep', 'Budi', 'Citra', 'Dewi', 'Eko'].map((name, i) =>
-      prisma.user.create({
-        data: {
-          name,
-          email: `${name.toLowerCase()}@mail.com`,
-          password: hashedPassword,
-          role: i === 0 ? 'ADMIN' : i === 1 ? 'PETANI' : 'USER',
-        },
-      })
-    )
-  );
+  // Kosongkan semua tabel (urutan penting)
+  await prisma.donation.deleteMany();
+  await prisma.project.deleteMany();
+  await prisma.legalMessage.deleteMany();
+  await prisma.legalThread.deleteMany();
+  await prisma.legalQuestion.deleteMany();
+  await prisma.farmAdvice.deleteMany();
+  await prisma.farmEntry.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.aIUsage.deleteMany();
+  await prisma.user.deleteMany();
 
-  // Seed Legal Questions
-  for (let user of users) {
-    await prisma.legalQuestion.create({
+  // Buat user
+  const hashed = await bcrypt.hash('password123', 10);
+  const [admin, petani, user] = await Promise.all([
+    prisma.user.create({
       data: {
-        userId: user.id,
-        question: `Apakah ${user.name} boleh membuka usaha di tanah warisan?`,
-        aiResponse: 'Anda dapat membuka usaha jika seluruh ahli waris menyetujui.',
-        category: 'Tanah',
+        name: 'Admin',
+        email: 'admin@mail.com',
+        password: hashed,
+        role: 'ADMIN',
       },
-    });
-  }
-
-  // Seed Legal Threads & Messages
-  for (let user of users) {
-    const thread = await prisma.legalThread.create({
+    }),
+    prisma.user.create({
       data: {
-        userId: user.id,
-        title: `Konsultasi hukum oleh ${user.name}`,
+        name: 'Petani',
+        email: 'petani@mail.com',
+        password: hashed,
+        role: 'PETANI',
       },
-    });
-
-    await prisma.legalMessage.createMany({
-      data: [
-        {
-          threadId: thread.id,
-          sender: 'USER',
-          message: 'Apa syarat sah perjanjian?',
-        },
-        {
-          threadId: thread.id,
-          sender: 'AI',
-          message: 'Syarat sah perjanjian meliputi kesepakatan, kecakapan, dan objek yang halal.',
-        },
-      ],
-    });
-  }
-
-  // Seed Farm Entries + Advice
-  const petani = users.find((u) => u.role === 'PETANI');
-  if (petani) {
-    for (let i = 0; i < 5; i++) {
-      const entry = await prisma.farmEntry.create({
-        data: {
-          userId: petani.id,
-          plantType: ['Padi', 'Jagung', 'Cabai', 'Kangkung', 'Tomat'][i],
-          location: `Desa ${i + 1}`,
-          plantedAt: new Date(Date.now() - i * 86400000 * 7),
-        },
-      });
-
-      await prisma.farmAdvice.create({
-        data: {
-          farmEntryId: entry.id,
-          type: 'watering',
-          adviceText: 'Lakukan penyiraman setiap pagi dan sore hari.',
-        },
-      });
-    }
-  }
-
-  // Seed Projects
-  const projectList = await Promise.all(
-    [...Array(5)].map((_, i) =>
-      prisma.project.create({
-        data: {
-          creatorId: users[0].id,
-          title: `Proyek Pembangunan ${i + 1}`,
-          description: 'Pembangunan infrastruktur desa.',
-          imageUrl: null,
-          targetAmount: 5000000,
-          deadline: new Date(Date.now() + 86400000 * 30),
-        },
-      })
-    )
-  );
-
-  // Seed Donations
-  for (let i = 0; i < 5; i++) {
-    await prisma.donation.create({
+    }),
+    prisma.user.create({
       data: {
-        donorId: users[i % users.length].id,
-        projectId: projectList[i].id,
-        amount: 100000 + i * 50000,
-        paymentMethod: 'QRIS',
-        paymentStatus: 'PAID',
-        paymentReference: `INV-${i + 100}`,
-        proofUrl: null,
+        name: 'User',
+        email: 'user@mail.com',
+        password: hashed,
+        role: 'USER',
       },
-    });
-  }
+    }),
+  ]);
 
-  // Seed Notifications
-  for (let user of users) {
-    await prisma.notification.create({
-      data: {
-        userId: user.id,
-        title: 'Info Hukum',
-        message: 'Periksa kembali dokumen tanah anda.',
-        type: 'HUKUM',
+  // LegalQuestion
+  await prisma.legalQuestion.create({
+    data: {
+      userId: user.id,
+      question: 'Bolehkah membangun di tanah warisan?',
+      aiResponse: 'Boleh jika disetujui semua ahli waris.',
+      category: 'Tanah',
+    },
+  });
+
+  // LegalThread + Messages
+  const thread = await prisma.legalThread.create({
+    data: {
+      userId: user.id,
+      title: 'Pertanyaan Hukum Pertama',
+    },
+  });
+
+  await prisma.legalMessage.createMany({
+    data: [
+      {
+        threadId: thread.id,
+        sender: 'USER',
+        message: 'Apa itu warisan sah?',
       },
-    });
-  }
+      {
+        threadId: thread.id,
+        sender: 'AI',
+        message: 'Warisan sah adalah harta yang ditinggalkan pewaris dengan dasar hukum.',
+      },
+    ],
+  });
 
-  console.log('✅ Seed data inserted.');
+  // FarmEntry + Advice (Petani)
+  const farm = await prisma.farmEntry.create({
+    data: {
+      userId: petani.id,
+      plantType: 'Padi',
+      location: 'Desa Cerdas',
+      plantedAt: new Date(),
+    },
+  });
+
+  await prisma.farmAdvice.create({
+    data: {
+      farmEntryId: farm.id,
+      type: 'watering',
+      adviceText: 'Siram dua kali sehari.',
+    },
+  });
+
+  // Project + Donation
+  const project = await prisma.project.create({
+    data: {
+      creatorId: admin.id,
+      title: 'Pembangunan Jembatan',
+      description: 'Untuk menghubungkan dusun A dan B',
+      targetAmount: 10000000,
+      deadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    },
+  });
+
+  await prisma.donation.create({
+    data: {
+      donorId: user.id,
+      projectId: project.id,
+      amount: 200000,
+      paymentMethod: 'QRIS',
+      paymentStatus: 'PAID',
+      paymentReference: 'INV-001',
+    },
+  });
+
+  // Notification
+  await prisma.notification.create({
+    data: {
+      userId: user.id,
+      title: 'Hukum Tanah',
+      message: 'Cek legalitas sertifikat Anda.',
+      type: 'HUKUM',
+    },
+  });
+
+  // AI Usage
+  await prisma.aIUsage.create({
+    data: {
+      userId: user.id,
+      date: new Date(),
+      count: 2,
+    },
+  });
+
+  console.log('✅ Seed minimal berhasil!');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('❌ Seed error:', e);
     process.exit(1);
   })
-  .finally(() => {
-    prisma.$disconnect();
-  });
+  .finally(() => prisma.$disconnect());

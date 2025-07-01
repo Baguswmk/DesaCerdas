@@ -10,6 +10,8 @@ import {
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { registerSchema } from "@/utils/Validator";
+
+import useAuthStore from "@/store/auth";
 import useThemeStore from "@/store/theme";
 import usePageStore from "@/store/page";
 
@@ -17,34 +19,26 @@ const Register = () => {
   const { isDarkMode } = useThemeStore();
   const { setCurrentPage } = usePageStore();
   const navigate = useNavigate();
+
+  const {
+    register: registerUser,
+    isLoading,
+    error,
+    successMessage,
+  } = useAuthStore();
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = async (data) => {
-    try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Gagal mendaftar");
-      }
-
-      alert("Registrasi berhasil! Silakan masuk.");
-      setCurrentPage("login");
-    } catch (error) {
-      alert(error.message || "Terjadi kesalahan saat registrasi.");
-    }
+    await registerUser(data);
+    navigate("/");
+    setCurrentPage("home");
   };
 
   const handlePageChange = (page) => {
@@ -133,10 +127,20 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? "Mendaftarkan..." : "Daftar"}
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? "Mendaftarkan..." : "Daftar"}
             </Button>
           </form>
+
+          {error && (
+            <p className="text-red-500 text-sm mt-4 text-center">{error}</p>
+          )}
+          {successMessage && (
+            <p className="text-green-500 text-sm mt-4 text-center">
+              {successMessage}
+            </p>
+          )}
+
           <div className="mt-6 text-center">
             <p
               className={`text-sm ${

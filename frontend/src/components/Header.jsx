@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import useThemeStore from "@/store/theme";
 import useAuthStore from "@/store/auth";
 import usePageStore from "@/store/page";
-import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 const Header = () => {
   const { isDarkMode, toggleTheme } = useThemeStore();
-  const { isLoggedIn, logout } = useAuthStore();
+  const { isLoggedIn, user, logout } = useAuthStore();
   const { setCurrentPage } = usePageStore();
   const [showDropdown, setShowDropdown] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showWelcome] = useState(() => {
+    return isLoggedIn && !localStorage.getItem("welcomeShown");
+  });
   const navigate = useNavigate();
-  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -24,7 +34,7 @@ const Header = () => {
     setCurrentPage(page);
     setShowDropdown(false);
     navigate(`/${page}`);
-  }
+  };
 
   return (
     <nav
@@ -77,7 +87,7 @@ const Header = () => {
 
             <div className="relative">
               <button
-                onClick=  {() => setShowDropdown(!showDropdown)}
+                onClick={() => setShowDropdown(!showDropdown)}
                 className={`flex items-center space-x-1 ${
                   isDarkMode
                     ? "text-gray-300 hover:text-white"
@@ -98,10 +108,7 @@ const Header = () => {
                   {["tanyahukum", "farmsmart", "bantudesa"].map((f) => (
                     <button
                       key={f}
-                      onClick={() => {
-                        setCurrentPage(f);
-                        setShowDropdown(false);
-                      }}
+                      onClick={() => handlePageChange(f)}
                       className={`block w-full text-left px-4 py-2 text-sm ${
                         isDarkMode
                           ? "text-gray-300 hover:bg-gray-700"
@@ -135,23 +142,46 @@ const Header = () => {
             </button>
 
             {isLoggedIn ? (
-              <div className="flex items-center space-x-3">
-                <span
-                  className={`text-sm ${
-                    isDarkMode ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  Selamat datang!
-                </span>
-                <Button
-                  onClick={logout}
-                  variant="outline"
-                  size="sm"
-                  className="!rounded-button whitespace-nowrap cursor-pointer"
-                >
-                  Logout
-                </Button>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={`flex items-center px-2 py-1 rounded-md transition-colors ${
+                      isDarkMode
+                        ? "bg-transparent hover:bg-gray-800 text-gray-300"
+                        : "bg-transparent hover:bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    <Avatar className="h-6 w-6 mr-2">
+                      <AvatarImage src={user?.avatarUrl} alt={user?.name} />
+                      <AvatarFallback
+                        className={
+                          isDarkMode
+                            ? "bg-gray-700 text-white"
+                            : "bg-gray-300 text-black"
+                        }
+                      >
+                        {user?.name?.[0]?.toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span
+                      className={`text-sm font-medium truncate ${
+                        isDarkMode ? "text-gray-300" : "text-gray-900"
+                      }`}
+                    >
+                      {user?.name}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => alert("Fitur Profil belum tersedia")}
+                  >
+                    Profil
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <div className="flex items-center space-x-2">
                 <Button

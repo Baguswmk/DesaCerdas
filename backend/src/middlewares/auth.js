@@ -1,4 +1,3 @@
-// middlewares/auth.js
 import { verifyToken as verifyJwt } from '../utils/jwt.js';
 
 export const verifyToken = (req, res, next) => {

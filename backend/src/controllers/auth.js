@@ -36,7 +36,7 @@ export const login = async (req, res) => {
     if (!valid) return res.status(401).json({ error: 'Password salah' });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, name: user.name,email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '2h' }
     );
@@ -59,6 +59,6 @@ export const logout = (req, res) => {
 };
 
 export const getMe = (req, res) => {
-  const { id, email, role } = req.user;
-  res.json({ id, email, role });
+  const { id, email, role, name } = req.user;
+  res.json({ id, email, role, name });
 };
