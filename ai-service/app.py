@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from dotenv import load_dotenv
 import openai
+import os
 
-openai.api_key = "YOUR_OPENAI_API_KEY"  # Ganti dengan token OpenAI-mu
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 class Prompt(BaseModel):
     question: str

@@ -1,9 +1,6 @@
-import prisma from '../prisma/client.js';
+import prisma from '../../prisma/index.js';
 import { sendToAI } from '../utils/openaiClient.js';
-
-
 import sanitizeHtml from 'sanitize-html';
-
 
 export const createThread = async (req, res) => {
   const title = sanitizeHtml(req.body.title, {

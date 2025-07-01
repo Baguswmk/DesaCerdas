@@ -6,8 +6,8 @@ import cookieParser from 'cookie-parser';
 import csrfMiddleware from './middlewares/csrf.js';
 import rateLimit from 'express-rate-limit';
 
-import legalThreadRoutes from './routes/legalThread.routes.js';
-import authRoutes from './routes/auth.routes.js';
+import legalThreadRoutes from './routes/legalThread.js';
+import authRoutes from './routes/auth.js';
 
 const app = express();
 
