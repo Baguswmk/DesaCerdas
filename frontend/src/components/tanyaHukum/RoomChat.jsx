@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Loader2 } from "lucide-react";
 
 import useThemeStore from "@/store/theme";
@@ -9,23 +11,57 @@ import useAuthStore from "@/store/auth";
 
 import { useThreadMessages } from "@/hooks/tanyaHukum/useThreadMessages";
 import { useSendMessage } from "@/hooks/tanyaHukum/useSendMessage";
+import { useDailyLimit } from "@/hooks/tanyaHukum/useDailyLimit";
 
 const RoomChat = () => {
   const [currentMessage, setCurrentMessage] = useState("");
   const [localMessages, setLocalMessages] = useState([]);
-  const [limitExceeded, setLimitExceeded] = useState(false); // 🆕 state
-  const messagesEndRef = useRef(null);
+  const [limitExceeded, setLimitExceeded] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  const { isDarkMode } = useThemeStore();
-  const { activeThreadId } = useChatUIStore();
+  const { activeThreadId, toggleSidebar } = useChatUIStore();
   const { user } = useAuthStore();
+  const { data: dailyLimit } = useDailyLimit();
+  const dailyLimitCount = dailyLimit?.count || 0;
 
-  const { data: messages = [], isLoading: isLoadingMessages } = useThreadMessages(activeThreadId);
+  const { data: messages = [], isLoading: isLoadingMessages } =
+    useThreadMessages(activeThreadId);
+
   const sendMessageMutation = useSendMessage();
+  const allMessages = [...messages, ...localMessages];
+
+  // ✅ Ref ke container scroll area
+  const scrollContainerRef = useRef(null);
+
+  const scrollToBottom = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [sendMessageMutation.isPending]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, localMessages]);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleSendMessage = () => {
     const trimmed = currentMessage.trim();
-    if (!trimmed || !activeThreadId || sendMessageMutation.isLoading || limitExceeded) return;
+    if (
+      !trimmed ||
+      !activeThreadId ||
+      sendMessageMutation.isPending ||
+      limitExceeded
+    )
+      return;
 
     setCurrentMessage("");
 
@@ -43,7 +79,7 @@ const RoomChat = () => {
         onSettled: () => setLocalMessages([]),
         onError: (err) => {
           if (err.response?.status === 429) {
-            setLimitExceeded(true); // 🚫 set batas harian
+            setLimitExceeded(true);
           } else {
             alert("Gagal mengirim pesan. Silakan coba lagi.");
             console.error(err);
@@ -60,99 +96,129 @@ const RoomChat = () => {
     }
   };
 
-  useEffect(() => {
-    const container = document.getElementById("scrollkebawah");
-    if (container) {
-      container.scrollTop = container.scrollHeight;
-    }
-  }, [messages, localMessages, sendMessageMutation.isLoading]);
-
   return (
-    <div className="flex flex-col h-full">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-        Riwayat Pertanyaan
-      </h1>
-
-      {/* Chat Content Area */}
-      <div id="scrollkebawah" className="flex-1 overflow-y-auto px-1 pr-3 mb-4" style={{ maxHeight: "calc(100vh - 280px)" }}>
-        <div className="space-y-6">
-          {isLoadingMessages ? (
-            <p className="text-sm text-center text-gray-400">Memuat percakapan...</p>
-          ) : (
-            [...messages, ...localMessages].map((chat, idx) => (
-              <div key={chat.id || idx} className="flex flex-col gap-4">
-                {chat.sender === "USER" ? (
-                  <div className="flex justify-end items-start gap-2">
-                    <div className="flex-1 flex justify-end">
-                      <div className="bg-blue-100 dark:bg-blue-800 text-gray-800 dark:text-white rounded-lg p-4 max-w-[80%]">
-                        <p className="whitespace-pre-line">{chat.message}</p>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 mt-2 block">
-                          {new Date(chat.createdAt).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="/user-avatar.png" />
-                      <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
-                    </Avatar>
-                  </div>
-                ) : (
-                  <div className="flex items-start gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="/ai-avatar.png" />
-                      <AvatarFallback>AI</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg p-4 max-w-[80%]">
-                        <p className="whitespace-pre-line">{chat.message}</p>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 mt-2 block">
-                          {new Date(chat.createdAt).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-
-          {sendMessageMutation.isLoading && (
-            <div className="text-sm italic text-gray-500 dark:text-gray-400">AI sedang mengetik...</div>
-          )}
-
-          <div ref={messagesEndRef} />
-        </div>
+    <div className="flex-1 flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b bg-white">
+        <h1 className="text-xl font-bold">Riwayat Pertanyaan</h1>
+        {windowWidth < 768 && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            className="md:hidden !rounded-button cursor-pointer"
+          >
+            <i className="fas fa-bars text-xl"></i>
+            <span className="sr-only">Open Sidebar</span>
+          </Button>
+        )}
       </div>
 
-      {/* Input Area */}
-      <div className="relative mt-2">
-        <textarea
-          placeholder="Ketik pertanyaan Anda..."
-          value={currentMessage}
-          onChange={(e) => setCurrentMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          rows={1}
-          disabled={limitExceeded}
-          className="w-full resize-none pl-4 pr-12 py-3 border border-gray-300 focus:border-green-500 rounded-lg text-sm dark:bg-gray-800 dark:text-white disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
-        />
-        <Button
-          onClick={handleSendMessage}
-          disabled={sendMessageMutation.isLoading || !currentMessage.trim() || limitExceeded}
-          className="absolute right-1 top-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md px-3 py-1 cursor-pointer flex items-center gap-1"
-          size="sm"
+      {/* Chat Messages */}
+      <ScrollArea className="p-4 max-h-[65vh] md:max-h-[70vh]">
+        <div
+          ref={scrollContainerRef}
+          className="overflow-y-auto max-h-[65vh] md:max-h-[70vh] space-y-6 max-w-4xl mx-auto"
         >
-          {sendMessageMutation.isLoading ? (
-            <Loader2 className="animate-spin h-4 w-4" />
-          ) : (
-            <i className="fas fa-paper-plane" />
+          {isLoadingMessages && (
+            <div className="flex justify-center bg-white">
+              <Loader2 className="animate-spin mr-2" />
+              Memuat pesan...
+            </div>
           )}
-        </Button>
-      </div>
 
-      {/* Batasan info */}
-      <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-        Anda dapat bertanya hingga <strong>20 kali per hari</strong>.{" "}
-        {limitExceeded && <span className="text-red-500">Batas harian Anda telah tercapai.</span>}
+          {allMessages.map((msg) => (
+            <div
+              key={msg.id}
+              className={
+                msg.sender === "USER"
+                  ? "flex flex-row-reverse gap-4"
+                  : "flex gap-4"
+              }
+            >
+              <Avatar className="h-8 w-8 mt-1">
+                <AvatarFallback
+                  className={
+                    msg.sender === "USER"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-200 text-gray-700"
+                  }
+                >
+                  {msg.sender === "USER" ? user?.name?.[0] || "U" : "AI"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 space-y-2">
+                <div
+                  className={`${
+                    msg.sender === "USER"
+                      ? "bg-blue-50 ml-auto max-w-md text-gray-800"
+                      : "bg-gray-100 text-gray-800"
+                  } p-4 rounded-lg`}
+                >
+                  <p>{msg.message}</p>
+                </div>
+                <p
+                  className={`text-xs text-gray-500 ${
+                    msg.sender === "USER" ? "text-right" : ""
+                  }`}
+                >
+                  {new Date(msg.createdAt).toLocaleString()}
+                </p>
+              </div>
+            </div>
+          ))}
+
+          {/* ✅ AI typing animation */}
+          {sendMessageMutation.isPending && (
+            <div key="ai-typing" className="flex gap-4">
+              <Avatar className="h-8 w-8 mt-1">
+                <AvatarFallback className="bg-gray-200 text-gray-700">
+                  AI
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 space-y-2">
+                <div className="bg-gray-100 text-gray-800 p-4 rounded-lg flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+                  <span>Sedang membalas...</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
+
+      {/* Chat Input */}
+      <div className="p-4 border-t bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder={
+                limitExceeded
+                  ? "Batas harian tercapai."
+                  : "Ketik pertanyaan Anda..."
+              }
+              value={currentMessage}
+              onChange={(e) => setCurrentMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={limitExceeded}
+              className="pr-12 py-6 border-gray-300 focus:border-green-500 focus:ring-green-500 text-sm"
+            />
+            <Button
+              onClick={handleSendMessage}
+              className="absolute right-1 top-1/2 -translate-y-1/2 bg-blue-500 hover:bg-blue-600 !rounded-button"
+              size="icon"
+              disabled={sendMessageMutation.isPending || limitExceeded}
+            >
+              <i className="fas fa-paper-plane"></i>
+            </Button>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            {limitExceeded
+              ? "Anda telah mencapai batas 20 pertanyaan hari ini."
+              : `Anda telah menggunakan ${dailyLimitCount}/20 pertanyaan hari ini.`}
+          </p>
+        </div>
       </div>
     </div>
   );

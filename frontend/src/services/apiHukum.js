@@ -35,3 +35,8 @@ export const deleteThread = async (id) => {
   const res = await axiosInstance.delete(`/legal/thread/${id}`);
   return res.data;
 };
+
+export const getTodayQuestionCount = async () => {
+  const res = await axiosInstance.get('/legal/daily-limit');
+  return res.data;
+};

@@ -6,6 +6,7 @@ import Kontak from "@/pages/Kontak";
 import About from "@/pages/About";
 import ScrollToTop from "@/utils/ScrollToTop";
 import TanyaHukumPage from "@/pages/TanyaHukum";
+import FarmSmartPage from "@/pages/FarmSmart";
 const IndexRoute=() => {
   return (
     <Router>
@@ -17,7 +18,7 @@ const IndexRoute=() => {
         <Route path="/contact" element={<Kontak />} />
         <Route path="/about" element={<About />} />
         <Route path="/tanyahukum" element={<TanyaHukumPage />} />
-        <Route path="/farmsmart" element={<Home />} />
+        <Route path="/farmsmart" element={<FarmSmartPage />} />
         <Route path="/bantu-desa" element={<Home />} />
         <Route path="*" element={<Home />} />
 

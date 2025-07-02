@@ -230,3 +230,20 @@ export const deleteThread = async (req, res) => {
     res.status(500).json({ error: "Gagal menghapus thread" });
   }
 };
+
+
+export const getTodayQuestionCount = async (req, res) => {
+  const userId = req.user.id;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const count = await prisma.legalMessage.count({
+    where: {
+      sender: 'USER',
+      thread: { userId },
+      createdAt: { gte: today },
+    },
+  });
+
+  res.json({ count });
+};

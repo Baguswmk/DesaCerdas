@@ -7,6 +7,7 @@ import {
   getThreadHistory,
   deleteThread,
   updateThreadTitle,
+  getTodayQuestionCount
 } from '../controllers/legalThread.js';
 
 import { verifyToken } from '../middlewares/auth.js';
@@ -22,5 +23,6 @@ router.get('/history', getThreadHistory);
 router.patch('/thread/:id', updateThreadTitle); 
 router.delete('/thread/:id', deleteThread);     
 
+router.get('/daily-limit', getTodayQuestionCount);
 
 export default router;

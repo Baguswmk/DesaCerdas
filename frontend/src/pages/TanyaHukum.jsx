@@ -30,16 +30,13 @@ const TanyaHukumPage = () => {
       <Header />
 
       {/* Layout utama */}
-      <div className="flex px-4 gap-4 max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto flex flex-1">
         {/* Sidebar kiri */}
-        <div className="w-full md:w-1/3 lg:w-1/4">
-          <Sidebar />
-        </div>
+
+        <Sidebar />
 
         {/* Room chat kanan */}
-        <div className={`flex-1 p-6 overflow-hidden`}>
-          <RoomChat />
-        </div>
+        <RoomChat />
       </div>
 
       <Footer />

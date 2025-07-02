@@ -9,6 +9,8 @@ const useChatUIStore = create((set) => ({
   closeRenameModal: () =>
     set({ renameThreadId: null, renameInput: "" }),
   setActiveThreadId: (id) => set({ activeThreadId: id }),
+    sidebarOpen: false,
+  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
 }));
 
 export default useChatUIStore;

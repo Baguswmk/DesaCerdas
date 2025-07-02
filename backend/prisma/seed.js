@@ -11,7 +11,9 @@ async function main() {
   await prisma.legalThread.deleteMany();
   await prisma.legalQuestion.deleteMany();
   await prisma.farmAdvice.deleteMany();
+  await prisma.farmAnalysis.deleteMany();
   await prisma.farmEntry.deleteMany();
+  await prisma.weatherForecast.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.aIUsage.deleteMany();
   await prisma.user.deleteMany();
@@ -84,7 +86,8 @@ async function main() {
       userId: petani.id,
       plantType: 'Padi',
       location: 'Desa Cerdas',
-      plantedAt: new Date(),
+      plantedAt: new Date('2025-07-01'),
+      expectedHarvestDate: new Date('2025-10-10'),
     },
   });
 
@@ -95,6 +98,44 @@ async function main() {
       adviceText: 'Siram dua kali sehari.',
     },
   });
+
+  // Tambah FarmAnalysis untuk FarmEntry
+  await prisma.farmAnalysis.create({
+    data: {
+      farmEntryId: farm.id,
+      harvestDate: new Date('2025-10-10'),
+      steps: [
+        'Persiapkan lahan dengan membersihkan gulma.',
+        'Olah tanah hingga 30 cm, buat bedengan.',
+        'Tanam benih dengan jarak 25x25 cm.',
+        'Pupuk dasar 10kg/10m2.',
+        'Penyiraman rutin pagi & sore.'
+      ],
+      risks: [
+        'Serangan wereng pada musim hujan.',
+        'Penyakit blast menyerang batang.',
+        'Kekeringan saat curah hujan rendah.',
+        'Banjir merusak perakaran.'
+      ],
+    },
+  });
+
+  // Tambah WeatherForecast 4 hari ke depan
+  const baseDate = new Date('2025-07-03');
+  for (let i = 0; i < 4; i++) {
+    const date = new Date(baseDate);
+    date.setDate(baseDate.getDate() + i);
+    await prisma.weatherForecast.create({
+      data: {
+        location: 'Desa Cerdas',
+        date,
+        forecast: i % 2 === 0 ? 'Cerah Berawan' : 'Hujan Ringan',
+        temperature: 27 + i,
+        humidity: 75 - i * 2,
+        windSpeed: 12 - i,
+      },
+    });
+  }
 
   // Project + Donation
   const project = await prisma.project.create({
@@ -137,7 +178,7 @@ async function main() {
     },
   });
 
-  console.log('✅ Seed minimal berhasil!');
+  console.log('✅ Seed data lengkap berhasil!');
 }
 
 main()
