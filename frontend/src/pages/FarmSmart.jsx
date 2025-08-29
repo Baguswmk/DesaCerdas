@@ -22,7 +22,7 @@ const FarmSmartPage = () => {
 
   const detectLocation = () => {
     setTimeout(() => {
-      useFarmSmartStore.getState().setLocation("Gading Rejo");
+      useFarmSmartStore.getState().setLocation("18.10.01");
       refetch();
     }, 500);
   };

@@ -155,7 +155,7 @@ export const fetchBMKGWeather = async (regionCode) => {
     const desa = data?.lokasi?.desa || regionCode;
     const adm3 = data?.lokasi?.adm3;
     const kecamatan = LOCATION_LABELS[adm3] || data?.lokasi?.kecamatan || adm3;
-
+    console.log("✅ Berhasil fetch BMKG:", cuacaArray);
     const formatted = cuacaArray.flatMap((daily) =>
       daily.map((item) => ({
         location: `${desa}, ${kecamatan}`,
@@ -164,8 +164,11 @@ export const fetchBMKGWeather = async (regionCode) => {
         temperature: Math.round(item.t),
         humidity: Math.round(item.hu),
         windSpeed: Math.round(item.ws),
+        image : item.image,
       }))
     );
+
+    console.log("📊 Data cuaca terformat:", formatted);
     return formatted;
   } catch (err) {
     console.error("❌ Gagal fetch BMKG:", err.message);
