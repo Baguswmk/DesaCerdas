@@ -23,6 +23,11 @@ model User {
   notifications  Notification[]
   legalThreads   LegalThread[]
   aiUsages       AIUsage[]
+  
+  // Bantu Desa Relations
+  kegiatanDesa   KegiatanDesa[] @relation("KegiatanCreator")
+  donasiDesa     DonasiDesa[]   @relation("DonasiDonor")
+  verifiedDonasi DonasiDesa[]   @relation("DonasiVerifier")
 }
 
 enum Role {
@@ -31,6 +36,65 @@ enum Role {
   PETANI
   LEGAL_HELPER
 }
+
+// === BANTU DESA MODELS ===
+
+model KegiatanDesa {
+  id              String            @id @default(uuid())
+  creator         User              @relation(name: "KegiatanCreator", fields: [creatorId], references: [id])
+  creatorId       String
+  judul           String
+  deskripsi       String
+  foto_url        String?
+  target_dana     Int
+  tanggal_mulai   DateTime
+  tanggal_selesai DateTime
+  jadwal          String?           // JSON string untuk array jadwal
+  persyaratan     String?           // JSON string untuk object persyaratan
+  galeri          String?           // JSON string untuk array URL gambar
+  qris_url        String?           // URL QR Code untuk pembayaran
+  status          KegiatanStatus    @default(AKTIF)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  donations       DonasiDesa[]
+}
+
+enum KegiatanStatus {
+  AKTIF
+  SELESAI
+  DIBATALKAN
+}
+
+model DonasiDesa {
+  id                  String        @id @default(uuid())
+  kegiatan            KegiatanDesa  @relation(fields: [kegiatanId], references: [id], onDelete: Cascade)
+  kegiatanId          String
+  donor               User?         @relation(name: "DonasiDonor", fields: [donorId], references: [id])
+  donorId             String?       // Null jika donasi anonymous tanpa login
+  donorName           String?       // Nama donatur (untuk yang login atau isi manual)
+  donorEmail          String?       // Email donatur
+  donorPhone          String?       // Phone donatur
+  amount              Int
+  isAnonymous         Boolean       @default(false)
+  message             String?       // Pesan dari donatur
+  bukti_transfer_url  String        // URL bukti transfer
+  status              DonasiStatus  @default(PENDING)
+  reference           String        @unique // Kode referensi unik
+  verifiedAt          DateTime?
+  verifiedBy          String?
+  verifier            User?         @relation(name: "DonasiVerifier", fields: [verifiedBy], references: [id])
+  adminNote           String?       // Catatan admin saat verifikasi
+  createdAt           DateTime      @default(now())
+}
+
+enum DonasiStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// === EXISTING MODELS (tidak berubah) ===
 
 model LegalQuestion {
   id         String   @id @default(uuid())
@@ -109,8 +173,7 @@ model WeatherForecast {
   windSpeed   Int
   createdAt   DateTime @default(now())
 
- @@unique([location, date], name: "location_date")
-
+  @@unique([location, date], name: "location_date")
 }
 
 model Project {
