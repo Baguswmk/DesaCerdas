@@ -15,13 +15,20 @@ import { chatRateLimiter } from '../middlewares/rateLimiter.js';
 const router = express.Router();
 router.use(verifyToken);
 
+// routes/legalThread.js
 router.post('/', createThread); 
 router.get('/', getUserThreads); 
-router.post('/:threadId/messages', chatRateLimiter , postMessageToThread); 
-router.get('/:threadId/messages', getThreadMessages); 
+
+// taruh yang statis dulu
 router.get('/history', getThreadHistory); 
+router.get('/daily-limit', getTodayQuestionCount);
+
+// baru dynamic pakai param
+router.post('/:threadId/messages', chatRateLimiter, postMessageToThread); 
+router.get('/:threadId/messages', getThreadMessages); 
 router.patch('/thread/:id', updateThreadTitle); 
-router.delete('/thread/:id', deleteThread);     
+router.delete('/thread/:id', deleteThread);
+
 
 router.get('/daily-limit', getTodayQuestionCount);
 

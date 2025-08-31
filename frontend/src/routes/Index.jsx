@@ -7,7 +7,10 @@ import About from "@/pages/About";
 import ScrollToTop from "@/utils/ScrollToTop";
 import TanyaHukumPage from "@/pages/TanyaHukum";
 import FarmSmartPage from "@/pages/FarmSmart";
-const IndexRoute=() => {
+import BantuDesaPage from "@/pages/BantuDesa";
+import DetailKegiatanPage from "@/pages/DetailKegiatan";
+
+const IndexRoute = () => {
   return (
     <Router>
       <ScrollToTop />
@@ -19,12 +22,12 @@ const IndexRoute=() => {
         <Route path="/about" element={<About />} />
         <Route path="/tanyahukum" element={<TanyaHukumPage />} />
         <Route path="/farmsmart" element={<FarmSmartPage />} />
-        <Route path="/bantu-desa" element={<Home />} />
+        <Route path="/bantu-desa" element={<BantuDesaPage />} />
+        <Route path="/bantu-desa/detail/:id" element={<DetailKegiatanPage />} />
         <Route path="*" element={<Home />} />
-
       </Routes>
     </Router>
   );
-}
+};
 
 export default IndexRoute;

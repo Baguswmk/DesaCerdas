@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent , CardTitle } from "./ui/card";
+import { Card, CardHeader, CardContent, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import useThemeStore from "@/store/theme";
 import usePageStore from "@/store/page";
@@ -12,7 +12,7 @@ const Fitur = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
     navigate(`/${page}`);
-  }
+  };
 
   return (
     <div className={`py-20 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
@@ -100,7 +100,7 @@ const Fitur = () => {
                 Platform donasi untuk pembangunan dan pemberdayaan masyarakat desa
               </p>
               <Button 
-                onClick={() => handlePageChange('bantudesa')}
+                onClick={() => handlePageChange('bantu-desa')}
                 className="w-full !rounded-button whitespace-nowrap cursor-pointer"
               >
                 Mulai Donasi

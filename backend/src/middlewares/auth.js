@@ -1,62 +1,74 @@
-// 1. Unified Auth Middleware - middlewares/auth.js
-import { verifyToken as verifyJwt } from '../utils/jwt.js';
+import jwt from 'jsonwebtoken';
 
-export const authenticate = (options = {}) => {
-  const { required = true, roles = [] } = options;
-  
-  return async (req, res, next) => {
-    try {
-      const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
-      
-      if (!token) {
-        if (required) {
-          return res.status(401).json({
-            success: false,
-            message: 'Authentication required'
-          });
-        }
-        return next();
-      }
-      
-      const decoded = verifyJwt(token);
-      req.user = decoded;
-      
-      // Role-based access control
-      if (roles.length > 0 && !roles.includes(decoded.role)) {
-        return res.status(403).json({
-          success: false,
-          message: 'Insufficient permissions'
-        });
-      }
-      
-      next();
-    } catch (error) {
-      if (required) {
-        return res.status(403).json({
-          success: false,
-          message: 'Invalid token'
-        });
-      }
-      next();
+// Middleware untuk verifikasi token JWT
+export const verifyToken = (req, res, next) => {
+  try {
+    // Ambil token dari cookies atau Authorization header
+    const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Token tidak ditemukan. Silakan login terlebih dahulu.' 
+      });
     }
+
+    // Verifikasi token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Token telah expired. Silakan login kembali.' 
+      });
+    }
+    return res.status(403).json({ 
+      success: false,
+      message: 'Token tidak valid.' 
+    });
+  }
+};
+
+// Middleware opsional untuk user yang belum login
+export const optionalAuth = (req, res, next) => {
+  try {
+    const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+    
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
+    }
+    
+    next();
+  } catch (error) {
+    // Jika token tidak valid, tetap lanjut tanpa user
+    next();
+  }
+};
+
+// Middleware untuk role-based access
+export const requireRole = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Akses ditolak. Login diperlukan.' 
+      });
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Akses ditolak. Role tidak memiliki izin.' 
+      });
+    }
+
+    next();
   };
 };
 
-// Specific middleware for common use cases
-export const requireAuth = authenticate({ required: true });
-export const optionalAuth = authenticate({ required: false });
-export const requireAdmin = authenticate({ required: true, roles: ['ADMIN'] });
-
-
-// 3. Error Handler Middleware - middlewares/errorHandler.js
-
-
-// 4. Request Logger - middlewares/logger.js
-
-
-// 5. Enhanced Upload Configuration - config/upload.js
-
-// 6. Validation Middleware - middlewares/validation.js
-
-
-// 7. Database Configuration - config/database.js
+// Alias untuk kemudahan penggunaan
+export const authenticateToken = verifyToken;
+export const requireAdmin = [verifyToken, requireRole('ADMIN')];

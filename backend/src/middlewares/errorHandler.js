@@ -1,44 +1,74 @@
 export const errorHandler = (err, req, res, next) => {
-  console.error(`[${new Date().toISOString()}] Error:`, err.message);
-  console.error('Stack:', err.stack);
+  console.error(`[${new Date().toISOString()}] Error:`, {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    url: req.url,
+    method: req.method,
+    user: req.user?.id || 'anonymous'
+  });
   
-  
-  if (err.code) {
+  // Prisma Database Errors
+  if (err.code && err.code.startsWith('P')) {
     switch (err.code) {
       case 'P2002':
-        return errorResponse(res, 'Data already exists', null, 409);
+        return res.status(409).json({
+          success: false,
+          message: 'Data sudah ada dalam sistem',
+          error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        });
       case 'P2025':
-        return errorResponse(res, 'Record not found', null, 404);
+        return res.status(404).json({
+          success: false,
+          message: 'Data tidak ditemukan'
+        });
       case 'P2003':
-        return errorResponse(res, 'Foreign key constraint failed', null, 400);
+        return res.status(400).json({
+          success: false,
+          message: 'Referensi data tidak valid'
+        });
       default:
-        return errorResponse(res, 'Database error', null, 500);
+        return res.status(500).json({
+          success: false,
+          message: 'Terjadi kesalahan database'
+        });
     }
   }
   
-  
+  // Multer File Upload Errors
   if (err.code === 'LIMIT_FILE_SIZE') {
-    return errorResponse(res, 'File too large', null, 413);
+    return res.status(413).json({
+      success: false,
+      message: 'Ukuran file terlalu besar'
+    });
   }
   
   if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-    return errorResponse(res, 'Unexpected file field', null, 400);
+    return res.status(400).json({
+      success: false,
+      message: 'Field file tidak sesuai'
+    });
   }
   
-  
+  // JWT Errors
   if (err.name === 'JsonWebTokenError') {
-    return errorResponse(res, 'Invalid token', null, 401);
+    return res.status(401).json({
+      success: false,
+      message: 'Token tidak valid'
+    });
   }
   
   if (err.name === 'TokenExpiredError') {
-    return errorResponse(res, 'Token expired', null, 401);
+    return res.status(401).json({
+      success: false,
+      message: 'Token telah expired'
+    });
   }
   
-  
-  if (err.name === 'ValidationError') {
-    return errorResponse(res, 'Validation failed', err.details, 422);
-  }
-  
-  
-  return errorResponse(res, 'Internal server error', null, 500);
+  // Default server error
+  return res.status(500).json({
+    success: false,
+    message: process.env.NODE_ENV === 'development' 
+      ? err.message 
+      : 'Terjadi kesalahan server internal'
+  });
 };
