@@ -168,6 +168,61 @@ async function main() {
       type: 'HUKUM',
     },
   });
+  // === SEED BANTU DESA ===
+  const kegiatanDesa = await prisma.kegiatanDesa.create({
+    data: {
+      creatorId: admin.id,
+      judul: "Pembangunan Sumur Desa",
+      deskripsi: "Untuk menyediakan air bersih bagi warga desa.",
+      foto_url: "https://placehold.co/600x400",
+      target_dana: 5000000,
+      tanggal_mulai: new Date(),
+      tanggal_selesai: new Date(Date.now() + 1000 * 60 * 60 * 24 * 15), // 15 hari ke depan
+      jadwal: JSON.stringify([
+        { tanggal: "2025-09-05", kegiatan: "Mulai pengeboran" },
+        { tanggal: "2025-09-10", kegiatan: "Pemasangan pipa" },
+      ]),
+      persyaratan: JSON.stringify({
+        warga: "Warga desa dengan KTP lokal",
+        kontribusi: "Gotong royong per RT",
+      }),
+      galeri: JSON.stringify([
+        "https://placehold.co/300x200",
+        "https://placehold.co/300x200",
+      ]),
+      qris_url: "https://placehold.co/200x200",
+      status: "AKTIF",
+    },
+  });
+
+  await prisma.donasiDesa.createMany({
+    data: [
+      {
+        kegiatanId: kegiatanDesa.id,
+        donorId: user.id,
+        donorName: "User Donatur",
+        donorEmail: "user@mail.com",
+        donorPhone: "081234567890",
+        amount: 100000,
+        isAnonymous: false,
+        message: "Semoga bermanfaat untuk warga desa!",
+        bukti_transfer_url: "https://placehold.co/400x300",
+        status: "APPROVED",
+        reference: "DONASI-001",
+        verifiedAt: new Date(),
+        verifiedBy: admin.id,
+      },
+      {
+        kegiatanId: kegiatanDesa.id,
+        donorName: "Hamba Allah",
+        amount: 50000,
+        isAnonymous: true,
+        bukti_transfer_url: "https://placehold.co/400x300",
+        status: "PENDING",
+        reference: "DONASI-002",
+      },
+    ],
+  });
 
   
   await prisma.aIUsage.create({

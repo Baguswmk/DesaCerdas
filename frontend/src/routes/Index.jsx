@@ -9,6 +9,8 @@ import TanyaHukumPage from "@/pages/TanyaHukum";
 import FarmSmartPage from "@/pages/FarmSmart";
 import BantuDesaPage from "@/pages/BantuDesa";
 import DetailKegiatanPage from "@/pages/DetailKegiatan";
+import AdminDashboard from "@/pages/AdminDashboard";
+import PrivateRoute from "@/utils/PrivateRoute";
 
 const IndexRoute = () => {
   return (
@@ -24,6 +26,14 @@ const IndexRoute = () => {
         <Route path="/farmsmart" element={<FarmSmartPage />} />
         <Route path="/bantu-desa" element={<BantuDesaPage />} />
         <Route path="/bantu-desa/detail/:id" element={<DetailKegiatanPage />} />
+        <Route 
+          path="/admin" 
+          element={
+            <PrivateRoute allowedRoles={['ADMIN']}>
+              <AdminDashboard />
+            </PrivateRoute>
+          } 
+        />
         <Route path="*" element={<Home />} />
       </Routes>
     </Router>
