@@ -2,12 +2,12 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// Konfigurasi multer untuk upload gambar
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = "uploads/bantu-desa/";
     
-    // Buat folder jika belum ada
+    
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
@@ -15,14 +15,14 @@ const storage = multer.diskStorage({
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    // Format: timestamp-random-originalname
+    
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
     const extension = path.extname(file.originalname);
     cb(null, file.fieldname + "-" + uniqueSuffix + extension);
   }
 });
 
-// Filter file untuk gambar saja
+
 const fileFilter = (req, file, cb) => {
   const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
   
@@ -33,26 +33,26 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Konfigurasi upload
+
 export const uploadImage = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB max
+    fileSize: 5 * 1024 * 1024, 
   },
   fileFilter: fileFilter
 });
 
-// Upload multiple untuk galeri
+
 export const uploadMultipleImages = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB per file
-    files: 10 // maksimal 10 file
+    fileSize: 5 * 1024 * 1024, 
+    files: 10 
   },
   fileFilter: fileFilter
 });
 
-// Helper function untuk format currency
+
 export const formatCurrency = (amount) => {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -61,7 +61,7 @@ export const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-// Helper function untuk validasi tanggal
+
 export const validateDate = (startDate, endDate) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -78,14 +78,14 @@ export const validateDate = (startDate, endDate) => {
   return true;
 };
 
-// Helper function untuk generate reference code
+
 export const generateReference = (prefix = "REF") => {
   const timestamp = Date.now().toString(36);
   const random = Math.random().toString(36).substring(2, 8).toUpperCase();
   return `${prefix}-${timestamp}-${random}`;
 };
 
-// Helper function untuk parse JSON dengan error handling
+
 export const safeJSONParse = (jsonString, defaultValue = null) => {
   try {
     return JSON.parse(jsonString);
@@ -95,23 +95,23 @@ export const safeJSONParse = (jsonString, defaultValue = null) => {
   }
 };
 
-// Helper function untuk menghitung progress kegiatan
+
 export const calculateProgress = (currentAmount, targetAmount) => {
   if (!targetAmount || targetAmount === 0) return 0;
   const progress = (currentAmount / targetAmount) * 100;
-  return Math.min(progress, 100); // Max 100%
+  return Math.min(progress, 100); 
 };
 
-// Helper function untuk menghitung sisa hari
+
 export const calculateDaysLeft = (endDate) => {
   const end = new Date(endDate);
   const now = new Date();
   const diffTime = end.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return Math.max(diffDays, 0); // Tidak boleh negatif
+  return Math.max(diffDays, 0); 
 };
 
-// Helper function untuk validasi nominal donasi
+
 export const validateDonationAmount = (amount, minAmount = 10000) => {
   const numAmount = parseInt(amount);
   

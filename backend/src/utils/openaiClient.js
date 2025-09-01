@@ -1,10 +1,6 @@
 import axios from "axios";
 
-/**
- * Kirim chat pertanyaan ke AI untuk modul Tanya Hukum.
- * @param {Array} messages - daftar pesan { sender: "USER"|"AI", message: string }
- * @returns {Promise<string>} - jawaban dari AI
- */
+
 export const sendToAI = async (messages) => {
   try {
     const payload = {
@@ -26,14 +22,7 @@ export const sendToAI = async (messages) => {
   }
 };
 
-/**
- * Kirim pertanyaan ke AI untuk rekomendasi pertanian.
- * @param {Object} data - data pertanyaan.
- * @param {string} data.plant - jenis tanaman.
- * @param {string} data.location - lokasi tanam.
- * @param {string} [data.question] - pertanyaan tambahan (opsional).
- * @returns {Promise<string>} - jawaban dari AI
- */
+
 export const sendFarmAI = async ({ plant, location, question }) => {
   try {
     const payload = { plant, location, question: question || "" };

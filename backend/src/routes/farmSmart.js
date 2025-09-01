@@ -7,10 +7,10 @@ import {
 
 const router = express.Router();
 
-// static first
+
 router.get("/weather", getWeatherForecast);
 
-// farm analysis
+
 router.post("/analysis", createFarmAnalysis);
 router.get("/analysis/:farmEntryId", getFarmAnalysis);
 

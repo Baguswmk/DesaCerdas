@@ -1,9 +1,9 @@
-// utils/weatherScheduler.js
+
 import cron from "node-cron";
 import { storeWeatherFromBMKG } from "../utils/storeWeatherFromBMKG.js";
 
-// Daftar kode ADM4 valid dari BMKG
-// utils/regionCodes.js
+
+
 
 const REGION_CODES = {
   "18.10.01": "Pringsewu",

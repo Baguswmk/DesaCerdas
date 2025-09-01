@@ -141,11 +141,7 @@ const LOCATION_LABELS = {
   "18.10.09.2009": "Pekon Way Kunir",
   "18.10.09.2010": "Pekon Gunung Raya"
 };
-/**
- * Ambil & format data cuaca dari BMKG.
- * @param {string} regionCode - kode wilayah tingkat IV (adm4), contoh: '18.10.01.1004'
- * @returns {Promise<Array>} - daftar data cuaca format sesuai schema Prisma
- */
+
 export const fetchBMKGWeather = async (regionCode) => {
   try {
     const url = `https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=${regionCode}`;

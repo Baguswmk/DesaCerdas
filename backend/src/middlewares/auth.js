@@ -1,7 +1,7 @@
-// backend/src/middlewares/auth.js - Perbaiki file ini
+
 import jwt from 'jsonwebtoken';
 
-// Middleware utama untuk autentikasi
+
 export const verifyToken = (req, res, next) => {
   try {
     const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
@@ -24,10 +24,10 @@ export const verifyToken = (req, res, next) => {
   }
 };
 
-// Alias untuk konsistensi
+
 export const authenticateToken = verifyToken;
 
-// Middleware untuk auth opsional (tidak wajib login)
+
 export const optionalAuth = (req, res, next) => {
   try {
     const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
@@ -39,12 +39,12 @@ export const optionalAuth = (req, res, next) => {
     
     next();
   } catch (error) {
-    // Jika token invalid, lanjut tanpa user
+    
     next();
   }
 };
 
-// Middleware untuk role-based access
+
 export const requireRole = (roles = []) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -65,10 +65,10 @@ export const requireRole = (roles = []) => {
   };
 };
 
-// Middleware khusus admin
+
 export const requireAdmin = [verifyToken, requireRole(['ADMIN'])];
 
-// Middleware dengan opsi
+
 export const authenticate = (options = {}) => {
   const { required = true, roles = [] } = options;
   
@@ -89,7 +89,7 @@ export const authenticate = (options = {}) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = decoded;
       
-      // Role-based access control
+      
       if (roles.length > 0 && !roles.includes(decoded.role)) {
         return res.status(403).json({
           success: false,
@@ -110,6 +110,6 @@ export const authenticate = (options = {}) => {
   };
 };
 
-// Specific middleware for common use cases
+
 export const requireAuth = authenticate({ required: true });
 export const adminOnly = authenticate({ required: true, roles: ['ADMIN'] });

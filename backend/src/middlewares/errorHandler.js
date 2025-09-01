@@ -7,7 +7,7 @@ export const errorHandler = (err, req, res, next) => {
     user: req.user?.id || 'anonymous'
   });
   
-  // Prisma Database Errors
+  
   if (err.code && err.code.startsWith('P')) {
     switch (err.code) {
       case 'P2002':
@@ -34,7 +34,7 @@ export const errorHandler = (err, req, res, next) => {
     }
   }
   
-  // Multer File Upload Errors
+  
   if (err.code === 'LIMIT_FILE_SIZE') {
     return res.status(413).json({
       success: false,
@@ -49,7 +49,7 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
   
-  // JWT Errors
+  
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
       success: false,
@@ -64,7 +64,7 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
   
-  // Default server error
+  
   return res.status(500).json({
     success: false,
     message: process.env.NODE_ENV === 'development' 

@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Kosongkan semua tabel (urutan penting)
+  
   await prisma.donation.deleteMany();
   await prisma.project.deleteMany();
   await prisma.legalMessage.deleteMany();
@@ -18,7 +18,7 @@ async function main() {
   await prisma.aIUsage.deleteMany();
   await prisma.user.deleteMany();
 
-  // Buat user
+  
   const hashed = await bcrypt.hash('password123', 10);
   const [admin, petani, user] = await Promise.all([
     prisma.user.create({
@@ -47,7 +47,7 @@ async function main() {
     }),
   ]);
 
-  // LegalQuestion
+  
   await prisma.legalQuestion.create({
     data: {
       userId: user.id,
@@ -57,7 +57,7 @@ async function main() {
     },
   });
 
-  // LegalThread + Messages
+  
   const thread = await prisma.legalThread.create({
     data: {
       userId: user.id,
@@ -80,7 +80,7 @@ async function main() {
     ],
   });
 
-  // FarmEntry + Advice (Petani)
+  
   const farm = await prisma.farmEntry.create({
     data: {
       userId: petani.id,
@@ -99,7 +99,7 @@ async function main() {
     },
   });
 
-  // Tambah FarmAnalysis untuk FarmEntry
+  
   await prisma.farmAnalysis.create({
     data: {
       farmEntryId: farm.id,
@@ -120,7 +120,7 @@ async function main() {
     },
   });
 
-  // Tambah WeatherForecast 4 hari ke depan
+  
   const baseDate = new Date('2025-07-03');
   for (let i = 0; i < 4; i++) {
     const date = new Date(baseDate);
@@ -137,7 +137,7 @@ async function main() {
     });
   }
 
-  // Project + Donation
+  
   const project = await prisma.project.create({
     data: {
       creatorId: admin.id,
@@ -159,7 +159,7 @@ async function main() {
     },
   });
 
-  // Notification
+  
   await prisma.notification.create({
     data: {
       userId: user.id,
@@ -169,7 +169,7 @@ async function main() {
     },
   });
 
-  // AI Usage
+  
   await prisma.aIUsage.create({
     data: {
       userId: user.id,

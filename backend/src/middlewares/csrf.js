@@ -1,46 +1,49 @@
 import csrf from 'csurf';
 
-// Konfigurasi CSRF yang flexible
+
 const createCSRFMiddleware = () => {
   return csrf({
     cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production', 
       sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-      maxAge: 3600000 // 1 hour
+      maxAge: 3600000 
     },
-    // Ignore CSRF untuk development jika environment variable diset
-    ignoreMethods: process.env.NODE_ENV === 'development' ? ['GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'DELETE'] : ['GET', 'HEAD', 'OPTIONS']
+    
+    ignoreMethods: process.env.NODE_ENV === 'development' 
+      ? ['GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'DELETE'] 
+      : ['GET', 'HEAD', 'OPTIONS']
   });
 };
 
-// Smart CSRF middleware - otomatis disable untuk development
+
 export const smartCSRF = (req, res, next) => {
   const isDevelopment = process.env.NODE_ENV === 'development';
   const forceDisable = process.env.DISABLE_CSRF === 'true';
   
-  // Disable CSRF jika development dan tidak ada force enable
+  
   if ((isDevelopment || forceDisable) && process.env.FORCE_CSRF !== 'true') {
-    console.log('🔓 CSRF protection disabled for development');
-    // Mock csrfToken function untuk compatibility
-    req.csrfToken = () => 'dev-mode-no-csrf-needed';
+    console.log('🔓 CSRF protection dimatikan untuk development');
+    
+    req.csrfToken = () => 'development-mode-no-csrf';
     return next();
   }
   
-  // Gunakan CSRF normal untuk production
+  
   const csrfProtection = createCSRFMiddleware();
   csrfProtection(req, res, (err) => {
     if (err) {
       console.error('❌ CSRF Error:', err.message);
       return res.status(403).json({
         success: false,
-        message: 'CSRF token diperlukan atau tidak valid',
+        message: 'CSRF token tidak valid atau hilang',
         code: 'INVALID_CSRF_TOKEN',
-        hint: 'Dapatkan CSRF token dari /api/csrf-token terlebih dahulu'
+        hint: 'Ambil CSRF token dari GET /api/csrf-token dulu'
       });
     }
     next();
   });
 };
+
 
 export default smartCSRF;

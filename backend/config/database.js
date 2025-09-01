@@ -5,12 +5,15 @@ const prisma = new PrismaClient({
   errorFormat: 'colorless'
 });
 
+
 process.on('SIGINT', async () => {
+  console.log('🔌 Menutup koneksi database...');
   await prisma.$disconnect();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
+  console.log('🔌 Menutup koneksi database...');
   await prisma.$disconnect();
   process.exit(0);
 });

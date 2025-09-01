@@ -1,10 +1,6 @@
 import prisma from "../../prisma/index.js";
 import { fetchBMKGWeather } from "./fetchBMKGWeather.js";
 
-/**
- * Ambil dari BMKG & simpan/update ke Prisma DB
- * @param {string} regionCode - kode wilayah adm4
- */
 export const storeWeatherFromBMKG = async (regionCode) => {
   const forecasts = await fetchBMKGWeather(regionCode);
   if (!Array.isArray(forecasts) || forecasts.length === 0) return;

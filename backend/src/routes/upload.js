@@ -1,4 +1,4 @@
-// backend/src/routes/upload.js - Express 5 Compatible
+
 import express from "express";
 import { 
   uploadSingleImage, 
@@ -10,7 +10,7 @@ import { authenticateToken, optionalAuth } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-// Upload routes
+
 router.post("/image", authenticateToken, ...uploadSingleImage);
 router.post("/images", authenticateToken, ...uploadMultipleImage);
 router.post("/bukti-transfer", optionalAuth, ...uploadBuktiTransfer);

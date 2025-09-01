@@ -13,7 +13,7 @@ export const getWeatherForecast = async (req, res) => {
     });
 console.log("🔍 Fetching Weather Forecast for:", location);
     if (forecasts.length === 0) {
-      // Fetch & Simpan jika belum ada
+      
       await storeWeatherFromBMKG(location);
       const updated = await prisma.weatherForecast.findMany({
         where: { location },
@@ -29,7 +29,7 @@ console.log("🔍 Fetching Weather Forecast for:", location);
   }
 };
 
-// POST /analysis
+
 export const createFarmAnalysis = async (req, res) => {
   try {
     const { farmEntryId, harvestDate, plant, location, question } = req.body;
@@ -38,14 +38,14 @@ export const createFarmAnalysis = async (req, res) => {
       return res.status(400).json({ message: "Tanaman dan lokasi wajib diisi." });
     }
 
-    // Kirim pertanyaan ke AI
+    
     const aiResult = await sendFarmAI({ plant, location, question });
 
-    // Parsing jawaban AI menjadi steps[] dan risks[]
+    
     const steps = extractSteps(aiResult);
     const risks = extractRisks(aiResult);
 
-    // Simpan ke database
+    
     const data = await prisma.farmAnalysis.create({
       data: {
         farmEntryId,
@@ -62,7 +62,7 @@ export const createFarmAnalysis = async (req, res) => {
   }
 };
 
-// Parsing jawaban AI menjadi list langkah
+
 function extractSteps(aiText) {
   const stepMatches = aiText.match(/(?:Langkah|Step)[\s\S]+?(?=Risiko|Risks|$)/i);
   if (!stepMatches) return [];
@@ -72,7 +72,7 @@ function extractSteps(aiText) {
     .filter((s) => s.length > 3 && /^\d/.test(s));
 }
 
-// Parsing jawaban AI menjadi list risiko
+
 function extractRisks(aiText) {
   const riskMatches = aiText.match(/(?:Risiko|Risks)[\s\S]+/i);
   if (!riskMatches) return [];
@@ -82,7 +82,7 @@ function extractRisks(aiText) {
     .filter((s) => s.length > 3 && /^\d/.test(s));
 }
 
-// GET /analysis/:farmEntryId
+
 export const getFarmAnalysis = async (req, res) => {
   try {
     const { farmEntryId } = req.params;

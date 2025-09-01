@@ -26,9 +26,9 @@ export const validate = (schema, source = 'body') => {
   };
 };
 
-// Validation schemas untuk berbagai endpoint
+
 export const schemas = {
-  // Auth schemas
+  
   register: z.object({
     name: z.string().min(2, 'Nama minimal 2 karakter').max(100),
     email: z.string().email('Format email tidak valid'),
@@ -41,7 +41,7 @@ export const schemas = {
     password: z.string().min(1, 'Password wajib diisi')
   }),
 
-  // Bantu Desa schemas
+  
   createKegiatan: z.object({
     judul: z.string().min(5, 'Judul minimal 5 karakter').max(200),
     deskripsi: z.string().min(20, 'Deskripsi minimal 20 karakter'),
@@ -84,7 +84,7 @@ export const schemas = {
     reason: z.string().max(500).optional()
   }),
 
-  // Legal Thread schemas
+  
   createThread: z.object({
     title: z.string().min(5, 'Judul minimal 5 karakter').max(200)
   }),
@@ -95,7 +95,7 @@ export const schemas = {
       .max(500, 'Pesan maksimal 500 karakter')
   }),
 
-  // Farm Smart schemas
+  
   createFarmAnalysis: z.object({
     farmEntryId: z.string().min(1),
     harvestDate: z.string().datetime(),
