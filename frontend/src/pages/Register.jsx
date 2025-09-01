@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -18,27 +19,39 @@ import usePageStore from "@/store/page";
 const Register = () => {
   const { isDarkMode } = useThemeStore();
   const { setCurrentPage } = usePageStore();
+  const { register: registerUser } = useAuthStore();
   const navigate = useNavigate();
-
-  const {
-    register: registerUser,
-    isLoading,
-    error,
-    successMessage,
-  } = useAuthStore();
+  const [registerError, setRegisterError] = useState("");
+  const [registerSuccess, setRegisterSuccess] = useState("");
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = async (data) => {
-    await registerUser(data);
-    navigate("/");
-    setCurrentPage("home");
+    try {
+      setRegisterError("");
+      setRegisterSuccess("");
+      
+      const result = await registerUser(data);
+      
+      if (result.success) {
+        setRegisterSuccess("Registrasi berhasil! Silakan login.");
+        setTimeout(() => {
+          setCurrentPage("login");
+          navigate("/login");
+        }, 2000);
+      } else {
+        setRegisterError(result.error || "Registrasi gagal");
+      }
+    } catch (err) {
+      console.error('Register submit error:', err);
+      setRegisterError("Terjadi kesalahan. Silakan coba lagi.");
+    }
   };
 
   const handlePageChange = (page) => {
@@ -72,6 +85,20 @@ const Register = () => {
           </p>
         </CardHeader>
         <CardContent>
+          {/* Show register error */}
+          {registerError && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {registerError}
+            </div>
+          )}
+          
+          {/* Show register success */}
+          {registerSuccess && (
+            <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+              {registerSuccess}
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <Input
@@ -127,19 +154,14 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? "Mendaftarkan..." : "Daftar"}
+            <Button 
+              type="submit" 
+              disabled={isSubmitting} 
+              className="w-full !rounded-button"
+            >
+              {isSubmitting ? "Mendaftarkan..." : "Daftar"}
             </Button>
           </form>
-
-          {error && (
-            <p className="text-red-500 text-sm mt-4 text-center">{error}</p>
-          )}
-          {successMessage && (
-            <p className="text-green-500 text-sm mt-4 text-center">
-              {successMessage}
-            </p>
-          )}
 
           <div className="mt-6 text-center">
             <p

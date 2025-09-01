@@ -27,7 +27,10 @@ const BantuDesaKegiatan = () => {
   });
 
   const { data: response, isLoading, error } = useKegiatanAktif(filters);
-  const activities = response?.data || [];
+  
+  // Backend return { success: true, data: { data: [...], total: X } }
+  const activities = response?.data?.data || [];
+  const total = response?.data?.total || 0;
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({

@@ -1,11 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { loginAPI, registerAPI } from "../services/auth";
-import axiosInstance from "../services/api"; // pastikan ini mengarah ke axiosInstance dengan withCredentials: true
+import { loginAPI, registerAPI, getMeAPI, logoutAPI } from "../services/auth";
 
 const useAuthStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       isLoggedIn: false,
       user: null,
       name: null,
@@ -14,7 +13,7 @@ const useAuthStore = create(
       successMessage: "",
 
       setIsLoggedIn: (status) => set({ isLoggedIn: status }),
-      setUserData: (user) => set({ user }),
+      setUserData: (user) => set({ user, name: user?.name }),
       setShowSuccessMessage: (msg) => set({ successMessage: msg }),
 
       login: async (credentials) => {
@@ -26,63 +25,86 @@ const useAuthStore = create(
             name: user.name,
             isLoggedIn: true,
             isLoading: false,
-            successMessage: "Login berhasil",
+            successMessage: "Login berhasil!",
           });
+          
+          
           setTimeout(() => set({ successMessage: "" }), 3000);
+          return { success: true };
         } catch (err) {
+          console.error('Login error:', err);
+          const errorMessage = err.response?.data?.message || err.message || "Login gagal";
           set({
-            error: err.response?.data?.message || "Login gagal",
+            error: errorMessage,
             isLoading: false,
+            isLoggedIn: false,
+            user: null
           });
+          return { success: false, error: errorMessage };
         }
       },
 
       register: async (data) => {
         set({ isLoading: true, error: null });
         try {
-          const { user } = await registerAPI(data);
+          const response = await registerAPI(data);
           set({
-            user,
-            isLoggedIn: true,
             isLoading: false,
-            successMessage: "Registrasi berhasil",
+            successMessage: "Registrasi berhasil! Silakan login.",
           });
+          
           setTimeout(() => set({ successMessage: "" }), 3000);
+          return { success: true };
         } catch (err) {
+          console.error('Register error:', err);
+          const errorMessage = err.response?.data?.message || err.message || "Registrasi gagal";
           set({
-            error: err.response?.data?.message || "Registrasi gagal",
+            error: errorMessage,
             isLoading: false,
           });
+          return { success: false, error: errorMessage };
         }
       },
 
       logout: async () => {
         try {
-          await axiosInstance.post('/auth/logout');
-        } catch (_) {}
+          await logoutAPI();
+        } catch (err) {
+          console.error('Logout error:', err);
+        }
+        
+        
         set({
           user: null,
+          name: null,
           isLoggedIn: false,
           successMessage: "Berhasil logout",
         });
+        
+        
+        localStorage.removeItem("csrfToken");
+        
         setTimeout(() => set({ successMessage: "" }), 3000);
       },
 
       autoLogin: async () => {
         try {
-          const res = await axiosInstance.get('/auth/me');
-          console.log("Auto login response:", res.data);
+          const { user } = await getMeAPI();
+          console.log("✅ Auto login success:", user);
           set({
-            user: res.data,
-            name: res.data.name,
+            user,
+            name: user.name,
             isLoggedIn: true,
           });
+          return true;
         } catch (err) {
+          console.log("❌ Auto login failed:", err.response?.data?.message || err.message);
           set({
             user: null,
             name: null,
             isLoggedIn: false,
           });
+          return false;
         }
       },
     }),
@@ -91,6 +113,7 @@ const useAuthStore = create(
       partialize: (state) => ({
         user: state.user,
         isLoggedIn: state.isLoggedIn,
+        name: state.name,
       }),
     }
   )

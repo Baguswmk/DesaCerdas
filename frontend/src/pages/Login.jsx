@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"; 
 import { loginSchema } from "@/utils/Validator";       
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -14,13 +15,13 @@ import { Button } from "@/components/ui/button";
 import useAuthStore from "@/store/auth";
 import usePageStore from "@/store/page";
 import useThemeStore from "@/store/theme";
-import { loginAPI } from "@/services/auth";
 
 const LoginPage = () => {
-  const { setIsLoggedIn, setShowSuccessMessage, setUserData } = useAuthStore();
+  const { login } = useAuthStore();
   const { setCurrentPage } = usePageStore();             
   const { isDarkMode } = useThemeStore();
   const navigate = useNavigate();
+  const [loginError, setLoginError] = useState("");
 
   const {
     register,
@@ -31,21 +32,21 @@ const LoginPage = () => {
   });
 
   const onSubmit = async (data) => {
-  try {
-    const { user } = await loginAPI(data); 
-    setIsLoggedIn(true);
-    setUserData(user);
-    setShowSuccessMessage("Login berhasil!");
-    setCurrentPage("home");
-    navigate("/");
-
-    setTimeout(() => setShowSuccessMessage(""), 3000);
-  } catch (err) {
-    console.error(err);
-    alert("Login gagal. Email atau password salah.");
-  }
-};
-
+    try {
+      setLoginError("");
+      const result = await login(data); 
+      
+      if (result.success) {
+        setCurrentPage("home");
+        navigate("/");
+      } else {
+        setLoginError(result.error || "Login gagal");
+      }
+    } catch (err) {
+      console.error('Login submit error:', err);
+      setLoginError("Terjadi kesalahan. Silakan coba lagi.");
+    }
+  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -78,6 +79,13 @@ const LoginPage = () => {
           </p>
         </CardHeader>
         <CardContent>
+          {/* Show login error */}
+          {loginError && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {loginError}
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <Input
