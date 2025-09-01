@@ -7,25 +7,26 @@ import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Textarea } from "../../ui/textarea";
 import { Checkbox } from "../../ui/checkbox";
+import { Loader2 } from "lucide-react";
+import { useParams } from "react-router-dom";
+
 import { useCreateDonasi } from "@/hooks/bantuDesa/useDonasi";
 import { uploadBuktiTransfer } from "@/services/apiBantuDesa";
-import { useParams } from "react-router-dom";
-import { Loader2 } from "lucide-react";
 
 function formatCurrency(amount) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-    minimumFractionDigits: 0
+    minimumFractionDigits: 0,
   }).format(amount);
 }
 
-const DonasiProgress = ({ 
-  terkumpul = 0, 
-  target = 0, 
-  deadline, 
+const DonasiProgress = ({
+  terkumpul = 0,
+  target = 0,
+  deadline,
   jumlahDonatur = 0,
-  progressPercentage = 0
+  progressPercentage = 0,
 }) => {
   const { id: kegiatanId } = useParams();
   const [showDonasiModal, setShowDonasiModal] = useState(false);
@@ -37,29 +38,32 @@ const DonasiProgress = ({
     donorPhone: "",
     isAnonymous: false,
     message: "",
-    bukti_transfer_url: ""
+    bukti_transfer_url: "",
   });
 
   const { mutate: createDonasi, isPending } = useCreateDonasi();
 
-  const daysLeft = deadline 
-    ? Math.max(0, Math.ceil((new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+  const daysLeft = deadline
+    ? Math.max(
+        0,
+        Math.ceil((new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+      )
     : 0;
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleFileUpload = async (file) => {
     if (!file) return;
-    
+
     setUploading(true);
     try {
       const response = await uploadBuktiTransfer(file);
-      handleInputChange('bukti_transfer_url', response.data.url);
+      handleInputChange("bukti_transfer_url", response.data.url);
     } catch (error) {
       alert("Gagal mengupload bukti transfer. Silakan coba lagi.");
       console.error(error);
@@ -69,12 +73,11 @@ const DonasiProgress = ({
   };
 
   const handleSubmitDonasi = () => {
-    // Validasi form
     if (!formData.amount || formData.amount < 10000) {
       alert("Minimal donasi adalah Rp 10.000");
       return;
     }
-    
+
     if (!formData.bukti_transfer_url) {
       alert("Bukti transfer wajib diupload");
       return;
@@ -82,13 +85,13 @@ const DonasiProgress = ({
 
     const donasiData = {
       ...formData,
-      amount: parseInt(formData.amount)
+      amount: parseInt(formData.amount),
     };
 
     createDonasi(
       { kegiatanId, data: donasiData },
       {
-        onSuccess: (response) => {
+        onSuccess: () => {
           alert("Donasi berhasil dikirim! Menunggu verifikasi admin.");
           setShowDonasiModal(false);
           setFormData({
@@ -98,12 +101,12 @@ const DonasiProgress = ({
             donorPhone: "",
             isAnonymous: false,
             message: "",
-            bukti_transfer_url: ""
+            bukti_transfer_url: "",
           });
         },
         onError: (error) => {
           alert(error.response?.data?.message || "Gagal mengirim donasi");
-        }
+        },
       }
     );
   };
@@ -124,13 +127,9 @@ const DonasiProgress = ({
                   <Progress value={progressPercentage} className="h-3 mb-4" />
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-600">
-                      <i className="fas fa-clock mr-1"></i>
-                      Sisa waktu: {daysLeft > 0 ? `${daysLeft} hari` : "Sudah berakhir"}
+                      ⏳ Sisa waktu: {daysLeft > 0 ? `${daysLeft} hari` : "Sudah berakhir"}
                     </div>
-                    <div className="text-sm text-gray-600">
-                      <i className="fas fa-users mr-1"></i>
-                      {jumlahDonatur} donatur
-                    </div>
+                    <div className="text-sm text-gray-600">👥 {jumlahDonatur} donatur</div>
                   </div>
                   <div className="mt-2 text-sm text-gray-500">
                     {progressPercentage.toFixed(1)}% dari target tercapai
@@ -143,8 +142,7 @@ const DonasiProgress = ({
                     disabled={daysLeft <= 0}
                     className="!rounded-button whitespace-nowrap w-full"
                   >
-                    <i className="fas fa-heart mr-2"></i>
-                    {daysLeft > 0 ? "Donasi Sekarang" : "Kegiatan Berakhir"}
+                    ❤️ {daysLeft > 0 ? "Donasi Sekarang" : "Kegiatan Berakhir"}
                   </Button>
                 </div>
               </div>
@@ -159,7 +157,7 @@ const DonasiProgress = ({
           <DialogHeader>
             <DialogTitle>Form Donasi</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <Label htmlFor="amount">Jumlah Donasi *</Label>
@@ -168,7 +166,7 @@ const DonasiProgress = ({
                 type="number"
                 placeholder="Minimal Rp 10.000"
                 value={formData.amount}
-                onChange={(e) => handleInputChange('amount', e.target.value)}
+                onChange={(e) => handleInputChange("amount", e.target.value)}
                 min="10000"
               />
             </div>
@@ -177,7 +175,7 @@ const DonasiProgress = ({
               <Checkbox
                 id="anonymous"
                 checked={formData.isAnonymous}
-                onCheckedChange={(checked) => handleInputChange('isAnonymous', checked)}
+                onCheckedChange={(checked) => handleInputChange("isAnonymous", checked)}
               />
               <Label htmlFor="anonymous">Donasi sebagai anonim</Label>
             </div>
@@ -189,7 +187,7 @@ const DonasiProgress = ({
                   <Input
                     id="donorName"
                     value={formData.donorName}
-                    onChange={(e) => handleInputChange('donorName', e.target.value)}
+                    onChange={(e) => handleInputChange("donorName", e.target.value)}
                     placeholder="Nama lengkap"
                   />
                 </div>
@@ -200,7 +198,7 @@ const DonasiProgress = ({
                     id="donorEmail"
                     type="email"
                     value={formData.donorEmail}
-                    onChange={(e) => handleInputChange('donorEmail', e.target.value)}
+                    onChange={(e) => handleInputChange("donorEmail", e.target.value)}
                     placeholder="email@example.com"
                   />
                 </div>
@@ -210,7 +208,7 @@ const DonasiProgress = ({
                   <Input
                     id="donorPhone"
                     value={formData.donorPhone}
-                    onChange={(e) => handleInputChange('donorPhone', e.target.value)}
+                    onChange={(e) => handleInputChange("donorPhone", e.target.value)}
                     placeholder="08xxxxxxxxxx"
                   />
                 </div>
@@ -222,7 +220,7 @@ const DonasiProgress = ({
               <Textarea
                 id="message"
                 value={formData.message}
-                onChange={(e) => handleInputChange('message', e.target.value)}
+                onChange={(e) => handleInputChange("message", e.target.value)}
                 placeholder="Tuliskan pesan atau doa untuk kegiatan ini..."
                 rows={3}
               />
@@ -244,10 +242,7 @@ const DonasiProgress = ({
                 </div>
               )}
               {formData.bukti_transfer_url && (
-                <div className="mt-2 text-sm text-green-600">
-                  <i className="fas fa-check mr-1"></i>
-                  Bukti transfer berhasil diupload
-                </div>
+                <div className="mt-2 text-sm text-green-600">✅ Bukti transfer berhasil diupload</div>
               )}
             </div>
 
