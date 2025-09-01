@@ -95,32 +95,6 @@ export const safeJSONParse = (jsonString, defaultValue = null) => {
   }
 };
 
-// Helper function untuk cleanup expired pending donations
-export const cleanupExpiredDonations = async () => {
-  const prisma = (await import("../../prisma/index.js")).default;
-  
-  try {
-    // Hapus donasi pending yang lebih dari 24 jam
-    const expiredTime = new Date();
-    expiredTime.setHours(expiredTime.getHours() - 24);
-
-    const result = await prisma.donasiDesa.deleteMany({
-      where: {
-        status: "PENDING",
-        createdAt: {
-          lt: expiredTime
-        }
-      }
-    });
-
-    console.log(`🗑️ Cleaned up ${result.count} expired pending donations`);
-    return result.count;
-  } catch (error) {
-    console.error("❌ Cleanup Error:", error);
-    return 0;
-  }
-};
-
 // Helper function untuk menghitung progress kegiatan
 export const calculateProgress = (currentAmount, targetAmount) => {
   if (!targetAmount || targetAmount === 0) return 0;
@@ -150,44 +124,4 @@ export const validateDonationAmount = (amount, minAmount = 10000) => {
   }
 
   return numAmount;
-};
-
-// Helper function untuk send notification (bisa dikembangkan untuk WhatsApp, Email, dll)
-export const sendNotification = async (userId, title, message, type = "DONATION") => {
-  const prisma = (await import("../../prisma/index.js")).default;
-  
-  try {
-    await prisma.notification.create({
-      data: {
-        userId,
-        title,
-        message,
-        type
-      }
-    });
-    
-    // TODO: Implementasi push notification, email, atau WhatsApp
-    console.log(`📱 Notification sent to user ${userId}: ${title}`);
-  } catch (error) {
-    console.error("❌ Send Notification Error:", error);
-  }
-};
-
-// Helper function untuk log activity (untuk audit trail)
-export const logActivity = async (userId, action, details = {}) => {
-  try {
-    console.log(`📝 Activity Log: User ${userId} - ${action}`, details);
-    
-    // TODO: Implementasi activity log ke database jika diperlukan
-    // await prisma.activityLog.create({
-    //   data: {
-    //     userId,
-    //     action,
-    //     details: JSON.stringify(details),
-    //     createdAt: new Date()
-    //   }
-    // });
-  } catch (error) {
-    console.error("❌ Log Activity Error:", error);
-  }
 };

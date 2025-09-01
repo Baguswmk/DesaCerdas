@@ -1,40 +1,36 @@
+// backend/src/middlewares/auth.js - Perbaiki file ini
 import jwt from 'jsonwebtoken';
 
-// Middleware untuk verifikasi token JWT
+// Middleware utama untuk autentikasi
 export const verifyToken = (req, res, next) => {
   try {
-    // Ambil token dari cookies atau Authorization header
-    const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
     
     if (!token) {
       return res.status(401).json({ 
-        success: false,
-        message: 'Token tidak ditemukan. Silakan login terlebih dahulu.' 
+        success: false, 
+        message: 'Token tidak ditemukan' 
       });
     }
-
-    // Verifikasi token
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ 
-        success: false,
-        message: 'Token telah expired. Silakan login kembali.' 
-      });
-    }
     return res.status(403).json({ 
-      success: false,
-      message: 'Token tidak valid.' 
+      success: false, 
+      message: 'Token tidak valid' 
     });
   }
 };
 
-// Middleware opsional untuk user yang belum login
+// Alias untuk konsistensi
+export const authenticateToken = verifyToken;
+
+// Middleware untuk auth opsional (tidak wajib login)
 export const optionalAuth = (req, res, next) => {
   try {
-    const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
     
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -43,32 +39,77 @@ export const optionalAuth = (req, res, next) => {
     
     next();
   } catch (error) {
-    // Jika token tidak valid, tetap lanjut tanpa user
+    // Jika token invalid, lanjut tanpa user
     next();
   }
 };
 
 // Middleware untuk role-based access
-export const requireRole = (...allowedRoles) => {
+export const requireRole = (roles = []) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ 
-        success: false,
-        message: 'Akses ditolak. Login diperlukan.' 
+        success: false, 
+        message: 'Authentication required' 
       });
     }
-
-    if (!allowedRoles.includes(req.user.role)) {
+    
+    if (roles.length > 0 && !roles.includes(req.user.role)) {
       return res.status(403).json({ 
-        success: false,
-        message: 'Akses ditolak. Role tidak memiliki izin.' 
+        success: false, 
+        message: 'Insufficient permissions' 
       });
     }
-
+    
     next();
   };
 };
 
-// Alias untuk kemudahan penggunaan
-export const authenticateToken = verifyToken;
-export const requireAdmin = [verifyToken, requireRole('ADMIN')];
+// Middleware khusus admin
+export const requireAdmin = [verifyToken, requireRole(['ADMIN'])];
+
+// Middleware dengan opsi
+export const authenticate = (options = {}) => {
+  const { required = true, roles = [] } = options;
+  
+  return async (req, res, next) => {
+    try {
+      const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+      
+      if (!token) {
+        if (required) {
+          return res.status(401).json({
+            success: false,
+            message: 'Authentication required'
+          });
+        }
+        return next();
+      }
+      
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
+      
+      // Role-based access control
+      if (roles.length > 0 && !roles.includes(decoded.role)) {
+        return res.status(403).json({
+          success: false,
+          message: 'Insufficient permissions'
+        });
+      }
+      
+      next();
+    } catch (error) {
+      if (required) {
+        return res.status(403).json({
+          success: false,
+          message: 'Invalid token'
+        });
+      }
+      next();
+    }
+  };
+};
+
+// Specific middleware for common use cases
+export const requireAuth = authenticate({ required: true });
+export const adminOnly = authenticate({ required: true, roles: ['ADMIN'] });

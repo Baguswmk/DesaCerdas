@@ -1,105 +1,174 @@
+// backend/src/app.js - Updated dengan CSRF yang benar
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import smartCSRF from './middlewares/csrf.js';
 import rateLimit from 'express-rate-limit';
-import path from 'path';
-
-// Import middlewares
-import csrfMiddleware from './middlewares/csrf.js';
-import { errorHandler } from './middlewares/errorHandler.js';
-import { requestLogger } from './middlewares/logger.js';
+import { startWeatherScheduler } from "./utils/weatherScheduler.js";
 
 // Import routes
-import authRoutes from './routes/auth.js';
 import legalThreadRoutes from './routes/legalThread.js';
 import farmSmartRoutes from './routes/farmSmart.js';
+import authRoutes from './routes/auth.js';
 import bantuDesaRoutes from './routes/bantuDesa.js';
 import uploadRoutes from './routes/upload.js';
 
-// Import utilities
-import { startWeatherScheduler } from './utils/weatherScheduler.js';
-
 const app = express();
 
-// ====== BASIC MIDDLEWARE ======
-app.use(helmet());
-app.use(cookieParser());
+// Start scheduler
+startWeatherScheduler();
+
+// Basic middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// ====== CORS CONFIGURATION ======
+// Cookie parser HARUS sebelum CSRF
+app.use(cookieParser());
+
+// Security middleware
+app.use(helmet({
+  crossOriginEmbedderPolicy: false // Untuk development
+}));
+
+// CORS configuration
 app.use(cors({
   origin: process.env.CLIENT_URL || "http://localhost:5173",
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token']
 }));
 
-// ====== LOGGING ======
-if (process.env.NODE_ENV === 'development') {
-  app.use(requestLogger);
-}
+// Serve static files
+app.use('/uploads', express.static('uploads'));
 
-// ====== RATE LIMITING ======
-const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 menit
-  max: 1000, // 1000 requests per window
-  message: {
-    success: false,
-    message: 'Terlalu banyak permintaan, coba lagi nanti'
-  }
-});
-
+// Rate limiting untuk auth
 const authLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 menit
-  max: 5, // 5 percobaan login per menit
-  message: {
-    success: false,
-    message: 'Terlalu banyak percobaan login, coba lagi nanti'
+  windowMs: 1 * 60 * 1000,
+  max: 10,
+  message: { error: 'Terlalu banyak percobaan, coba lagi nanti.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// CSRF token endpoint - HARUS sebelum routes lain yang pakai CSRF
+app.get('/api/csrf-token', smartCSRF, (req, res) => {
+  try {
+    const token = req.csrfToken();
+    res.json({ 
+      success: true,
+      csrfToken: token,
+      environment: process.env.NODE_ENV || 'development',
+      message: 'CSRF token berhasil diambil'
+    });
+  } catch (error) {
+    console.error('Error generating CSRF token:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Gagal generate CSRF token',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal error'
+    });
   }
-});
-
-// ====== STATIC FILES ======
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
-
-// ====== ROUTES ======
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ 
-    success: true, 
-    message: 'Server berjalan dengan baik',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// CSRF Token endpoint
-app.get('/api/csrf-token', csrfMiddleware, (req, res) => {
-  res.json({ 
-    success: true,
-    csrfToken: req.csrfToken() 
-  });
 });
 
 // API Routes
 app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/legal', generalLimiter, legalThreadRoutes);
-app.use('/api/farm', generalLimiter, farmSmartRoutes);
-app.use('/api/bantu-desa', generalLimiter, bantuDesaRoutes);
-app.use('/api/upload', generalLimiter, uploadRoutes);
+app.use('/api/legal', legalThreadRoutes);
+app.use('/api/farm', farmSmartRoutes);
+app.use('/api/bantu-desa', bantuDesaRoutes);
+app.use('/api/upload', uploadRoutes);
 
-// ====== 404 HANDLER ======
-app.use('*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Endpoint tidak ditemukan'
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    csrf: process.env.NODE_ENV === 'production' ? 'enabled' : 'disabled'
   });
 });
 
-// ====== ERROR HANDLER ======
-app.use(errorHandler);
+// API info endpoint
+app.get('/api', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Desa Cerdas API',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/api/auth',
+      legal: '/api/legal', 
+      farm: '/api/farm',
+      bantuDesa: '/api/bantu-desa',
+      upload: '/api/upload',
+      csrf: '/api/csrf-token'
+    }
+  });
+});
 
-// ====== START SCHEDULERS ======
-startWeatherScheduler();
+// 404 handler
+app.use((req, res, next) => {
+  if (!res.headersSent) {
+    res.status(404).json({ 
+      success: false,
+      message: `Route ${req.method} ${req.originalUrl} tidak ditemukan`,
+      availableEndpoints: [
+        '/api/auth',
+        '/api/legal',
+        '/api/farm', 
+        '/api/bantu-desa',
+        '/api/upload',
+        '/api/csrf-token',
+        '/health'
+      ]
+    });
+  } else {
+    next();
+  }
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  // Log error untuk debugging
+  console.error(`[${new Date().toISOString()}] Error:`, {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    url: req.url,
+    method: req.method
+  });
+  
+  // Jangan kirim response jika sudah dikirim
+  if (res.headersSent) {
+    return next(err);
+  }
+  
+  // Handle specific error types
+  if (err.code === 'EBADCSRFTOKEN') {
+    return res.status(403).json({
+      success: false,
+      message: 'CSRF token tidak valid atau tidak ada',
+      code: 'INVALID_CSRF_TOKEN',
+      hint: 'Ambil CSRF token dari GET /api/csrf-token terlebih dahulu'
+    });
+  }
+  
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({
+      success: false,
+      message: 'File atau data terlalu besar',
+      code: 'PAYLOAD_TOO_LARGE'
+    });
+  }
+  
+  // Generic error response
+  res.status(err.status || 500).json({ 
+    success: false,
+    message: err.message || 'Internal Server Error',
+    code: err.code || 'INTERNAL_ERROR',
+    ...(process.env.NODE_ENV === 'development' && { 
+      stack: err.stack,
+      details: err 
+    })
+  });
+});
 
 export default app;

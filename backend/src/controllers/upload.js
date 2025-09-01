@@ -1,4 +1,4 @@
-import { uploadImage, uploadMultipleImages } from "../utils/bantuDesa.js";
+import { uploadImage, uploadMultipleImages } from "../utils/bantuDesaUtils.js";
 import path from "path";
 
 
