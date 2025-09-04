@@ -1,42 +1,29 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import useThemeStore from "@/store/theme";
 import useAuthStore from "@/store/auth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Sidebar from "@/components/tanyaHukum/Sidebar";
-import RoomChat from "@/components/tanyaHukum/RoomChat";
+import CompleteLegalQASystem from "@/components/tanyaHukum/CompleteLegalQASystem";
 
 const TanyaHukumPage = () => {
   const { isDarkMode } = useThemeStore();
-  const { isLoggedIn, autoLogin, user } = useAuthStore();
-  const navigate = useNavigate();
+  const { autoLogin } = useAuthStore();
+
   useEffect(() => {
     autoLogin();
   }, [autoLogin]);
 
-  useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/login");
-    }
-  }, [isLoggedIn, navigate]);
-
   return (
     <div
-      className={`min-h-screen pt-20 pb-10 ${
+      className={`min-h-screen ${
         isDarkMode ? "bg-gray-900" : "bg-gray-50"
       }`}
     >
       <Header />
-
-      {/* Layout utama */}
-      <div className="max-w-7xl mx-auto flex flex-1">
-        {/* Sidebar kiri */}
-
-        <Sidebar />
-
-        {/* Room chat kanan */}
-        <RoomChat />
+      
+      {/* Full screen component */}
+      <div className="pt-16"> {/* Account for fixed header */}
+        <CompleteLegalQASystem />
       </div>
 
       <Footer />
