@@ -2,7 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { smartCSRF } from './middlewares/csrf.js'; 
+import { smartCSRF } from './middlewares/csrf.js';
 import rateLimit from 'express-rate-limit';
 import { startWeatherScheduler } from "./utils/weatherScheduler.js";
 import { requestLogger } from './middlewares/logger.js';
@@ -31,13 +31,17 @@ app.use(cookieParser());
 
 
 app.use(helmet({
-  crossOriginEmbedderPolicy: false 
+  crossOriginEmbedderPolicy: false
 }));
 
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5174",
-  credentials: true, 
+  origin: [
+    process.env.CLIENT_URL || "http://localhost:5174",  // Changed from 5173 to 5174
+    "http://localhost:5173",  // Keep this for compatibility
+    "http://localhost:3000"   // Add other possible ports
+  ],
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token', 'X-CSRF-Token']
 }));
@@ -47,11 +51,11 @@ app.use('/uploads', express.static('uploads'));
 
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 100, 
-  message: { 
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: {
     success: false,
-    message: 'Terlalu banyak percobaan login. Coba lagi dalam 15 menit.' 
+    message: 'Terlalu banyak percobaan login. Coba lagi dalam 15 menit.'
   },
   standardHeaders: true,
   legacyHeaders: false
@@ -61,7 +65,7 @@ const authLimiter = rateLimit({
 app.get('/api/csrf-token', smartCSRF, (req, res) => {
   try {
     const token = req.csrfToken();
-    res.json({ 
+    res.json({
       success: true,
       csrfToken: token,
       environment: process.env.NODE_ENV || 'development',
@@ -85,9 +89,9 @@ app.use('/api/upload', uploadRoutes);
 
 
 app.get('/health', (req, res) => {
-  res.json({ 
+  res.json({
     success: true,
-    status: 'Server berjalan normal', 
+    status: 'Server berjalan normal',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   });
@@ -116,7 +120,7 @@ app.get('/api', (req, res) => {
 
 app.use((req, res, next) => {
   if (!res.headersSent) {
-    res.status(404).json({ 
+    res.status(404).json({
       success: false,
       message: `Endpoint ${req.method} ${req.originalUrl} tidak ditemukan`,
       hint: 'Cek dokumentasi API di GET /api'
@@ -126,20 +130,20 @@ app.use((req, res, next) => {
 
 
 app.use((err, req, res, next) => {
-  
+
   console.error(`[${new Date().toISOString()}] ❌ Error:`, {
     message: err.message,
     url: req.url,
     method: req.method,
     user: req.user?.email || 'anonymous'
   });
-  
-  
+
+
   if (res.headersSent) {
     return next(err);
   }
-  
-  
+
+
   if (err.code === 'EBADCSRFTOKEN') {
     return res.status(403).json({
       success: false,
@@ -147,31 +151,31 @@ app.use((err, req, res, next) => {
       hint: 'Ambil token baru dari GET /api/csrf-token'
     });
   }
-  
-  
+
+
   if (err.type === 'entity.too.large') {
     return res.status(413).json({
       success: false,
       message: 'File terlalu besar, maksimal 10MB'
     });
   }
-  
-  
+
+
   if (err.code && err.code.startsWith('P')) {
     return res.status(500).json({
       success: false,
       message: 'Terjadi kesalahan database'
     });
   }
-  
-  
-  res.status(err.status || 500).json({ 
+
+
+  res.status(err.status || 500).json({
     success: false,
-    message: process.env.NODE_ENV === 'development' 
-      ? err.message 
+    message: process.env.NODE_ENV === 'development'
+      ? err.message
       : 'Terjadi kesalahan server',
-    ...(process.env.NODE_ENV === 'development' && { 
-      stack: err.stack 
+    ...(process.env.NODE_ENV === 'development' && {
+      stack: err.stack
     })
   });
 });

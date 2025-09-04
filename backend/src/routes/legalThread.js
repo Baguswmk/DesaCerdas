@@ -12,17 +12,19 @@ import {
   getGuestUsage
 } from '../controllers/legalThread.js';
 
-import { verifyToken } from '../middlewares/auth.js';
+import { verifyToken, optionalAuth } from '../middlewares/auth.js';
 import { chatRateLimiter, guestRateLimiter } from '../middlewares/rateLimiter.js';
+import { smartCSRF } from '../middlewares/csrf.js';
 
 const router = express.Router();
 
 // ========== GUEST ROUTES (No authentication required) ==========
-// Guest can ask questions without login (3 times limit per day per IP)
-router.post('/guest/ask', guestRateLimiter, askGuestQuestion);
+// Apply CSRF but allow guests
+router.post('/guest/ask', smartCSRF, guestRateLimiter, askGuestQuestion);
 router.get('/guest/usage', getGuestUsage);
 
 // ========== AUTHENTICATED ROUTES (Login required) ==========
+router.use(smartCSRF); // Apply CSRF to all authenticated routes
 router.use(verifyToken); // All routes below require authentication
 
 // Thread management

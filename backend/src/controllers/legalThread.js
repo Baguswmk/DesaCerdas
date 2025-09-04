@@ -26,9 +26,9 @@ export const askGuestQuestion = async (req, res) => {
 
     // Check guest usage limit
     const usage = guestUsage.get(clientIP) || { count: 0, date: today };
-    
+
     if (usage.count >= 3) {
-      return res.status(429).json({ 
+      return res.status(429).json({
         error: "Batas 3 pertanyaan gratis per hari tercapai. Silakan login untuk mendapatkan 20 pertanyaan per hari.",
         code: "GUEST_LIMIT_EXCEEDED"
       });
@@ -56,9 +56,9 @@ export const askGuestQuestion = async (req, res) => {
     }
 
     // Update guest usage
-    guestUsage.set(clientIP, { 
-      count: usage.count + 1, 
-      date: today 
+    guestUsage.set(clientIP, {
+      count: usage.count + 1,
+      date: today
     });
 
     res.status(200).json({
@@ -85,11 +85,11 @@ export const getGuestUsage = async (req, res) => {
   try {
     const clientIP = req.ip || req.connection.remoteAddress;
     const today = new Date().toDateString();
-    
+
     resetDailyCount();
-    
+
     const usage = guestUsage.get(clientIP) || { count: 0, date: today };
-    
+
     res.json({
       current: usage.count,
       limit: 3,
@@ -141,15 +141,23 @@ export const getUserThreads = async (req, res) => {
   }
 };
 
+// File: backend/src/controllers/legalThread.js
 export const postMessageToThread = async (req, res) => {
   const { message } = req.body;
   const { threadId } = req.params;
   const userId = req.user.id;
-  
+
   try {
+    console.log("=== DEBUG START ===");
+    console.log("ThreadId:", threadId);
+    console.log("UserId:", userId);
+    console.log("Message:", message);
+
     const today = new Date().toISOString().split("T")[0];
+    console.log("Today:", today);
 
     // Check daily usage for logged users (20 limit)
+    console.log("Checking daily usage...");
     const usageToday = await prisma.aIUsage.upsert({
       where: {
         userId_date: {
@@ -166,9 +174,11 @@ export const postMessageToThread = async (req, res) => {
         count: 1,
       },
     });
+    console.log("Usage today:", usageToday);
 
     if (usageToday.count > 20) {
-      return res.status(429).json({ 
+      console.log("Usage limit exceeded");
+      return res.status(429).json({
         error: "Batas penggunaan harian AI tercapai (20 pertanyaan per hari).",
         code: "USER_LIMIT_EXCEEDED"
       });
@@ -178,6 +188,7 @@ export const postMessageToThread = async (req, res) => {
       allowedTags: [],
       allowedAttributes: {},
     });
+    console.log("Clean message:", cleanMessage);
 
     if (cleanMessage.length < 2 || cleanMessage.length > 500) {
       return res.status(400).json({ error: "Pesan harus antara 2-500 karakter." });
@@ -188,14 +199,17 @@ export const postMessageToThread = async (req, res) => {
       return res.status(400).json({ error: "Pesan mengandung karakter tidak valid." });
     }
 
+    console.log("Checking thread ownership...");
     const thread = await prisma.legalThread.findUnique({
       where: { id: threadId },
     });
+    console.log("Thread:", thread);
 
     if (!thread || thread.userId !== userId) {
       return res.status(403).json({ error: "Akses ditolak ke thread ini" });
     }
 
+    console.log("Creating user message...");
     const userMsg = await prisma.legalMessage.create({
       data: {
         threadId,
@@ -203,17 +217,24 @@ export const postMessageToThread = async (req, res) => {
         message: cleanMessage,
       },
     });
+    console.log("User message created:", userMsg);
 
+    console.log("Getting all messages for AI context...");
     const messages = await prisma.legalMessage.findMany({
       where: { threadId },
       orderBy: { createdAt: "asc" },
     });
+    console.log("Messages count:", messages.length);
 
+    console.log("Sending to AI service...");
     let aiResponse = await sendToAI(messages);
+    console.log("AI Response:", aiResponse);
+
     if (!aiResponse || aiResponse.trim().length < 3) {
       aiResponse = "Maaf, tidak dapat memberikan jawaban yang memadai.";
     }
 
+    console.log("Creating AI message...");
     const aiMsg = await prisma.legalMessage.create({
       data: {
         threadId,
@@ -224,9 +245,11 @@ export const postMessageToThread = async (req, res) => {
         }),
       },
     });
+    console.log("AI message created:", aiMsg);
 
-    res.status(200).json({ 
-      userMsg, 
+    console.log("=== DEBUG SUCCESS ===");
+    res.status(200).json({
+      userMsg,
       aiMsg,
       usage: {
         current: usageToday.count,
@@ -235,7 +258,10 @@ export const postMessageToThread = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error("postMessageToThread error:", err);
+    console.error("=== DEBUG ERROR ===");
+    console.error("Error details:", err);
+    console.error("Error stack:", err.stack);
+    console.error("=== DEBUG ERROR END ===");
     res.status(500).json({ error: "Gagal memproses pesan" });
   }
 };
@@ -362,7 +388,7 @@ export const getTodayQuestionCount = async (req, res) => {
 
     const count = usage?.count || 0;
 
-    res.json({ 
+    res.json({
       current: count,
       limit: 20,
       remaining: 20 - count,
