@@ -19,3 +19,5 @@ build/
 # Logs
 *.log
 
+venv/
+__pycache__/

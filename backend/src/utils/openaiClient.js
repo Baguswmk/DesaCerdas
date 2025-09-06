@@ -12,7 +12,7 @@ export const sendToAI = async (messages) => {
 
     console.log(">> Kirim ke AI Hukum:", JSON.stringify(payload, null, 2));
 
-    const response = await axios.post("http://127.0.0.1:8000/ask-law-simple", payload);
+    const response = await axios.post("http://127.0.0.1:8000/ask-law", payload);
 
     console.log(">> Jawaban dari AI Hukum:", response.data);
     return response.data.answer;
