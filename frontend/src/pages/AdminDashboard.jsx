@@ -90,7 +90,7 @@ console.log("kegiatan type:", typeof kegiatan, kegiatan);
   return (
     <div className={`min-h-screen ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
       {/* <Header /> */}
-      
+      <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="mb-8">
