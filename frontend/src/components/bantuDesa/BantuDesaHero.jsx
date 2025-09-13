@@ -15,8 +15,8 @@ const BantuDesaHero = () => {
     };
 
     return (
-        <section className=" relative min-h-[700px] flex items-center overflow-hidden">
-            {/* Enhanced Background with Multiple Layers */}
+        <section className="relative min-h-[700px] flex items-center overflow-hidden">
+            {/* Enhanced Background with Emerald Theme */}
             <div className="absolute inset-0">
                 {/* Base Image */}
                 <div 
@@ -26,10 +26,17 @@ const BantuDesaHero = () => {
                     }}
                 />
                 
-                {/* Gradient Overlays */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-800/70 to-purple-900/90" />
+                {/* Emerald Gradient Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/90 via-emerald-800/70 to-green-900/90" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-blue-900/30" />
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-emerald-900/30" />
+            </div>
+
+            {/* Softer Background Elements */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+                <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-emerald-300/20 rounded-full blur-2xl animate-pulse delay-2000"></div>
             </div>
 
             {/* Animated Particles Background */}
@@ -37,7 +44,7 @@ const BantuDesaHero = () => {
                 {[...Array(20)].map((_, i) => (
                     <div
                         key={i}
-                        className="absolute w-2 h-2 bg-white/20 rounded-full animate-float"
+                        className="absolute w-2 h-2 bg-white/25 rounded-full animate-float"
                         style={{
                             left: `${Math.random() * 100}%`,
                             top: `${Math.random() * 100}%`,
@@ -50,11 +57,10 @@ const BantuDesaHero = () => {
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div className="max-w-4xl">
-                 
                     {/* Main Heading with Enhanced Typography */}
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-tight">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-tight animate-fadeInUp">
                         <span className="block">Bantu</span>
-                        <span className="block bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 bg-clip-text text-transparent">
+                        <span className="block bg-gradient-to-r from-emerald-200 via-emerald-300 to-emerald-400 bg-clip-text text-transparent">
                             Desa
                         </span>
                         <span className="block text-3xl md:text-4xl lg:text-5xl font-bold text-white/90 mt-2">
@@ -63,7 +69,7 @@ const BantuDesaHero = () => {
                     </h1>
 
                     {/* Enhanced Subtitle */}
-                    <div className="mb-10 space-y-4">
+                    <div className="mb-10 space-y-4 animate-fadeInUp animation-delay-300">
                         <p className="text-xl md:text-2xl lg:text-3xl text-white/95 leading-relaxed font-medium">
                             Mari bergotong royong membangun desa lebih baik
                         </p>
@@ -73,11 +79,11 @@ const BantuDesaHero = () => {
                     </div>
 
                     {/* Enhanced CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-6">
+                    <div className="flex flex-col sm:flex-row gap-6 animate-fadeInUp animation-delay-600">
                         <Button 
                             size="lg" 
                             onClick={scrollToKegiatan}
-                            className="group !rounded-2xl px-8 py-4 text-lg font-bold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300 border-0"
+                            className="group !rounded-2xl px-8 py-4 text-lg font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-2xl hover:shadow-emerald-500/25 transform hover:scale-105 transition-all duration-300 border-0"
                         >
                             <Eye className="h-5 w-5 mr-3 transition-transform group-hover:scale-110" />
                             Lihat Kegiatan
@@ -88,14 +94,12 @@ const BantuDesaHero = () => {
                             variant="outline" 
                             size="lg" 
                             onClick={() => navigate('/admin/dashboard')}
-                            className="group !rounded-2xl px-8 py-4 text-lg font-bold bg-white/10 border-2 border-white/30 text-white hover:bg-white hover:text-blue-600 backdrop-blur-sm shadow-2xl hover:shadow-white/25 transform hover:scale-105 transition-all duration-300"
+                            className="group !rounded-2xl px-8 py-4 text-lg font-bold bg-white/10 border-2 border-white/30 text-white hover:bg-white hover:text-emerald-600 backdrop-blur-sm shadow-2xl hover:shadow-white/25 transform hover:scale-105 transition-all duration-300"
                         >
                             <Plus className="h-5 w-5 mr-3 transition-transform group-hover:rotate-90" />
                             Kelola Kegiatan
                         </Button>
                     </div>
-
-                    
                 </div>
             </div>
 
@@ -124,6 +128,28 @@ const BantuDesaHero = () => {
 
                 .animate-float {
                     animation: float 8s ease-in-out infinite;
+                }
+                
+                .animate-fadeInUp {
+                    animation: fadeInUp 0.8s ease-out forwards;
+                }
+                
+                .animation-delay-300 {
+                    animation-delay: 0.3s;
+                }
+                
+                .animation-delay-600 {
+                    animation-delay: 0.6s;
+                }
+
+                /* Respect reduced motion for accessibility */
+                @media (prefers-reduced-motion: reduce) {
+                    .animate-float,
+                    .animate-fadeInUp,
+                    .animation-delay-300,
+                    .animation-delay-600 {
+                        animation: none !important;
+                    }
                 }
             `}</style>
         </section>

@@ -23,8 +23,8 @@ const Fitur = () => {
       title: 'TanyaHukum',
       description: 'Konsultasi hukum gratis dengan AI yang dilengkapi referensi undang-undang terkini dan panduan lengkap',
       icon: '⚖️',
-      bgGradient: 'from-blue-600 to-purple-600',
-      hoverGradient: 'from-blue-700 to-purple-700',
+      bgGradient: 'from-emerald-600 to-green-600',
+      hoverGradient: 'from-emerald-700 to-green-700',
       features: ['AI Legal Assistant', 'Database UU Terkini', 'Konsultasi 24/7'],
       route: 'tanyahukum'
     },
@@ -43,8 +43,8 @@ const Fitur = () => {
       title: 'BantuDesa',
       description: 'Platform donasi transparan untuk membantu pembangunan infrastruktur dan pemberdayaan masyarakat desa',
       icon: '🤝',
-      bgGradient: 'from-orange-600 to-red-600',
-      hoverGradient: 'from-orange-700 to-red-700',
+      bgGradient: 'from-emerald-500 to-green-500',
+      hoverGradient: 'from-emerald-600 to-green-600',
       features: ['Donasi Transparan', 'Progress Real-time', 'Impact Report'],
       route: 'bantudesa'
     }
@@ -56,12 +56,12 @@ const Fitur = () => {
         ? 'bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950' 
         : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
     }`}>
-      {/* Enhanced Background Elements */}
+      {/* Enhanced Background Elements with Emerald Theme */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 bg-white/20 rounded-full animate-float"
+            className="absolute w-2 h-2 bg-emerald-300/25 rounded-full animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -72,22 +72,22 @@ const Fitur = () => {
         ))}
       </div>
 
-      {/* Gradient Overlays */}
+      {/* Emerald Gradient Overlays */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-400/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-400/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-3/4 left-1/2 w-64 h-64 bg-green-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-200/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-300/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-3/4 left-1/2 w-64 h-64 bg-emerald-100/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Enhanced Header */}
+        {/* Enhanced Header with Emerald Theme */}
         <div className="text-center mb-20">
           <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl shadow-xl">
+            <div className="p-3 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl shadow-xl">
               <Sparkles className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h2 className={`text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2`}>
+              <h2 className={`text-5xl md:text-6xl font-black bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent mb-2`}>
                 Platform Digital
               </h2>
               <div className={`text-2xl md:text-3xl font-bold ${
@@ -95,7 +95,7 @@ const Fitur = () => {
               }`}>
                 Terpadu untuk Desa
               </div>
-              <div className="h-1 w-32 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-3"></div>
+              <div className="h-1 w-32 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full mx-auto mt-3"></div>
             </div>
           </div>
 
@@ -104,23 +104,23 @@ const Fitur = () => {
           } mb-8`}>
             Tiga layanan terintegrasi yang dirancang khusus untuk 
             <span className={`font-bold ${
-              isDarkMode ? 'text-blue-400' : 'text-blue-600'
+              isDarkMode ? 'text-emerald-300' : 'text-emerald-600'
             }`}> kemajuan </span>
             dan 
             <span className={`font-bold ${
-              isDarkMode ? 'text-purple-400' : 'text-purple-600'
+              isDarkMode ? 'text-green-300' : 'text-green-600'
             }`}> pemberdayaan </span>
             desa Indonesia
           </p>
 
-          {/* Trust Indicators */}
+          {/* Trust Indicators with Emerald Colors */}
           <div className="flex flex-wrap justify-center items-center gap-8 text-sm">
             <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${
               isDarkMode 
                 ? 'bg-gray-800/50 border border-gray-700/50' 
                 : 'bg-white/50 border border-gray-200/50'
             } backdrop-blur-sm`}>
-              <CheckCircle className="h-4 w-4 text-green-500" />
+              <CheckCircle className="h-4 w-4 text-emerald-500" />
               <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
                 Terpercaya & Aman
               </span>
@@ -130,7 +130,7 @@ const Fitur = () => {
                 ? 'bg-gray-800/50 border border-gray-700/50' 
                 : 'bg-white/50 border border-gray-200/50'
             } backdrop-blur-sm`}>
-              <Zap className="h-4 w-4 text-blue-500" />
+              <Zap className="h-4 w-4 text-emerald-500" />
               <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
                 24/7 Support
               </span>
@@ -140,7 +140,7 @@ const Fitur = () => {
                 ? 'bg-gray-800/50 border border-gray-700/50' 
                 : 'bg-white/50 border border-gray-200/50'
             } backdrop-blur-sm`}>
-              <Users className="h-4 w-4 text-purple-500" />
+              <Users className="h-4 w-4 text-emerald-500" />
               <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
                 1000+ Desa Bergabung
               </span>
@@ -148,7 +148,7 @@ const Fitur = () => {
           </div>
         </div>
         
-        {/* Enhanced Features Grid */}
+        {/* Enhanced Features Grid with Emerald Theme */}
         <div className="grid md:grid-cols-3 gap-8 lg:gap-10 mb-16">
           {features.map((feature, index) => (
             <div
@@ -164,10 +164,10 @@ const Fitur = () => {
                 relative overflow-hidden shadow-xl hover:shadow-2xl
                 transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02]
                 ${isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/80 border-gray-200/50'} 
-                backdrop-blur-sm cursor-pointer h-full group-hover:border-transparent
+                backdrop-blur-sm cursor-pointer h-full group-hover:border-emerald-300/50
               `}>
                 
-                {/* Gradient Background on Hover */}
+                {/* Emerald Gradient Background on Hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
                 
                 {/* Content */}
@@ -181,7 +181,7 @@ const Fitur = () => {
                         {feature.icon}
                       </span>
                     </div>
-                    {/* Glow effect */}
+                    {/* Emerald Glow effect */}
                     <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 rounded-2xl`}></div>
                   </div>
                   
@@ -199,8 +199,7 @@ const Fitur = () => {
                     {feature.description}
                   </p>
 
-                 
-                  {/* Features List */}
+                  {/* Features List with Emerald Bullets */}
                   <div className="mb-8">
                     <div className="space-y-3">
                       {feature.features.map((item, idx) => (
@@ -244,7 +243,7 @@ const Fitur = () => {
                   } flex items-center justify-center shadow-lg backdrop-blur-sm border ${
                     isDarkMode ? 'border-gray-600/50' : 'border-gray-200/50'
                   }`}>
-                    <ExternalLink className="h-4 w-4 text-blue-500" />
+                    <ExternalLink className="h-4 w-4 text-emerald-500" />
                   </div>
                 </div>
               </Card>
@@ -252,7 +251,7 @@ const Fitur = () => {
           ))}
         </div>
 
-        {/* Bottom CTA Section */}
+        {/* Bottom CTA Section with Emerald Theme */}
         <div className="text-center">
           <div className={`inline-flex flex-col items-center gap-6 px-12 py-8 rounded-3xl ${
             isDarkMode 
@@ -263,7 +262,7 @@ const Fitur = () => {
               <div className="flex items-center gap-1">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className={`w-2 h-2 ${
-                    isDarkMode ? 'bg-blue-400' : 'bg-blue-500'
+                    isDarkMode ? 'bg-emerald-300' : 'bg-emerald-500'
                   } rounded-full animate-pulse`} 
                   style={{ animationDelay: `${i * 200}ms` }}></div>
                 ))}
@@ -276,7 +275,7 @@ const Fitur = () => {
               <div className="flex items-center gap-1">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className={`w-2 h-2 ${
-                    isDarkMode ? 'bg-purple-400' : 'bg-purple-500'
+                    isDarkMode ? 'bg-emerald-300' : 'bg-emerald-500'
                   } rounded-full animate-pulse`}
                   style={{ animationDelay: `${(i + 3) * 200}ms` }}></div>
                 ))}
@@ -287,7 +286,7 @@ const Fitur = () => {
               <div className={`flex items-center gap-2 px-6 py-3 rounded-full ${
                 isDarkMode ? 'bg-gray-700/50 border border-gray-600/50' : 'bg-gray-100/50 border border-gray-200/50'
               } backdrop-blur-sm shadow-lg`}>
-                <CheckCircle className="h-4 w-4 text-green-500" />
+                <CheckCircle className="h-4 w-4 text-emerald-500" />
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   Bersertifikat
                 </span>
@@ -295,7 +294,7 @@ const Fitur = () => {
               <div className={`flex items-center gap-2 px-6 py-3 rounded-full ${
                 isDarkMode ? 'bg-gray-700/50 border border-gray-600/50' : 'bg-gray-100/50 border border-gray-200/50'
               } backdrop-blur-sm shadow-lg`}>
-                <Zap className="h-4 w-4 text-blue-500" />
+                <Zap className="h-4 w-4 text-emerald-500" />
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   Data Aman
                 </span>
@@ -303,7 +302,7 @@ const Fitur = () => {
               <div className={`flex items-center gap-2 px-6 py-3 rounded-full ${
                 isDarkMode ? 'bg-gray-700/50 border border-gray-600/50' : 'bg-gray-100/50 border border-gray-200/50'
               } backdrop-blur-sm shadow-lg`}>
-                <Users className="h-4 w-4 text-purple-500" />
+                <Users className="h-4 w-4 text-emerald-500" />
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   Support 24/7
                 </span>

@@ -70,31 +70,33 @@ const LoginPage = () => {
   return (
     <div
       className={`min-h-screen flex items-center justify-center py-20 px-4 relative overflow-hidden ${
-        isDarkMode ? "bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900" : "bg-gradient-to-br from-gray-50 via-slate-100 to-gray-100"
+        isDarkMode 
+          ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" 
+          : "bg-gradient-to-br from-emerald-50/30 via-white to-green-50/20"
       }`}
     >
-      {/* Subtle Background Elements */}
+      {/* Enhanced Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div 
-          className="absolute w-96 h-96 bg-slate-400/10 rounded-full blur-3xl animate-pulse-slow"
+          className="absolute w-96 h-96 bg-gradient-to-r from-emerald-400/10 via-green-500/10 to-emerald-600/10 rounded-full blur-3xl animate-pulse-slow"
           style={{
             left: `${20 + mousePosition.x * 0.01}%`,
             top: `${10 + mousePosition.y * 0.01}%`,
           }}
         ></div>
         <div 
-          className="absolute w-80 h-80 bg-gray-400/10 rounded-full blur-3xl animate-pulse-slow delay-1000"
+          className="absolute w-80 h-80 bg-gradient-to-r from-green-400/10 via-emerald-500/10 to-green-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000"
           style={{
             right: `${15 + mousePosition.x * 0.01}%`,
             bottom: `${20 + mousePosition.y * 0.01}%`,
           }}
         ></div>
         
-        {/* Fewer, more subtle floating particles */}
-        {[...Array(10)].map((_, i) => (
+        {/* Enhanced floating particles */}
+        {[...Array(12)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-slate-400/30 rounded-full animate-float"
+            className="absolute w-1.5 h-1.5 bg-emerald-400/40 rounded-full animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -106,56 +108,74 @@ const LoginPage = () => {
       </div>
 
       <Card
-        className={`w-full max-w-md relative z-10 shadow-xl backdrop-blur-xl border overflow-hidden ${
-          isDarkMode ? "bg-gray-800/90 border-gray-700/50" : "bg-white/90 border-gray-200/50"
-        }`}
+        className={`w-full max-w-md relative z-10 shadow-2xl backdrop-blur-xl border overflow-hidden ${
+          isDarkMode 
+            ? "bg-gray-800/90 border-gray-700/50" 
+            : "bg-white/90 border-emerald-200/50"
+        } rounded-3xl`}
       >
-        {/* Subtle top accent */}
-        <div className={`absolute top-0 left-0 right-0 h-1 ${isDarkMode ? 'bg-slate-600' : 'bg-slate-400'}`}></div>
+        {/* Enhanced top accent with emerald gradient */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 animate-gradient-x"></div>
 
         <div className="relative z-10">
           <CardHeader className="text-center pb-8 pt-12">
-            {/* Logo/Icon */}
-            <div className="mb-6 mx-auto">
-              <div className={`w-20 h-20 mx-auto rounded-xl ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'} shadow-lg flex items-center justify-center transform hover:scale-105 transition-all duration-300`}>
-                <i className={`fas fa-user-circle text-3xl ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}></i>
+            {/* Enhanced Logo/Icon */}
+            <div className="mb-8 mx-auto">
+              <div className={`w-24 h-24 mx-auto rounded-3xl shadow-2xl flex items-center justify-center transform hover:scale-110 transition-all duration-300 bg-gradient-to-br from-emerald-500 via-green-500 to-emerald-600 relative overflow-hidden group`}>
+                <i className="fas fa-user-circle text-4xl text-white relative z-10"></i>
+                {/* Enhanced glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-green-600 opacity-0 group-hover:opacity-60 blur-2xl transition-opacity duration-300"></div>
               </div>
             </div>
 
             <CardTitle
-              className={`text-3xl font-bold mb-4 ${
+              className={`text-4xl font-black mb-6 ${
                 isDarkMode ? "text-white" : "text-gray-900"
               }`}
             >
               Selamat Datang
             </CardTitle>
             <p
-              className={`text-base ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+              className={`text-lg font-medium ${
+                isDarkMode ? "text-gray-300" : "text-gray-600"
+              }`}
             >
               Masuk untuk mengakses platform 
-              <span className={`font-semibold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}> DesaCerdas</span>
+              <span className="font-black bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-600 bg-clip-text text-transparent"> DesaCerdas</span>
             </p>
           </CardHeader>
 
           <CardContent className="px-8 pb-8">
-            {/* Error Display */}
+            {/* Enhanced Error Display */}
             {loginError && (
-              <div className={`mb-6 p-4 rounded-lg border ${isDarkMode ? 'bg-red-900/20 border-red-700/50 text-red-400' : 'bg-red-50 border-red-200 text-red-600'} animate-shake`}>
+              <div className={`mb-6 p-4 rounded-2xl border shadow-lg backdrop-blur-sm animate-shake ${
+                isDarkMode 
+                  ? 'bg-red-900/20 border-red-700/50 text-red-400' 
+                  : 'bg-red-50 border-red-200 text-red-600'
+              } relative overflow-hidden`}>
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
                 <div className="flex items-center gap-3">
-                  <i className="fas fa-exclamation-circle"></i>
-                  <span className="font-medium">{loginError}</span>
+                  <div className="p-2 bg-gradient-to-r from-red-500 to-red-600 rounded-xl shadow-lg">
+                    <i className="fas fa-exclamation-circle text-white text-sm"></i>
+                  </div>
+                  <span className="font-semibold">{loginError}</span>
                 </div>
               </div>
             )}
             
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Email Field */}
-              <div className="space-y-2">
-                <label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
-                  <i className={`fas fa-envelope ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}></i>
+              {/* Enhanced Email Field */}
+              <div className="space-y-3">
+                <label className={`text-sm font-bold ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                } flex items-center gap-3`}>
+                  <div className="p-2 flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg shadow-lg">
+                    <i className="fas fa-envelope text-white text-xs"></i>
+                  </div>
                   Email Address
                 </label>
-                <div className="relative">
+                <div className="relative group">
                   <Input
                     type="email"
                     placeholder="nama@email.com"
@@ -164,31 +184,45 @@ const LoginPage = () => {
                       errors.email 
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
                         : isDarkMode
-                          ? "border-gray-600 focus:border-slate-500 focus:ring-slate-500/20"
-                          : "border-gray-300 focus:border-slate-400 focus:ring-slate-400/20"
-                    } text-base w-full pl-11 pr-4 py-3 rounded-lg transition-all duration-200 ${
+                          ? "border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20"
+                          : "border-gray-300 focus:border-emerald-500 focus:ring-emerald-500/20"
+                    } text-base w-full pl-12 pr-4 py-4 rounded-2xl transition-all duration-300 shadow-lg focus:shadow-2xl backdrop-blur-sm font-medium ${
                       isDarkMode 
                         ? 'bg-gray-700/50 text-white placeholder-gray-400' 
-                        : 'bg-white text-gray-900 placeholder-gray-500'
-                    } hover:shadow-md focus:shadow-lg`}
+                        : 'bg-white/80 text-gray-900 placeholder-gray-500'
+                    } hover:shadow-xl group-hover:scale-102`}
                   />
-                  <i className={`fas fa-at absolute left-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}></i>
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                    <div className={`p-2 flex items-center rounded-lg ${
+                      isDarkMode ? 'bg-gray-600' : 'bg-emerald-100'
+                    } group-focus-within:bg-emerald-500 transition-all duration-300`}>
+                      <i className={`fas fa-at text-sm ${
+                        isDarkMode ? 'text-gray-300' : 'text-emerald-600'
+                      } group-focus-within:text-white transition-colors duration-300`}></i>
+                    </div>
+                  </div>
                 </div>
                 {errors.email && (
-                  <p className="text-red-500 text-sm font-medium flex items-center gap-2">
-                    <i className="fas fa-times-circle"></i>
+                  <p className="text-red-500 text-sm font-bold flex items-center gap-2 animate-fadeInUp">
+                    <div className="p-1 bg-red-500 rounded-full">
+                      <i className="fas fa-times text-white text-xs"></i>
+                    </div>
                     {errors.email.message}
                   </p>
                 )}
               </div>
 
-              {/* Password Field */}
-              <div className="space-y-2">
-                <label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
-                  <i className={`fas fa-lock ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}></i>
+              {/* Enhanced Password Field */}
+              <div className="space-y-3">
+                <label className={`text-sm font-bold ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                } flex items-center gap-3`}>
+                  <div className="p-2 flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg shadow-lg">
+                    <i className="fas fa-lock text-white text-xs"></i>
+                  </div>
                   Password
                 </label>
-                <div className="relative">
+                <div className="relative group">
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Masukkan password"
@@ -197,72 +231,65 @@ const LoginPage = () => {
                       errors.password 
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
                         : isDarkMode
-                          ? "border-gray-600 focus:border-slate-500 focus:ring-slate-500/20"
-                          : "border-gray-300 focus:border-slate-400 focus:ring-slate-400/20"
-                    } text-base w-full pl-11 pr-12 py-3 rounded-lg transition-all duration-200 ${
+                          ? "border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20"
+                          : "border-gray-300 focus:border-emerald-500 focus:ring-emerald-500/20"
+                    } text-base w-full pl-12 pr-14 py-4 rounded-2xl transition-all duration-300 shadow-lg focus:shadow-2xl backdrop-blur-sm font-medium ${
                       isDarkMode 
                         ? 'bg-gray-700/50 text-white placeholder-gray-400' 
-                        : 'bg-white text-gray-900 placeholder-gray-500'
-                    } hover:shadow-md focus:shadow-lg`}
+                        : 'bg-white/80 text-gray-900 placeholder-gray-500'
+                    } hover:shadow-xl group-hover:scale-102`}
                   />
-                  <i className={`fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}></i>
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                    <div className={`p-2 flex items-center rounded-lg ${
+                      isDarkMode ? 'bg-gray-600' : 'bg-emerald-100'
+                    } group-focus-within:bg-emerald-500 transition-all duration-300`}>
+                      <i className={`fas fa-key text-sm ${
+                        isDarkMode ? 'text-gray-300' : 'text-emerald-600'
+                      } group-focus-within:text-white transition-colors duration-300`}></i>
+                    </div>
+                  </div>
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'} transition-colors duration-200`}
+                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-xl transition-all duration-300 ${
+                      isDarkMode 
+                        ? 'text-gray-400 hover:text-white hover:bg-gray-600' 
+                        : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50'
+                    } hover:scale-110`}
                   >
                     <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-500 text-sm font-medium flex items-center gap-2">
-                    <i className="fas fa-times-circle"></i>
+                  <p className="text-red-500 text-sm font-bold flex items-center gap-2 animate-fadeInUp">
+                    <div className="p-1 bg-red-500 rounded-full">
+                      <i className="fas fa-times text-white text-xs"></i>
+                    </div>
                     {errors.password.message}
                   </p>
                 )}
               </div>
 
-              {/* Remember Me & Forgot Password */}
-              {/* <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input 
-                    type="checkbox" 
-                    className={`w-4 h-4 rounded focus:ring-2 transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'text-slate-500 focus:ring-slate-400 bg-gray-700 border-gray-600' 
-                        : 'text-slate-600 focus:ring-slate-500 bg-white border-gray-300'
-                    }`}
-                  />
-                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300 group-hover:text-white' : 'text-gray-600 group-hover:text-gray-900'} transition-colors duration-200`}>
-                    Ingat saya
-                  </span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => alert("Fitur lupa password akan segera tersedia")}
-                  className={`text-sm font-medium ${isDarkMode ? 'text-slate-400 hover:text-slate-300' : 'text-slate-600 hover:text-slate-800'} transition-colors duration-200`}
-                >
-                  Lupa password?
-                </button>
-              </div> */}
-
-              {/* Submit Button */}
+              {/* Enhanced Submit Button */}
               <Button
                 type="submit"
                 disabled={isSubmitting || isLoading}
-                className={`w-full py-3 text-base font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+                className={`w-full py-4 text-lg font-black rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden ${
                   isDarkMode 
-                    ? 'bg-slate-700 hover:bg-slate-600 text-white' 
-                    : 'bg-slate-800 hover:bg-slate-700 text-white'
-                }`}
+                    ? 'bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 hover:from-emerald-700 hover:via-green-700 hover:to-emerald-800 text-white' 
+                    : 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 hover:from-emerald-600 hover:via-green-600 hover:to-emerald-700 text-white'
+                } border border-emerald-500/30 hover:border-emerald-400/50`}
               >
+                {/* Enhanced shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 -translate-x-full hover:translate-x-full transition-transform duration-1000"></div>
+                
                 {isSubmitting || isLoading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <i className="fas fa-spinner animate-spin"></i>
+                  <div className="flex items-center justify-center gap-3 relative z-10">
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
                     <span>Masuk...</span>
                   </div>
                 ) : (
-                  <span className="flex items-center justify-center gap-2">
+                  <span className="flex items-center justify-center gap-3 relative z-10">
                     <i className="fas fa-sign-in-alt"></i>
                     <span>Masuk ke Akun</span>
                   </span>
@@ -270,33 +297,36 @@ const LoginPage = () => {
               </Button>
             </form>
 
-
-            {/* Register Link */}
+            {/* Enhanced Register Link */}
             <div className="mt-8 text-center">
               <p
-                className={`text-sm ${
+                className={`text-base font-medium ${
                   isDarkMode ? "text-gray-300" : "text-gray-600"
                 }`}
               >
                 Belum punya akun?{" "}
                 <button
                   onClick={() => handlePageChange("register")}
-                  className={`font-semibold ${isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-900'} transition-colors duration-200`}
+                  className="font-black bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-600 bg-clip-text text-transparent hover:from-emerald-500 hover:via-green-500 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105 inline-block"
                 >
                   Daftar sekarang →
                 </button>
               </p>
             </div>
 
-            {/* Back to Home */}
-            <div className="mt-6 text-center">
+            {/* Enhanced Back to Home */}
+            <div className="mt-8 text-center">
               <button
                 onClick={() => handlePageChange("home")}
-                className={`text-sm font-medium ${
-                  isDarkMode ? "text-gray-400 hover:text-gray-300" : "text-gray-500 hover:text-gray-700"
-                } transition-colors duration-200 flex items-center justify-center gap-2 mx-auto`}
+                className={`text-sm font-bold ${
+                  isDarkMode ? "text-gray-400 hover:text-emerald-400" : "text-gray-500 hover:text-emerald-600"
+                } transition-all duration-300 flex items-center justify-center gap-2 mx-auto hover:scale-105 p-3 rounded-2xl hover:bg-emerald-50/10 backdrop-blur-sm`}
               >
-                <i className="fas fa-home"></i>
+                <div className={`p-2 flex items-center rounded-lg ${
+                  isDarkMode ? 'bg-gray-700' : 'bg-emerald-100'
+                } group-hover:bg-emerald-500 transition-all duration-300`}>
+                  <i className="fas fa-home text-xs"></i>
+                </div>
                 <span>Kembali ke Beranda</span>
               </button>
             </div>
@@ -340,6 +370,7 @@ const LoginPage = () => {
         }
         .animate-shake { animation: shake 0.5s ease-in-out; }
         .animate-fadeInUp { animation: fadeInUp 0.3s ease-out; }
+        .hover\\:scale-102:hover { transform: scale(1.02); }
       `}</style>
     </div>
   );

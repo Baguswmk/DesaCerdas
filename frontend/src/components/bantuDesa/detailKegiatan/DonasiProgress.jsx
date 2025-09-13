@@ -197,13 +197,33 @@ const DonasiProgress = ({
   return (
     <>
       <section
-        className={`py-12 ${
+        className={`py-12 relative ${
           isDarkMode
             ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
-            : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
+            : "bg-gradient-to-br from-emerald-50/30 via-white to-green-50/20"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Enhanced floating background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-emerald-400/5 via-green-500/5 to-emerald-600/5 rounded-full blur-3xl animate-pulse-slow"></div>
+          <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-green-400/5 via-emerald-500/5 to-green-600/5 rounded-full blur-3xl animate-pulse-slow delay-1000"></div>
+          
+          {/* Floating particles */}
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-emerald-400/20 rounded-full animate-float"
+              style={{
+                left: `${10 + Math.random() * 80}%`,
+                top: `${10 + Math.random() * 80}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${4 + Math.random() * 4}s`
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <Card
             className={`border-0 shadow-2xl overflow-hidden ${
               isDarkMode
@@ -215,14 +235,14 @@ const DonasiProgress = ({
               {/* Header */}
               <div className="text-center mb-8">
                 <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="p-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl shadow-lg">
+                  <div className="p-3 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl shadow-lg">
                     <Heart className="h-8 w-8 text-white" />
                   </div>
-                  <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
+                  <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-emerald-500 to-green-500 bg-clip-text text-transparent">
                     Progress Donasi
                   </h3>
                 </div>
-                <div className="h-1 w-24 bg-gradient-to-r from-red-500 to-pink-500 rounded-full mx-auto" />
+                <div className="h-1 w-24 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full mx-auto" />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -235,9 +255,9 @@ const DonasiProgress = ({
                         label: "Target Dana",
                         value: formatCurrency(target),
                         icon: Target,
-                        color: "from-purple-400 to-purple-500",
-                        bgColor: "bg-purple-100",
-                        textColor: "text-purple-600",
+                        color: "from-emerald-400 to-emerald-500",
+                        bgColor: "bg-emerald-100",
+                        textColor: "text-emerald-600",
                       },
                       {
                         label: "Terkumpul",
@@ -251,9 +271,9 @@ const DonasiProgress = ({
                         label: "Donatur",
                         value: `${jumlahDonatur} orang`,
                         icon: Users,
-                        color: "from-blue-400 to-blue-500",
-                        bgColor: "bg-blue-100",
-                        textColor: "text-blue-600",
+                        color: "from-emerald-400 to-green-500",
+                        bgColor: "bg-emerald-100",
+                        textColor: "text-emerald-600",
                       },
                       {
                         label: "Sisa Waktu",
@@ -262,11 +282,11 @@ const DonasiProgress = ({
                         color:
                           daysLeft <= 7
                             ? "from-orange-400 to-red-400"
-                            : "from-indigo-400 to-indigo-500",
+                            : "from-emerald-400 to-green-500",
                         bgColor:
-                          daysLeft <= 7 ? "bg-orange-100" : "bg-indigo-100",
+                          daysLeft <= 7 ? "bg-orange-100" : "bg-emerald-100",
                         textColor:
-                          daysLeft <= 7 ? "text-orange-600" : "text-indigo-600",
+                          daysLeft <= 7 ? "text-orange-600" : "text-emerald-600",
                       },
                     ].map((stat, index) => (
                       <div
@@ -320,7 +340,7 @@ const DonasiProgress = ({
                           }
                           className={`font-bold px-3 py-1 ${
                             progressPercentage >= 100
-                              ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white animate-pulse"
+                              ? "bg-gradient-to-r from-emerald-500 to-green-500 text-white animate-pulse"
                               : ""
                           }`}
                         >
@@ -335,14 +355,14 @@ const DonasiProgress = ({
                         className="h-4 md:h-6"
                       />
                       {progressPercentage >= 100 && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-green-400 via-emerald-400 to-green-500 rounded-full animate-pulse opacity-75"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-emerald-500 to-green-500 rounded-full animate-pulse opacity-75"></div>
                       )}
                     </div>
 
                     {progressPercentage >= 100 && (
-                      <div className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl">
-                        <CheckCircle className="h-6 w-6 text-green-600" />
-                        <span className="text-green-800 font-bold text-lg">
+                      <div className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-emerald-100 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20 rounded-2xl">
+                        <CheckCircle className="h-6 w-6 text-emerald-600" />
+                        <span className="text-emerald-800 dark:text-emerald-300 font-bold text-lg">
                           Target donasi telah tercapai!
                         </span>
                       </div>
@@ -369,7 +389,7 @@ const DonasiProgress = ({
                           }
                           className={`px-3 py-1 ${
                             progressPercentage >= milestone
-                              ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
+                              ? "bg-gradient-to-r from-emerald-500 to-green-500 text-white"
                               : ""
                           }`}
                         >
@@ -385,14 +405,14 @@ const DonasiProgress = ({
                   <div
                     className={`p-8 rounded-2xl text-center ${
                       isDarkMode
-                        ? "bg-gradient-to-br from-gray-700/50 to-gray-600/50 border border-gray-600"
-                        : "bg-gradient-to-br from-blue-50/80 to-purple-50/80 border border-gray-200"
+                        ? "bg-gradient-to-br from-gray-700/50 to-gray-600/50 border border-emerald-600/20"
+                        : "bg-gradient-to-br from-emerald-50/80 to-green-50/80 border border-emerald-200/50"
                     }`}
                   >
                     <div className="mb-6">
                       <Gift
                         className={`h-16 w-16 mx-auto mb-4 ${
-                          daysLeft <= 0 ? "text-gray-400" : "text-red-500"
+                          daysLeft <= 0 ? "text-gray-400" : "text-emerald-500"
                         }`}
                       />
                       <h4
@@ -416,35 +436,33 @@ const DonasiProgress = ({
                       <div
                         className={`mb-6 p-4 rounded-xl ${
                           daysLeft <= 7
-                            ? "bg-gradient-to-r from-orange-100 to-red-100 border border-orange-200"
+                            ? "bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/20 dark:to-red-900/20 border border-orange-200 dark:border-orange-800/20"
                             : isDarkMode
-                            ? "bg-gray-600/50"
-                            : "bg-gray-100/50"
+                            ? "bg-emerald-600/20"
+                            : "bg-emerald-100/50"
                         }`}
                       >
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="flex items-center justify-center gap-2">
-                            <Clock
-                              className={`h-5 w-5 ${
-                                daysLeft <= 7
-                                  ? "text-orange-600"
-                                  : "text-blue-500"
-                              }`}
-                            />
-                            <span
-                              className={`font-bold ${
-                                daysLeft <= 7
-                                  ? "text-orange-800"
-                                  : isDarkMode
-                                  ? "text-gray-300"
-                                  : "text-gray-700"
-                              }`}
-                            >
-                              {daysLeft <= 7
-                                ? "Segera Berakhir!"
-                                : `Masih ${daysLeft} hari lagi`}
-                            </span>
-                          </div>
+                        <div className="flex items-center justify-center gap-2 mb-4">
+                          <Clock
+                            className={`h-5 w-5 ${
+                              daysLeft <= 7
+                                ? "text-orange-600"
+                                : "text-emerald-500"
+                            }`}
+                          />
+                          <span
+                            className={`font-bold ${
+                              daysLeft <= 7
+                                ? "text-orange-800 dark:text-orange-300"
+                                : isDarkMode
+                                ? "text-emerald-300"
+                                : "text-emerald-700"
+                            }`}
+                          >
+                            {daysLeft <= 7
+                              ? "Segera Berakhir!"
+                              : `Masih ${daysLeft} hari lagi`}
+                          </span>
                         </div>
                        
                         <Button
@@ -454,7 +472,7 @@ const DonasiProgress = ({
                           className={`w-full !rounded-2xl px-8 py-4 text-lg font-bold shadow-xl transform transition-all duration-300 ${
                             daysLeft <= 0
                               ? "bg-gray-400 cursor-not-allowed"
-                              : "bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 hover:scale-105 hover:shadow-red-500/25"
+                              : "bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 hover:scale-105 hover:shadow-emerald-500/25"
                           }`}
                         >
                           <Heart className="h-5 w-5 mr-3" />
@@ -486,13 +504,13 @@ const DonasiProgress = ({
         <DialogContent
           className={`max-w-2xl max-h-[90vh] overflow-y-auto !rounded-2xl ${
             isDarkMode
-              ? "bg-gray-800 border-gray-700"
-              : "bg-white border-gray-200"
+              ? "bg-gray-800 border-emerald-700/30"
+              : "bg-white border-emerald-200/50"
           }`}
         >
-          <DialogHeader className="pb-6 border-b border-gray-200 dark:border-gray-700">
+          <DialogHeader className="pb-6 border-b border-emerald-200/20 dark:border-emerald-700/20">
             <DialogTitle className="text-3xl flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl">
+              <div className="p-3 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl">
                 <Heart className="h-6 w-6 text-white" />
               </div>
               <span>Form Donasi</span>
@@ -519,7 +537,7 @@ const DonasiProgress = ({
                     }
                     className={`!rounded-xl py-3 font-bold transition-all duration-200 ${
                       formData.amount === amount.toString()
-                        ? "bg-gradient-to-r from-blue-500 to-purple-500 transform scale-105"
+                        ? "bg-gradient-to-r from-emerald-500 to-green-500 transform scale-105"
                         : "hover:scale-105"
                     }`}
                     disabled={isPending}
@@ -548,7 +566,7 @@ const DonasiProgress = ({
               />
               <p
                 className={`text-sm mt-2 font-medium ${
-                  formData.amount ? "text-blue-600" : "text-gray-500"
+                  formData.amount ? "text-emerald-600" : "text-gray-500"
                 }`}
               >
                 Jumlah:{" "}
@@ -562,8 +580,8 @@ const DonasiProgress = ({
             <div
               className={`flex items-center space-x-3 p-4 rounded-xl border-2 ${
                 isDarkMode
-                  ? "bg-gray-700/30 border-gray-600"
-                  : "bg-gray-50/50 border-gray-200"
+                  ? "bg-gray-700/30 border-emerald-600/20"
+                  : "bg-emerald-50/50 border-emerald-200/50"
               }`}
             >
               <Checkbox
@@ -594,8 +612,8 @@ const DonasiProgress = ({
               <div
                 className={`grid gap-4 p-6 rounded-2xl border ${
                   isDarkMode
-                    ? "bg-gray-700/30 border-gray-600"
-                    : "bg-blue-50/50 border-blue-200"
+                    ? "bg-gray-700/30 border-emerald-600/20"
+                    : "bg-emerald-50/50 border-emerald-200/50"
                 }`}
               >
                 <h4
@@ -680,28 +698,28 @@ const DonasiProgress = ({
               className={`p-6 rounded-2xl border-2 border-dashed transition-all duration-300 ${
                 formData.bukti_transfer_url
                   ? isDarkMode
-                    ? "border-green-500 bg-green-900/20"
-                    : "border-green-500 bg-green-50"
+                    ? "border-emerald-500 bg-emerald-900/20"
+                    : "border-emerald-500 bg-emerald-50"
                   : uploading
                   ? isDarkMode
-                    ? "border-blue-500 bg-blue-900/20"
-                    : "border-blue-500 bg-blue-50"
+                    ? "border-emerald-500 bg-emerald-900/20"
+                    : "border-emerald-500 bg-emerald-50"
                   : isDarkMode
-                  ? "border-gray-600 bg-gray-700/30 hover:border-gray-500"
-                  : "border-gray-300 bg-gray-50 hover:border-gray-400"
+                  ? "border-gray-600 bg-gray-700/30 hover:border-emerald-500"
+                  : "border-gray-300 bg-gray-50 hover:border-emerald-400"
               }`}
             >
               <div className="text-center">
                 {formData.bukti_transfer_url ? (
                   <div>
-                    <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                    <p className="text-green-600 font-bold mb-4">
+                    <CheckCircle className="h-12 w-12 text-emerald-500 mx-auto mb-4" />
+                    <p className="text-emerald-600 font-bold mb-4">
                       Bukti transfer berhasil diupload!
                     </p>
                     <img
                       src={formData.bukti_transfer_url}
                       alt="Preview bukti transfer"
-                      className="w-40 h-40 object-cover rounded-xl mx-auto border-4 border-green-200 shadow-lg"
+                      className="w-40 h-40 object-cover rounded-xl mx-auto border-4 border-emerald-200 shadow-lg"
                       onError={(e) => {
                         e.target.style.display = "none";
                       }}
@@ -709,8 +727,8 @@ const DonasiProgress = ({
                   </div>
                 ) : uploading ? (
                   <div>
-                    <Loader2 className="h-12 w-12 text-blue-500 mx-auto mb-4 animate-spin" />
-                    <p className="text-blue-600 font-bold">
+                    <Loader2 className="h-12 w-12 text-emerald-500 mx-auto mb-4 animate-spin" />
+                    <p className="text-emerald-600 font-bold">
                       Mengupload bukti transfer...
                     </p>
                   </div>
@@ -749,7 +767,7 @@ const DonasiProgress = ({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex gap-4 pt-6 border-t border-emerald-200/20 dark:border-emerald-700/20">
               <Button
                 variant="outline"
                 onClick={handleCloseModal}
@@ -760,7 +778,7 @@ const DonasiProgress = ({
               </Button>
               <Button
                 onClick={handleSubmitDonasi}
-                className="flex-1 !rounded-xl py-3 text-base font-bold bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 shadow-xl hover:shadow-red-500/25 transform hover:scale-105 transition-all duration-200"
+                className="flex-1 !rounded-xl py-3 text-base font-bold bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 shadow-xl hover:shadow-emerald-500/25 transform hover:scale-105 transition-all duration-200"
                 disabled={
                   isPending ||
                   uploading ||
@@ -795,6 +813,40 @@ const DonasiProgress = ({
             opacity: 1;
             transform: translateY(0);
           }
+        }
+        
+        @keyframes float {
+          0%, 100% { 
+            transform: translateY(0px) rotate(0deg); 
+            opacity: 0.6; 
+          }
+          33% { 
+            transform: translateY(-10px) rotate(5deg); 
+            opacity: 1; 
+          }
+          66% { 
+            transform: translateY(-5px) rotate(-5deg); 
+            opacity: 0.8; 
+          }
+        }
+        
+        @keyframes pulse-slow {
+          0%, 100% { 
+            transform: scale(1); 
+            opacity: 0.6; 
+          }
+          50% { 
+            transform: scale(1.05); 
+            opacity: 0.8; 
+          }
+        }
+        
+        .animate-float { 
+          animation: float linear infinite; 
+        }
+        
+        .animate-pulse-slow { 
+          animation: pulse-slow 4s ease-in-out infinite; 
         }
       `}</style>
     </>

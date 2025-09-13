@@ -26,11 +26,11 @@ const Footer = () => {
   ];
 
   const socialMedia = [
-    { icon: "fab fa-facebook", color: "hover:text-blue-500", label: "Facebook", hoverBg: "hover:bg-blue-50 dark:hover:bg-blue-900/20" },
-    { icon: "fab fa-twitter", color: "hover:text-sky-400", label: "Twitter", hoverBg: "hover:bg-sky-50 dark:hover:bg-sky-900/20" },
-    { icon: "fab fa-instagram", color: "hover:text-pink-500", label: "Instagram", hoverBg: "hover:bg-pink-50 dark:hover:bg-pink-900/20" },
-    { icon: "fab fa-youtube", color: "hover:text-red-500", label: "YouTube", hoverBg: "hover:bg-red-50 dark:hover:bg-red-900/20" },
-    { icon: "fab fa-linkedin", color: "hover:text-blue-600", label: "LinkedIn", hoverBg: "hover:bg-blue-50 dark:hover:bg-blue-900/20" }
+    { icon: "fab fa-facebook", color: "hover:text-emerald-500", label: "Facebook", hoverBg: "hover:bg-emerald-50 dark:hover:bg-emerald-900/20" },
+    { icon: "fab fa-twitter", color: "hover:text-emerald-600", label: "Twitter", hoverBg: "hover:bg-emerald-50 dark:hover:bg-emerald-900/20" },
+    { icon: "fab fa-instagram", color: "hover:text-green-500", label: "Instagram", hoverBg: "hover:bg-green-50 dark:hover:bg-green-900/20" },
+    { icon: "fab fa-youtube", color: "hover:text-emerald-500", label: "YouTube", hoverBg: "hover:bg-emerald-50 dark:hover:bg-emerald-900/20" },
+    { icon: "fab fa-linkedin", color: "hover:text-green-600", label: "LinkedIn", hoverBg: "hover:bg-green-50 dark:hover:bg-green-900/20" }
   ];
 
   return (
@@ -39,14 +39,14 @@ const Footer = () => {
         ? "bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950" 
         : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
     }`}>
-      {/* Enhanced Background Elements */}
+      {/* Enhanced Background Elements with Emerald Theme */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Floating particles with better animation */}
+        {/* Floating particles with emerald colors */}
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
             className={`absolute w-1 h-1 ${
-              isDarkMode ? "bg-white/10" : "bg-gray-400/20"
+              isDarkMode ? "bg-emerald-300/15" : "bg-emerald-400/20"
             } rounded-full animate-float`}
             style={{
               left: `${Math.random() * 100}%`,
@@ -57,14 +57,14 @@ const Footer = () => {
           />
         ))}
         
-        {/* Enhanced gradient overlays */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-400/3 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-400/3 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-purple-400/3 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        {/* Enhanced emerald gradient overlays */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-200/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-300/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-emerald-100/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
 
-      {/* Enhanced top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 animate-gradient-x"></div>
+      {/* Enhanced top accent line with emerald gradient */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 animate-gradient-x"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content with enhanced styling */}
@@ -73,17 +73,17 @@ const Footer = () => {
             {/* Enhanced Brand Section */}
             <div className="lg:col-span-2">
               <div className="flex items-center space-x-4 mb-8">
-                <div className={`p-4 rounded-2xl bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 shadow-2xl transform hover:scale-110 hover:rotate-6 transition-all duration-500 group overflow-hidden`}>
+                <div className={`p-4 rounded-2xl bg-gradient-to-br from-emerald-500 via-green-500 to-emerald-600 shadow-2xl transform hover:scale-110 hover:rotate-6 transition-all duration-500 group overflow-hidden`}>
                   {/* Glassmorphism overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <i className="fas fa-home text-2xl text-white relative z-10"></i>
                   {/* Glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-blue-500 to-purple-600 opacity-0 group-hover:opacity-60 blur-2xl transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-green-500 to-emerald-600 opacity-0 group-hover:opacity-60 blur-2xl transition-opacity duration-300"></div>
                 </div>
                 <div>
                   <span className={`text-3xl font-black ${
                     isDarkMode ? "text-white" : "text-gray-900"
-                  } hover:bg-gradient-to-r hover:from-emerald-600 hover:via-blue-600 hover:to-purple-600 hover:bg-clip-text hover:text-transparent transition-all duration-500 cursor-pointer`}
+                  } hover:bg-gradient-to-r hover:from-emerald-600 hover:via-green-600 hover:to-emerald-600 hover:bg-clip-text hover:text-transparent transition-all duration-500 cursor-pointer`}
                   onClick={() => handlePageChange("home")}>
                     DesaCerdas
                   </span>
@@ -97,12 +97,13 @@ const Footer = () => {
                 Platform digital terpadu yang memberdayakan masyarakat desa Indonesia melalui teknologi modern dan solusi inovatif untuk kemajuan bersama.
               </p>
 
-              {/* Enhanced Social Media with modern styling */}
+              {/* Enhanced Social Media with emerald styling */}
               <div className="mb-8">
                 <h4 className={`text-lg font-bold mb-6 ${
                   isDarkMode ? "text-white" : "text-gray-900"
                 } flex items-center gap-3`}>
-                  <div className="p-2 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-xl">
+                  <div className="p-2 items-center flex bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl">
+                  
                     <i className="fas fa-share-alt text-white text-sm"></i>
                   </div>
                   Ikuti Kami
@@ -130,12 +131,13 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Enhanced Features Section */}
+            {/* Enhanced Features Section with Emerald Theme */}
             <div>
               <h4 className={`font-black text-xl mb-8 ${
                 isDarkMode ? "text-white" : "text-gray-900"
               } flex items-center gap-3`}>
-                <div className="p-2 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-xl">
+                  <div className="p-2 items-center flex bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl">
+                
                   <i className="fas fa-rocket text-white text-sm"></i>
                 </div>
                 Fitur Unggulan
@@ -158,7 +160,7 @@ const Footer = () => {
                         {feature.icon}
                       </span>
                       <div className="flex-1">
-                        <div className="font-bold text-base group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-blue-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                        <div className="font-bold text-base group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-green-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                           {feature.label}
                         </div>
                         <div className={`text-xs ${
@@ -179,7 +181,8 @@ const Footer = () => {
               <h4 className={`font-black text-xl mb-8 ${
                 isDarkMode ? "text-white" : "text-gray-900"
               } flex items-center gap-3`}>
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl">
+                  <div className="p-2 items-center flex bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl">
+                
                   <i className="fas fa-building text-white text-sm"></i>
                 </div>
                 Perusahaan
@@ -201,8 +204,8 @@ const Footer = () => {
                       <span className="text-lg mr-4 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         {item.icon}
                       </span>
-                      <span className="font-bold flex-1 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">{item.label}</span>
-                      <i className="fas fa-arrow-right opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300 text-blue-500"></i>
+                      <span className="font-bold flex-1 group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-green-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">{item.label}</span>
+                      <i className="fas fa-arrow-right opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300 text-emerald-500"></i>
                     </button>
                   </li>
                 ))}
@@ -217,11 +220,12 @@ const Footer = () => {
                   ? 'bg-gray-800/50 border-gray-700/50' 
                   : 'bg-white/50 border-gray-200/50'
               } overflow-hidden group`}>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/5 via-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/5 via-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <h5 className={`font-bold text-base mb-4 ${
                   isDarkMode ? "text-white" : "text-gray-900"
                 } flex items-center gap-3 relative z-10`}>
-                  <div className="p-2 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-xl">
+                  <div className="p-2 items-center flex bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl">
+                  
                     <i className="fas fa-map-marker-alt text-white text-xs"></i>
                   </div>
                   Kontak
@@ -234,12 +238,12 @@ const Footer = () => {
                     <span className="group-hover/item:text-emerald-600 dark:group-hover/item:text-emerald-400 transition-colors duration-200">info@desacerdas.id</span>
                   </div>
                   <div className="flex items-center group/item">
-                    <i className="fas fa-phone mr-3 text-blue-500 transform group-hover/item:scale-110 transition-transform duration-200"></i>
-                    <span className="group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors duration-200">+62 21 1234 5678</span>
+                    <i className="fas fa-phone mr-3 text-green-500 transform group-hover/item:scale-110 transition-transform duration-200"></i>
+                    <span className="group-hover/item:text-green-600 dark:group-hover/item:text-green-400 transition-colors duration-200">+62 21 1234 5678</span>
                   </div>
                   <div className="flex items-center group/item">
-                    <i className="fas fa-map-marker-alt mr-3 text-purple-500 transform group-hover/item:scale-110 transition-transform duration-200"></i>
-                    <span className="group-hover/item:text-purple-600 dark:group-hover/item:text-purple-400 transition-colors duration-200">Jakarta, Indonesia</span>
+                    <i className="fas fa-map-marker-alt mr-3 text-emerald-500 transform group-hover/item:scale-110 transition-transform duration-200"></i>
+                    <span className="group-hover/item:text-emerald-600 dark:group-hover/item:text-emerald-400 transition-colors duration-200">Jakarta, Indonesia</span>
                   </div>
                 </div>
               </div>
@@ -248,8 +252,8 @@ const Footer = () => {
               <div className="space-y-3">
                 {[
                   { icon: "fas fa-check-circle", label: "Verified", color: "emerald" },
-                  { icon: "fas fa-shield-alt", label: "Secure", color: "blue" },
-                  { icon: "fas fa-bolt", label: "Fast", color: "purple" }
+                  { icon: "fas fa-shield-alt", label: "Secure", color: "green" },
+                  { icon: "fas fa-bolt", label: "Fast", color: "emerald" }
                 ].map((badge, index) => (
                   <div key={badge.label} 
                     className={`px-4 py-3 rounded-xl text-sm font-medium backdrop-blur-sm border shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 group ${
@@ -301,8 +305,8 @@ const Footer = () => {
                 </div>
                 <div className={`px-4 py-2 rounded-full text-xs font-medium backdrop-blur-sm border shadow-lg ${
                   isDarkMode 
-                    ? 'bg-blue-900/40 text-blue-300 border-blue-800/50' 
-                    : 'bg-blue-50 text-blue-700 border-blue-200'
+                    ? 'bg-green-900/40 text-green-300 border-green-800/50' 
+                    : 'bg-green-50 text-green-700 border-green-200'
                 } transform hover:scale-105 transition-all duration-200`}>
                   <i className="fas fa-shield-alt mr-1"></i>
                   Aman
@@ -312,19 +316,19 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Enhanced Back to Top Button */}
+        {/* Enhanced Back to Top Button with Emerald Theme */}
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className={`fixed bottom-8 right-8 p-4 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-110 hover:-translate-y-2 z-50 group ${
             isDarkMode 
-              ? 'bg-gradient-to-r from-emerald-700 to-blue-700 hover:from-emerald-600 hover:to-blue-600 text-white' 
-              : 'bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white'
+              ? 'bg-gradient-to-r from-emerald-700 to-green-700 hover:from-emerald-600 hover:to-green-600 text-white' 
+              : 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white'
           } border ${isDarkMode ? 'border-emerald-800/50' : 'border-emerald-600'} focus-visible:ring-4 focus-visible:ring-white/60 focus-visible:outline-none backdrop-blur-sm`}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
           <i className="fas fa-chevron-up text-lg relative z-10 transform group-hover:-translate-y-1 transition-transform duration-200"></i>
           {/* Glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-blue-500 opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-green-500 opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-300"></div>
         </button>
       </div>
 

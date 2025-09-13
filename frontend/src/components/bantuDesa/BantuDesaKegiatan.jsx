@@ -38,6 +38,7 @@ const getCategoryIcon = (kategori) => {
   return icons[kategori] || "📋";
 };
 
+
 const BantuDesaKegiatan = () => {
   const { isDarkMode } = useThemeStore();
   const [filters, setFilters] = useState({
@@ -84,20 +85,20 @@ const BantuDesaKegiatan = () => {
     <section id="kegiatan-section" className={`py-20 ${
       isDarkMode 
         ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
-        : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
+        : 'bg-gradient-to-br from-emerald-50/30 via-white to-green-50/20'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Enhanced Header */}
         <div className="text-center mb-16">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl shadow-lg">
+            <div className="p-3 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl shadow-lg">
               <Activity className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h2 className={`text-5xl py-4 md:text-6xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}>
+              <h2 className={`text-5xl py-4 md:text-6xl font-black bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent`}>
                 Kegiatan Desa
               </h2>
-              <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-2" />
+              <div className="h-1 w-24 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full mx-auto mt-2" />
             </div>
           </div>
           <p className={`text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed ${
@@ -114,27 +115,27 @@ const BantuDesaKegiatan = () => {
               title: "Total Kegiatan",
               value: stats.total,
               icon: Activity,
-              color: "from-gray-400 to-gray-500",
-              bgColor: "bg-gray-100",
-              textColor: "text-gray-600",
+              color: "from-emerald-400 to-emerald-500",
+              bgColor: "bg-emerald-100",
+              textColor: "text-emerald-600",
               description: "Semua kegiatan",
             },
             {
               title: "Sedang Aktif",
               value: stats.aktif,
               icon: TrendingUp,
-              color: "from-green-400 to-green-500",
-              bgColor: "bg-green-100",
-              textColor: "text-green-600",
+              color: "from-emerald-400 to-emerald-500",
+              bgColor: "bg-emerald-100",
+              textColor: "text-emerald-600",
               description: "Berjalan",
             },
             {
               title: "Target Dana",
               value: formatCurrency(stats.totalTarget).replace("Rp", "").trim(),
               icon: Target,
-              color: "from-purple-400 to-purple-500",
-              bgColor: "bg-purple-100",
-              textColor: "text-purple-600",
+              color: "from-green-400 to-green-500",
+              bgColor: "bg-green-100",
+              textColor: "text-green-600",
               description: "Total target",
               isAmount: true,
             },
@@ -142,9 +143,9 @@ const BantuDesaKegiatan = () => {
               title: "Dana Terkumpul",
               value: formatCurrency(stats.totalTerkumpul).replace("Rp", "").trim(),
               icon: Users,
-              color: "from-orange-400 to-orange-500",
-              bgColor: "bg-orange-100",
-              textColor: "text-orange-600",
+              color: "from-emerald-400 to-green-500",
+              bgColor: "bg-emerald-100",
+              textColor: "text-emerald-600",
               description: "Terkumpul",
               isAmount: true,
             },
@@ -209,7 +210,7 @@ const BantuDesaKegiatan = () => {
           <CardContent className="p-8">
             <div className="flex flex-col lg:flex-row gap-6 items-center">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl">
+                <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl">
                   <Filter className="h-5 w-5 text-white" />
                 </div>
                 <h3 className={`text-lg font-bold ${
@@ -228,12 +229,12 @@ const BantuDesaKegiatan = () => {
                     onChange={(e) => handleFilterChange('search', e.target.value)}
                     className={`pl-12 pr-4 py-3 text-base !rounded-xl border-2 transition-all duration-200 ${
                       isDarkMode
-                        ? "bg-gray-700 border-gray-600 focus:border-blue-500"
-                        : "bg-white border-gray-300 focus:border-blue-500"
+                        ? "bg-gray-700 border-gray-600 focus:border-emerald-500"
+                        : "bg-white border-gray-300 focus:border-emerald-500"
                     } shadow-lg focus:shadow-xl`}
                   />
                 </div>
-                <Button type="submit" className="!rounded-xl px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
+                <Button type="submit" className="!rounded-xl px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700">
                   <Search className="h-4 w-4" />
                 </Button>
               </form>
@@ -249,13 +250,13 @@ const BantuDesaKegiatan = () => {
                   <SelectContent>
                     <SelectItem value="AKTIF">
                       <span className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        🚀 Aktif
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                         🚀 Aktif
                       </span>
                     </SelectItem>
                     <SelectItem value="SELESAI">
                       <span className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                         ✅ Selesai
                       </span>
                     </SelectItem>
@@ -289,9 +290,9 @@ const BantuDesaKegiatan = () => {
           }`}>
             <div className="flex flex-wrap gap-6 items-center text-sm font-medium">
               <div className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-blue-500" />
+                <Target className="h-5 w-5 text-green-500" />
                 <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                  Total: <span className="font-bold text-blue-600">{total}</span> kegiatan
+                  Total: <span className="font-bold text-green-600">{total}</span> kegiatan
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -302,9 +303,9 @@ const BantuDesaKegiatan = () => {
               </div>
               {filters.search && (
                 <div className="flex items-center gap-2">
-                  <Search className="h-5 w-5 text-orange-500" />
+                  <Search className="h-5 w-5 text-emerald-500" />
                   <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                    Hasil untuk: <span className="font-bold text-orange-600">"{filters.search}"</span>
+                    Hasil untuk: <span className="font-bold text-emerald-600">"{filters.search}"</span>
                   </span>
                 </div>
               )}
@@ -317,17 +318,17 @@ const BantuDesaKegiatan = () => {
           <div className="flex justify-center items-center py-20">
             <div className="text-center">
               <div className="relative mb-6">
-                <Loader2 className="animate-spin h-16 w-16 text-primary mx-auto mb-4" />
-                <div className="absolute inset-0 h-16 w-16 border-4 border-blue-200 rounded-full animate-pulse mx-auto"></div>
+                <Loader2 className="animate-spin h-16 w-16 text-emerald-500 mx-auto mb-4" />
+                <div className="absolute inset-0 h-16 w-16 border-4 border-emerald-200 rounded-full animate-pulse mx-auto"></div>
               </div>
               <div className="space-y-2">
                 <span className={`text-xl font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                   Memuat data kegiatan...
                 </span>
                 <div className="flex items-center justify-center gap-1">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce delay-200"></div>
+                  <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce delay-200"></div>
                 </div>
               </div>
             </div>
@@ -428,9 +429,9 @@ const BantuDesaKegiatan = () => {
                     <div className="absolute top-3 right-3">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                         activity.status === 'AKTIF' 
-                          ? 'bg-green-100 text-green-800' 
+                          ? 'bg-emerald-100 text-emerald-800' 
                           : activity.status === 'SELESAI'
-                          ? 'bg-blue-100 text-blue-800'
+                          ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       }`}>
                         {activity.status}
@@ -446,7 +447,7 @@ const BantuDesaKegiatan = () => {
                   </div>
                   
                   <CardContent className="p-6">
-                    <h3 className={`text-xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors ${
+                    <h3 className={`text-xl font-bold mb-3 line-clamp-2 group-hover:text-emerald-600 transition-colors ${
                       isDarkMode ? 'text-white' : 'text-gray-900'
                     }`}>
                       {activity.judul}
@@ -515,7 +516,7 @@ const BantuDesaKegiatan = () => {
                       />
                       <div className={`text-xs text-right ${
                         progressPercentage >= 100 
-                          ? 'text-green-600 font-medium' 
+                          ? 'text-emerald-600 font-medium' 
                           : isDarkMode ? 'text-gray-500' : 'text-gray-500'
                       }`}>
                         {progressPercentage.toFixed(1)}% tercapai
@@ -525,7 +526,7 @@ const BantuDesaKegiatan = () => {
                     <div className="flex gap-3">
                       <Link to={`/bantu-desa/detail/${activity.id}`} className="flex-1">
                         <Button 
-                          className="w-full !rounded-button" 
+                          className="w-full !rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700" 
                           size="sm"
                           disabled={activity.status !== 'AKTIF'}
                         >
@@ -536,7 +537,7 @@ const BantuDesaKegiatan = () => {
                       <Link to={`/bantu-desa/detail/${activity.id}`} className="flex-1">
                         <Button 
                           variant="outline" 
-                          className="w-full !rounded-button" 
+                          className="w-full !rounded-xl border-2 hover:border-emerald-500" 
                           size="sm"
                         >
                           <i className="fas fa-info-circle mr-2"></i>
@@ -558,7 +559,7 @@ const BantuDesaKegiatan = () => {
               variant="outline"
               disabled={filters.page <= 1}
               onClick={() => handlePageChange(filters.page - 1)}
-              className="!rounded-button"
+              className="!rounded-xl"
             >
               <i className="fas fa-chevron-left mr-2"></i>
               Sebelumnya
@@ -583,7 +584,11 @@ const BantuDesaKegiatan = () => {
                     variant={filters.page === pageNum ? "default" : "outline"}
                     size="sm"
                     onClick={() => handlePageChange(pageNum)}
-                    className="!rounded-button w-10"
+                    className={`!rounded-xl w-10 ${
+                      filters.page === pageNum 
+                        ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
+                        : ''
+                    }`}
                   >
                     {pageNum}
                   </Button>
@@ -595,7 +600,7 @@ const BantuDesaKegiatan = () => {
               variant="outline"
               disabled={filters.page >= totalPages}
               onClick={() => handlePageChange(filters.page + 1)}
-              className="!rounded-button"
+              className="!rounded-xl"
             >
               Selanjutnya
               <i className="fas fa-chevron-right ml-2"></i>
@@ -603,6 +608,74 @@ const BantuDesaKegiatan = () => {
           </div>
         )}
       </div>
+
+      {/* Enhanced floating background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Animated gradient orbs */}
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-emerald-400/5 via-green-500/5 to-emerald-600/5 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-green-400/5 via-emerald-500/5 to-green-600/5 rounded-full blur-3xl animate-pulse-slow delay-1000"></div>
+        
+        {/* Floating particles */}
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-emerald-400/20 rounded-full animate-float"
+            style={{
+              left: `${10 + Math.random() * 80}%`,
+              top: `${10 + Math.random() * 80}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${4 + Math.random() * 4}s`
+            }}
+          />
+        ))}
+      </div>
+
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes float {
+          0%, 100% { 
+            transform: translateY(0px) rotate(0deg); 
+            opacity: 0.6; 
+          }
+          33% { 
+            transform: translateY(-10px) rotate(5deg); 
+            opacity: 1; 
+          }
+          66% { 
+            transform: translateY(-5px) rotate(-5deg); 
+            opacity: 0.8; 
+          }
+        }
+        
+        @keyframes pulse-slow {
+          0%, 100% { 
+            transform: scale(1); 
+            opacity: 0.6; 
+          }
+          50% { 
+            transform: scale(1.05); 
+            opacity: 0.8; 
+          }
+        }
+        
+        .animate-float { 
+          animation: float linear infinite; 
+        }
+        
+        .animate-pulse-slow { 
+          animation: pulse-slow 4s ease-in-out infinite; 
+        }
+      `}</style>
     </section>
   );
 };
