@@ -9,7 +9,7 @@ import { useUpdateThreadTitle } from '@/hooks/tanyaHukum/useUpdateThreadTitle';
 import { useThreadMessages } from '@/hooks/tanyaHukum/useThreadMessages';
 import { useSendMessage } from '@/hooks/tanyaHukum/useSendMessage';
 import { useDailyLimit } from '@/hooks/tanyaHukum/useDailyLimit';
-
+import { toast } from 'sonner';
 // Guest usage hook
 const useGuestUsage = () => {
     const [usage, setUsage] = useState({ current: 0, limit: 3, remaining: 3, canAsk: true });
@@ -181,9 +181,9 @@ const CompleteLegalQASystem = () => {
                         onSettled: () => setLocalMessages([]),
                         onError: (err) => {
                             if (err.response?.status === 429) {
-                                alert('Batas penggunaan harian AI tercapai (20 pertanyaan per hari).');
+                                toast.error('Batas penggunaan harian AI tercapai (20 pertanyaan per hari).');
                             } else {
-                                alert('Gagal mengirim pesan. Silakan coba lagi.');
+                                toast.error('Gagal mengirim pesan. Silakan coba lagi.');
                             }
                         },
                     }
@@ -219,7 +219,7 @@ const CompleteLegalQASystem = () => {
                 if (error.message.includes('GUEST_LIMIT_EXCEEDED')) {
                     setShowLoginPrompt(true);
                 } else {
-                    alert('Gagal mengirim pertanyaan. Silakan coba lagi.');
+                    toast.error('Gagal mengirim pertanyaan. Silakan coba lagi.');
                 }
             }
         }

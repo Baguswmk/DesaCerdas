@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Loader2, Send, Menu, Bot, User, Sparkles, MessageCircle } from "lucide-react";
+import { toast } from 'sonner';
 
 import useThemeStore from "@/store/theme";
 import useChatUIStore from "@/store/chatUIStore";
@@ -79,7 +80,7 @@ const RoomChat = () => {
           if (err.response?.status === 429) {
             setLimitExceeded(true);
           } else {
-            alert("Gagal mengirim pesan. Silakan coba lagi.");
+            toast.error("Gagal mengirim pesan. Silakan coba lagi.");
             console.error(err);
           }
         },

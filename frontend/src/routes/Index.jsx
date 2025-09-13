@@ -24,7 +24,7 @@ const IndexRoute = () => {
         <Route path="/about" element={<About />} />
         <Route path="/tanyahukum" element={<TanyaHukumPage />} />
         <Route path="/farmsmart" element={<FarmSmartPage />} />
-        <Route path="/bantu-desa" element={<BantuDesaPage />} />
+        <Route path="/bantudesa" element={<BantuDesaPage />} />
         <Route path="/bantu-desa/detail/:id" element={<DetailKegiatanPage />} />
         <Route 
           path="/admin" 

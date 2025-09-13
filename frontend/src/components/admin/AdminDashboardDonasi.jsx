@@ -8,208 +8,209 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-    Loader2,
-    Eye,
-    CheckCircle,
-    XCircle,
-    Calendar,
-    DollarSign,
-    Users,
-    TrendingUp,
-    Download,
-    Search,
-    Filter,
-    RefreshCw,
-    AlertCircle,
-    BarChart3,
-    PieChart,
-    Activity
+  Loader2,
+  Eye,
+  CheckCircle,
+  XCircle,
+  Calendar,
+  DollarSign,
+  Users,
+  Download,
+  Search,
+  RefreshCw,
+  AlertCircle,
+  Activity,
 } from "lucide-react";
+import { toast } from "sonner";
+
 import { useDonasiPending, useVerifyDonasi } from "@/hooks/bantuDesa/useDonasi";
 import { useKegiatanAktif } from "@/hooks/bantuDesa/useKegiatan";
 import useThemeStore from "@/store/theme";
 import useBantuDesaStore from "@/store/bantuDesaStore";
 
 function formatCurrency(amount) {
-    return new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0
-    }).format(amount);
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
 }
 
 function formatDate(date) {
-    return new Date(date).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+  return new Date(date).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 const AdminDashboardDonasi = () => {
-    const { isDarkMode } = useThemeStore();
-    const {
-        setDonasiPending,
-        calculateDashboardStats,
-        dashboardStats
-    } = useBantuDesaStore();
+  const { isDarkMode } = useThemeStore();
+  const { setDonasiPending, calculateDashboardStats } = useBantuDesaStore();
 
-    const [selectedDonasi, setSelectedDonasi] = useState(null);
-    const [verifyAction, setVerifyAction] = useState("");
-    const [verifyReason, setVerifyReason] = useState("");
-    const [showBuktiModal, setShowBuktiModal] = useState(false);
-    const [selectedBukti, setSelectedBukti] = useState("");
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filterStatus, setFilterStatus] = useState("PENDING");
+  const [selectedDonasi, setSelectedDonasi] = useState(null);
+  const [verifyAction, setVerifyAction] = useState("");
+  const [verifyReason, setVerifyReason] = useState("");
+  const [showBuktiModal, setShowBuktiModal] = useState(false);
+  const [selectedBukti, setSelectedBukti] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("PENDING");
 
-    const { data: donasiPending, isLoading: loadingPending, refetch, error } = useDonasiPending();
-    const { data: kegiatanResponse, isLoading: loadingKegiatan } = useKegiatanAktif({ limit: 100 });
-    const { mutate: verifyDonasi, isPending: isVerifying } = useVerifyDonasi();
+  const { data: donasiPending, isLoading: loadingPending, refetch, error } = useDonasiPending();
+  const { data: kegiatanResponse, isLoading: loadingKegiatan } = useKegiatanAktif({ limit: 100 });
+  const { mutateAsync: verifyDonasi, isPending: isVerifying } = useVerifyDonasi();
 
-    const kegiatan = kegiatanResponse?.data.data || [];
-    const donasi = donasiPending?.data || [];
+  const kegiatan = kegiatanResponse?.data.data || [];
+  const donasi = donasiPending?.data || [];
 
-    useEffect(() => {
-        if (donasi) {
-            setDonasiPending(donasi);
-            calculateDashboardStats();
-        }
-    }, [donasi, setDonasiPending, calculateDashboardStats]);
+  useEffect(() => {
+    if (donasi) {
+      setDonasiPending(donasi);
+      calculateDashboardStats();
+    }
+  }, [donasi, setDonasiPending, calculateDashboardStats]);
 
-    const stats = {
-        totalPending: donasi?.filter(d => d.status === 'PENDING').length || 0,
-        totalApproved: donasi?.filter(d => d.status === 'APPROVED').length || 0,
-        totalRejected: donasi?.filter(d => d.status === 'REJECTED').length || 0,
-        totalAmount: donasi?.filter(d => d.status === 'APPROVED').reduce((sum, d) => sum + d.amount, 0) || 0
-    };
+  const stats = {
+    totalPending: donasi?.filter((d) => d.status === "PENDING").length || 0,
+    totalApproved: donasi?.filter((d) => d.status === "APPROVED").length || 0,
+    totalRejected: donasi?.filter((d) => d.status === "REJECTED").length || 0,
+    totalAmount:
+      donasi?.filter((d) => d.status === "APPROVED").reduce((sum, d) => sum + d.amount, 0) || 0,
+  };
 
-    const filteredDonasi = (donasi || []).filter(donasi => {
-        const matchSearch = donasi.kegiatan?.judul?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            donasi.donorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            donasi.donorEmail?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchStatus = filterStatus === 'ALL' || donasi.status === filterStatus;
-        return matchSearch && matchStatus;
-    });
+  const filteredDonasi = (donasi || []).filter((d) => {
+    const matchSearch =
+      d.kegiatan?.judul?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      d.donorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      d.donorEmail?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchStatus = filterStatus === "ALL" || d.status === filterStatus;
+    return matchSearch && matchStatus;
+  });
 
-    const handleVerifyDonasi = async () => {
-        if (!selectedDonasi || !verifyAction) return;
+  // === Refactor flow verifikasi donasi ===
+  const handleVerifyDonasi = async () => {
+    if (!selectedDonasi || !verifyAction) return;
 
-        try {
-            await verifyDonasi(
-                {
-                    donasiId: selectedDonasi.id,
-                    data: {
-                        action: verifyAction,
-                        reason: verifyReason
-                    }
-                }
-            );
+    const prevData = [...donasi];
+    setDonasiPending((prev) =>
+      prev.map((d) =>
+        d.id === selectedDonasi.id
+          ? { ...d, status: verifyAction === "approve" ? "APPROVED" : "REJECTED" }
+          : d
+      )
+    );
 
-            setSelectedDonasi(null);
-            setVerifyAction("");
-            setVerifyReason("");
-            await refetch();
-            
-            // Success notification with better UX
-            const successMessage = verifyAction === 'approve' ? 'Donasi berhasil disetujui! ✅' : 'Donasi berhasil ditolak! ❌';
-            alert(successMessage);
-        } catch (error) {
-            console.error('Verify donasi error:', error);
-            alert("❌ " + (error.response?.data?.message || "Gagal memverifikasi donasi"));
-        }
-    };
+    try {
+      await verifyDonasi({
+        donasiId: selectedDonasi.id,
+        data: { action: verifyAction, reason: verifyReason },
+      });
 
-    const handleViewBukti = (buktiUrl) => {
-        setSelectedBukti(buktiUrl);
-        setShowBuktiModal(true);
-    };
+      calculateDashboardStats();
 
-    const exportToCSV = () => {
-        if (!filteredDonasi || filteredDonasi.length === 0) {
-            alert("⚠️ Tidak ada data untuk diekspor");
-            return;
-        }
+      toast.success(
+        verifyAction === "approve"
+          ? "✅ Donasi berhasil disetujui"
+          : "❌ Donasi berhasil ditolak"
+      );
 
-        const csvData = filteredDonasi.map(donasi => ({
-            'Tanggal': formatDate(donasi.createdAt),
-            'Kegiatan': donasi.kegiatan?.judul || '-',
-            'Donatur': donasi.isAnonymous ? 'Anonim' : (donasi.donorName || '-'),
-            'Email': donasi.donorEmail || '-',
-            'Jumlah': donasi.amount,
-            'Status': donasi.status,
-            'Referensi': donasi.reference || '-'
-        }));
+      setSelectedDonasi(null);
+      setVerifyAction("");
+      setVerifyReason("");
+    } catch (err) {
+      setDonasiPending(prevData);
+      toast.error(err.response?.data?.message || "Gagal memverifikasi donasi");
+    }
+  };
 
-        const csvContent = [
-            Object.keys(csvData[0]).join(','),
-            ...csvData.map(row => Object.values(row).join(','))
-        ].join('\n');
+  const handleViewBukti = (buktiUrl) => {
+    setSelectedBukti(buktiUrl);
+    setShowBuktiModal(true);
+  };
 
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `donasi-report-${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    };
-
-    const handleRefresh = async () => {
-        try {
-            await refetch();
-            alert("✅ Data berhasil diperbarui");
-        } catch (error) {
-            console.error('Refresh error:', error);
-            alert("❌ Gagal memperbarui data");
-        }
-    };
-
-    if (loadingPending || loadingKegiatan) {
-        return (
-            <div className="flex justify-center items-center min-h-96">
-                <div className="text-center">
-                    <div className="relative">
-                        <Loader2 className="animate-spin h-12 w-12 text-primary mx-auto mb-4" />
-                        <div className="absolute inset-0 h-12 w-12 border-4 border-green-200 rounded-full animate-pulse mx-auto"></div>
-                    </div>
-                    <div className="space-y-2">
-                        <span className="text-lg font-medium">Memuat dashboard donasi...</span>
-                        <div className="flex items-center justify-center gap-1">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100"></div>
-                            <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce delay-200"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
+  // === Refactor flow export ===
+  const exportToCSV = () => {
+    if (!filteredDonasi || filteredDonasi.length === 0) {
+      toast.info("⚠️ Tidak ada data untuk diekspor");
+      return;
     }
 
-    if (error) {
-        return (
-            <div className="flex justify-center items-center min-h-96">
-                <div className="text-center max-w-md">
-                    <div className="relative mb-6">
-                        <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-                        <div className="absolute inset-0 h-16 w-16 border-4 border-red-200 rounded-full animate-ping mx-auto"></div>
-                    </div>
-                    <h3 className="text-xl font-semibold mb-3 text-red-600">Gagal Memuat Data</h3>
-                    <p className="text-gray-600 mb-6 leading-relaxed">{error.message || "Terjadi kesalahan saat memuat data dashboard"}</p>
-                    <Button onClick={handleRefresh} className="!rounded-xl px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700">
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Coba Lagi
-                    </Button>
-                </div>
-            </div>
-        );
-    }
+    const csvData = filteredDonasi.map((d) => ({
+      Tanggal: formatDate(d.createdAt),
+      Kegiatan: d.kegiatan?.judul || "-",
+      Donatur: d.isAnonymous ? "Anonim" : d.donorName || "-",
+      Email: d.donorEmail || "-",
+      Jumlah: d.amount,
+      Status: d.status,
+      Referensi: d.reference || "-",
+    }));
 
+    const csvContent = [
+      Object.keys(csvData[0]).join(","),
+      ...csvData.map((row) => Object.values(row).join(",")),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `donasi-report-${new Date().toISOString().split("T")[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    toast.success("✅ Data berhasil diekspor ke CSV");
+  };
+
+  // === Refactor flow refresh ===
+  const handleRefresh = async () => {
+    try {
+      await refetch();
+      toast.success("✅ Data berhasil diperbarui");
+    } catch (err) {
+      toast.error("❌ Gagal memperbarui data");
+    }
+  };
+
+  // === Loading & error UI tetap sama ===
+  if (loadingPending || loadingKegiatan) {
     return (
-        <div className={`p-6 space-y-8 min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'}`}>
+      <div className="flex justify-center items-center min-h-96">
+        <Loader2 className="animate-spin h-12 w-12 text-primary mx-auto mb-4" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-96">
+        <div className="text-center max-w-md">
+          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold mb-3 text-red-600">Gagal Memuat Data</h3>
+          <p className="text-gray-600 mb-6 leading-relaxed">
+            {error.message || "Terjadi kesalahan saat memuat data dashboard"}
+          </p>
+          <Button onClick={handleRefresh} className="!rounded-xl px-6 py-3">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Coba Lagi
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // === Return UI original (tidak diubah) ===
+  return (
+    <div
+      className={`p-6 space-y-8 min-h-screen ${
+        isDarkMode
+          ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+          : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+      }`}
+    >
             {/* Header */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div className="space-y-2">
@@ -357,7 +358,7 @@ const AdminDashboardDonasi = () => {
                             <select
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
-                                className={`px-6 py-3 rounded-xl border-2 text-base font-medium shadow-lg transition-all duration-200 ${
+                                className={`px-3 py-3 rounded-xl border-2 text-base font-medium shadow-lg transition-all duration-200 ${
                                     isDarkMode 
                                         ? 'bg-gray-700 border-gray-600 text-white' 
                                         : 'bg-white border-gray-300 text-gray-900'

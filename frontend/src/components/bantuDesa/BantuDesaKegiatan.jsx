@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
-import { Loader2, Search, Calendar, Users, Target, MapPin } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { Loader2, Search, Calendar, Users, Target, MapPin, Clock, Filter, RefreshCw, Heart, Info, TrendingUp, Activity, AlertCircle } from "lucide-react";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useKegiatanAktif } from "@/hooks/bantuDesa/useKegiatan";
@@ -25,6 +26,18 @@ function calculateDaysLeft(endDate) {
   return Math.max(diffDays, 0);
 }
 
+const getCategoryIcon = (kategori) => {
+  const icons = {
+    PEMBANGUNAN: "🏗️",
+    KESEHATAN: "🏥",
+    PENDIDIKAN: "📚",
+    LINGKUNGAN: "🌱",
+    SOSIAL: "🤝",
+    EKONOMI: "💰",
+  };
+  return icons[kategori] || "📋";
+};
+
 const BantuDesaKegiatan = () => {
   const { isDarkMode } = useThemeStore();
   const [filters, setFilters] = useState({
@@ -36,8 +49,8 @@ const BantuDesaKegiatan = () => {
 
   const { data: response, isLoading, error, refetch } = useKegiatanAktif(filters);
   
-  // Fix: Handle BE response structure properly
-  const activities = response?.data || [];
+  // Properly handle the response structure
+  const activities = response?.data?.data || [];
   const total = response?.total || 0;
   const totalPages = Math.ceil(total / filters.limit);
 
@@ -58,104 +71,240 @@ const BantuDesaKegiatan = () => {
     setFilters(prev => ({ ...prev, page: newPage }));
   };
 
+  // Calculate statistics
+  const stats = {
+    total: activities.length,
+    aktif: activities.filter((k) => k.status === "AKTIF").length,
+    selesai: activities.filter((k) => k.status === "SELESAI").length,
+    totalTarget: activities.reduce((sum, k) => sum + (k.target_dana || 0), 0),
+    totalTerkumpul: activities.reduce((sum, k) => sum + (k.dana_terkumpul || 0), 0),
+  };
+
   return (
-    <section className={`py-16 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <section id="kegiatan-section" className={`py-20 ${
+      isDarkMode 
+        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
+        : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            Kegiatan Desa
-          </h2>
-          <p className={`text-lg max-w-2xl mx-auto ${
+        {/* Enhanced Header */}
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl shadow-lg">
+              <Activity className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h2 className={`text-5xl py-4 md:text-6xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}>
+                Kegiatan Desa
+              </h2>
+              <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-2" />
+            </div>
+          </div>
+          <p className={`text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed ${
             isDarkMode ? 'text-gray-300' : 'text-gray-600'
           }`}>
-            Bergabunglah dalam berbagai kegiatan desa yang sedang berlangsung dan butuh dukungan Anda
+            Bergabunglah dalam berbagai kegiatan desa yang sedang berlangsung dan butuh dukungan Anda untuk kemajuan bersama
           </p>
         </div>
 
-        {/* Filter Section */}
-        <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
-          <form onSubmit={handleSearchSubmit} className="flex gap-2 flex-1 max-w-md">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Cari kegiatan..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className={`pl-10 ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}
-              />
-            </div>
-            <Button type="submit" size="icon" className="!rounded-button">
-              <Search className="h-4 w-4" />
-            </Button>
-          </form>
-          
-          <div className="flex gap-2">
-            <Select 
-              value={filters.status} 
-              onValueChange={(value) => handleFilterChange('status', value)}
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {[
+            {
+              title: "Total Kegiatan",
+              value: stats.total,
+              icon: Activity,
+              color: "from-gray-400 to-gray-500",
+              bgColor: "bg-gray-100",
+              textColor: "text-gray-600",
+              description: "Semua kegiatan",
+            },
+            {
+              title: "Sedang Aktif",
+              value: stats.aktif,
+              icon: TrendingUp,
+              color: "from-green-400 to-green-500",
+              bgColor: "bg-green-100",
+              textColor: "text-green-600",
+              description: "Berjalan",
+            },
+            {
+              title: "Target Dana",
+              value: formatCurrency(stats.totalTarget).replace("Rp", "").trim(),
+              icon: Target,
+              color: "from-purple-400 to-purple-500",
+              bgColor: "bg-purple-100",
+              textColor: "text-purple-600",
+              description: "Total target",
+              isAmount: true,
+            },
+            {
+              title: "Dana Terkumpul",
+              value: formatCurrency(stats.totalTerkumpul).replace("Rp", "").trim(),
+              icon: Users,
+              color: "from-orange-400 to-orange-500",
+              bgColor: "bg-orange-100",
+              textColor: "text-orange-600",
+              description: "Terkumpul",
+              isAmount: true,
+            },
+          ].map((stat, index) => (
+            <Card
+              key={stat.title}
+              className={`group relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 ${
+                isDarkMode
+                  ? "bg-gray-800/50 backdrop-blur-sm"
+                  : "bg-white/80 backdrop-blur-sm"
+              }`}
+              style={{
+                animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
+              }}
             >
-              <SelectTrigger className={`w-40 ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="AKTIF">
-                  <span className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    Aktif
-                  </span>
-                </SelectItem>
-                <SelectItem value="SELESAI">
-                  <span className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    Selesai
-                  </span>
-                </SelectItem>
-                <SelectItem value="DIBATALKAN">
-                  <span className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    Dibatalkan
-                  </span>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Button
-              variant="outline"
-              onClick={() => refetch()}
-              disabled={isLoading}
-              className="!rounded-button"
-            >
-              <i className="fas fa-refresh mr-2"></i>
-              Refresh
-            </Button>
-          </div>
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+              ></div>
+
+              <CardContent className="p-6 relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p
+                      className={`text-xs font-bold uppercase tracking-wide ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      {stat.title}
+                    </p>
+                    <p
+                      className={`text-xl md:text-2xl font-black mt-2 ${stat.textColor} group-hover:scale-110 transition-transform duration-300`}
+                    >
+                      {stat.isAmount ? `${stat.value}` : stat.value.toLocaleString()}
+                    </p>
+                    <p
+                      className={`text-xs mt-1 font-medium ${
+                        isDarkMode ? "text-gray-500" : "text-gray-400"
+                      }`}
+                    >
+                      {stat.description}
+                    </p>
+                  </div>
+                  <div
+                    className={`p-3 rounded-2xl ${stat.bgColor} transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-lg`}
+                  >
+                    <stat.icon className={`h-6 w-6 ${stat.textColor}`} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        {/* Stats Info */}
+        {/* Enhanced Filter Section */}
+        <Card
+          className={`border-0 shadow-xl mb-8 ${
+            isDarkMode
+              ? "bg-gray-800/50 backdrop-blur-sm"
+              : "bg-white/80 backdrop-blur-sm"
+          }`}
+        >
+          <CardContent className="p-8">
+            <div className="flex flex-col lg:flex-row gap-6 items-center">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl">
+                  <Filter className="h-5 w-5 text-white" />
+                </div>
+                <h3 className={`text-lg font-bold ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Filter & Pencarian
+                </h3>
+              </div>
+
+              <form onSubmit={handleSearchSubmit} className="flex gap-3 flex-1 max-w-md">
+                <div className="relative flex-1">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Input
+                    placeholder="🔍 Cari kegiatan berdasarkan judul, deskripsi, atau lokasi..."
+                    value={filters.search}
+                    onChange={(e) => handleFilterChange('search', e.target.value)}
+                    className={`pl-12 pr-4 py-3 text-base !rounded-xl border-2 transition-all duration-200 ${
+                      isDarkMode
+                        ? "bg-gray-700 border-gray-600 focus:border-blue-500"
+                        : "bg-white border-gray-300 focus:border-blue-500"
+                    } shadow-lg focus:shadow-xl`}
+                  />
+                </div>
+                <Button type="submit" className="!rounded-xl px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
+                  <Search className="h-4 w-4" />
+                </Button>
+              </form>
+              
+              <div className="flex gap-3">
+                <Select 
+                  value={filters.status} 
+                  onValueChange={(value) => handleFilterChange('status', value)}
+                >
+                  <SelectTrigger className={`w-48 !rounded-xl py-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'} shadow-lg`}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="AKTIF">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        🚀 Aktif
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="SELESAI">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        ✅ Selesai
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="DIBATALKAN">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        ❌ Dibatalkan
+                      </span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Button
+                  variant="outline"
+                  onClick={() => refetch()}
+                  disabled={isLoading}
+                  className="!rounded-xl px-6 py-3 border-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Results Info */}
         {!isLoading && !error && (
-          <div className={`mb-6 p-4 rounded-lg ${
-            isDarkMode ? 'bg-gray-800' : 'bg-white'
-          } shadow-sm`}>
-            <div className="flex flex-wrap gap-4 text-sm">
+          <div className={`mb-8 p-6 rounded-2xl shadow-lg ${
+            isDarkMode ? 'bg-gray-800/50 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm'
+          }`}>
+            <div className="flex flex-wrap gap-6 items-center text-sm font-medium">
               <div className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-blue-500" />
+                <Target className="h-5 w-5 text-blue-500" />
                 <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                  Total: {total} kegiatan
+                  Total: <span className="font-bold text-blue-600">{total}</span> kegiatan
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-green-500" />
+                <Calendar className="h-5 w-5 text-green-500" />
                 <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                  Halaman: {filters.page} dari {totalPages}
+                  Halaman: <span className="font-bold text-green-600">{filters.page}</span> dari <span className="font-bold text-green-600">{totalPages || 1}</span>
                 </span>
               </div>
               {filters.search && (
                 <div className="flex items-center gap-2">
-                  <Search className="h-4 w-4 text-orange-500" />
+                  <Search className="h-5 w-5 text-orange-500" />
                   <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                    Hasil untuk: "{filters.search}"
+                    Hasil untuk: <span className="font-bold text-orange-600">"{filters.search}"</span>
                   </span>
                 </div>
               )}
@@ -167,31 +316,52 @@ const BantuDesaKegiatan = () => {
         {isLoading && (
           <div className="flex justify-center items-center py-20">
             <div className="text-center">
-              <Loader2 className="animate-spin h-10 w-10 text-primary mx-auto mb-4" />
-              <span className="text-lg font-medium">Memuat data kegiatan...</span>
+              <div className="relative mb-6">
+                <Loader2 className="animate-spin h-16 w-16 text-primary mx-auto mb-4" />
+                <div className="absolute inset-0 h-16 w-16 border-4 border-blue-200 rounded-full animate-pulse mx-auto"></div>
+              </div>
+              <div className="space-y-2">
+                <span className={`text-xl font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                  Memuat data kegiatan...
+                </span>
+                <div className="flex items-center justify-center gap-1">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-100"></div>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce delay-200"></div>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="text-center py-20">
-            <div className={`max-w-md mx-auto p-6 rounded-lg ${
-              isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'
-            }`}>
-              <div className="text-red-500 mb-4">
-                <i className="fas fa-exclamation-circle text-3xl"></i>
+          <div className="flex justify-center items-center py-20">
+            <div className="text-center max-w-md">
+              <div className={`p-8 rounded-2xl shadow-2xl ${
+                isDarkMode 
+                  ? 'bg-gray-800/50 backdrop-blur-sm border border-red-800/20' 
+                  : 'bg-white/80 backdrop-blur-sm border border-red-200'
+              }`}>
+                <div className="relative mb-6">
+                  <div className="p-4 bg-gradient-to-r from-red-400 to-red-500 rounded-full mx-auto w-fit">
+                    <AlertCircle className="h-8 w-8 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                  Gagal Memuat Data
+                </h3>
+                <p className={`text-sm mb-6 leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  {error.response?.data?.message || error.message || "Terjadi kesalahan saat memuat data kegiatan"}
+                </p>
+                <Button 
+                  onClick={() => refetch()} 
+                  className="!rounded-xl px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:scale-105 transition-all duration-200"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Coba Lagi
+                </Button>
               </div>
-              <h3 className="text-lg font-medium mb-2 text-red-600">
-                Gagal Memuat Data
-              </h3>
-              <p className="text-red-500 mb-4 text-sm">
-                {error.response?.data?.message || "Terjadi kesalahan saat memuat data kegiatan"}
-              </p>
-              <Button onClick={() => refetch()} className="!rounded-button">
-                <i className="fas fa-refresh mr-2"></i>
-                Coba Lagi
-              </Button>
             </div>
           </div>
         )}
@@ -199,16 +369,20 @@ const BantuDesaKegiatan = () => {
         {/* Empty State */}
         {!isLoading && !error && activities.length === 0 && (
           <div className="text-center py-20">
-            <div className={`max-w-md mx-auto ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            <div className={`max-w-md mx-auto p-8 rounded-2xl shadow-2xl ${
+              isDarkMode 
+                ? 'bg-gray-800/50 backdrop-blur-sm border border-gray-700' 
+                : 'bg-white/80 backdrop-blur-sm border border-gray-200'
             }`}>
-              <div className="mb-6">
-                <i className="fas fa-search text-6xl opacity-50"></i>
-              </div>
-              <h3 className="text-xl font-medium mb-2">
+              <div className="text-6xl mb-6">🎯</div>
+              <h3 className={`text-xl font-bold mb-3 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>
                 Tidak ada kegiatan ditemukan
               </h3>
-              <p className="text-sm mb-6">
+              <p className={`text-sm mb-6 leading-relaxed ${
+                isDarkMode ? 'text-gray-300' : 'text-gray-600'
+              }`}>
                 {filters.search 
                   ? `Tidak ada kegiatan yang cocok dengan pencarian "${filters.search}"`
                   : "Belum ada kegiatan yang tersedia saat ini"
@@ -218,7 +392,7 @@ const BantuDesaKegiatan = () => {
                 <Button 
                   onClick={() => handleFilterChange('search', '')}
                   variant="outline"
-                  className="!rounded-button"
+                  className="!rounded-xl hover:scale-105 transition-all duration-200"
                 >
                   Hapus Filter
                 </Button>
@@ -227,16 +401,17 @@ const BantuDesaKegiatan = () => {
           </div>
         )}
 
-        {/* Kegiatan Grid */}
+        {/* Enhanced Kegiatan Grid */}
         {!isLoading && !error && activities.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {activities.map((activity) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {activities.map((activity, index) => {
               const daysLeft = calculateDaysLeft(activity.tanggal_selesai);
-              const progressPercentage = activity.progress_percentage || 0;
+              const progressPercentage = activity.progress_percentage || 
+                (activity.target_dana > 0 ? Math.round((activity.dana_terkumpul / activity.target_dana) * 100) : 0);
               
               return (
                 <Card 
-                  key={activity.id} 
+                  key={activity.id}
                   className={`overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group ${
                     isDarkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' : 'bg-white hover:shadow-xl'
                   }`}
@@ -247,7 +422,7 @@ const BantuDesaKegiatan = () => {
                       alt={activity.judul}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       onError={(e) => {
-                        e.target.src = `https://readdy.ai/api/search-image?query=Indonesian%20village%20community%20activity&width=400&height=200&seq=${activity.id}&orientation=landscape`;
+                        e.target.src = `https://readdy.ai/api/search-image?query=Indonesian%20village%20community%20activity&width=400&height=200&seq=fallback&orientation=landscape`;
                       }}
                     />
                     <div className="absolute top-3 right-3">

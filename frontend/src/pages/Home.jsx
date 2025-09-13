@@ -8,9 +8,12 @@ const Home = () => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+    <div className={`min-h-screen ${
+      isDarkMode 
+        ? "bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950" 
+        : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+    }`}>
       <Header />
-
       <Hero />
       <Fitur />
       <Footer />

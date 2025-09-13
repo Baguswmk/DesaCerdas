@@ -1,6 +1,5 @@
 import axiosInstance from "./api";
 
-
 export const getKegiatanAktif = (params = {}) => {
   const { status = "AKTIF", page = 1, limit = 10, search = "" } = params;
   return axiosInstance.get("/bantu-desa/kegiatan-desa", { 
@@ -20,7 +19,6 @@ export const updateKegiatan = (id, data) =>
 export const deleteKegiatan = (id) =>
   axiosInstance.delete(`/bantu-desa/kegiatan-desa/${id}`);
 
-
 export const createDonasi = (kegiatanId, data) =>
   axiosInstance.post(`/bantu-desa/kegiatan-desa/${kegiatanId}/donasi`, data);
 
@@ -32,7 +30,6 @@ export const verifyDonasi = (donasiId, data) =>
 
 export const getDonasiHistory = () =>
   axiosInstance.get("/bantu-desa/donasi/history");
-
 
 export const uploadSingleImage = (file) => {
   const formData = new FormData();
