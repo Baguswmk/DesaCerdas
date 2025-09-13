@@ -70,34 +70,31 @@ const LoginPage = () => {
   return (
     <div
       className={`min-h-screen flex items-center justify-center py-20 px-4 relative overflow-hidden ${
-        isDarkMode ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
+        isDarkMode ? "bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900" : "bg-gradient-to-br from-gray-50 via-slate-100 to-gray-100"
       }`}
     >
-      {/* Enhanced Background Elements */}
+      {/* Subtle Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Dynamic gradient orbs */}
         <div 
-          className="absolute w-96 h-96 bg-gradient-to-br from-blue-400/30 to-cyan-400/30 rounded-full blur-3xl animate-pulse-slow"
+          className="absolute w-96 h-96 bg-slate-400/10 rounded-full blur-3xl animate-pulse-slow"
           style={{
-            left: `${20 + mousePosition.x * 0.02}%`,
-            top: `${10 + mousePosition.y * 0.02}%`,
+            left: `${20 + mousePosition.x * 0.01}%`,
+            top: `${10 + mousePosition.y * 0.01}%`,
           }}
         ></div>
         <div 
-          className="absolute w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse-slow delay-1000"
+          className="absolute w-80 h-80 bg-gray-400/10 rounded-full blur-3xl animate-pulse-slow delay-1000"
           style={{
-            right: `${15 + mousePosition.x * 0.015}%`,
-            bottom: `${20 + mousePosition.y * 0.015}%`,
+            right: `${15 + mousePosition.x * 0.01}%`,
+            bottom: `${20 + mousePosition.y * 0.01}%`,
           }}
         ></div>
         
-        {/* Floating particles */}
-        {[...Array(20)].map((_, i) => (
+        {/* Fewer, more subtle floating particles */}
+        {[...Array(10)].map((_, i) => (
           <div
             key={i}
-            className={`absolute w-2 h-2 rounded-full animate-float ${
-              i % 3 === 0 ? 'bg-blue-400/40' : i % 3 === 1 ? 'bg-cyan-400/40' : 'bg-purple-400/40'
-            }`}
+            className="absolute w-1 h-1 bg-slate-400/30 rounded-full animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -109,56 +106,53 @@ const LoginPage = () => {
       </div>
 
       <Card
-        className={`w-full max-w-md relative z-10 shadow-2xl backdrop-blur-xl border-0 overflow-hidden ${
-          isDarkMode ? "bg-gray-800/80" : "bg-white/80"
+        className={`w-full max-w-md relative z-10 shadow-xl backdrop-blur-xl border overflow-hidden ${
+          isDarkMode ? "bg-gray-800/90 border-gray-700/50" : "bg-white/90 border-gray-200/50"
         }`}
       >
-        {/* Card glow effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 rounded-3xl blur opacity-20 animate-pulse"></div>
-        
-        {/* Top gradient accent */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 animate-gradient-x"></div>
+        {/* Subtle top accent */}
+        <div className={`absolute top-0 left-0 right-0 h-1 ${isDarkMode ? 'bg-slate-600' : 'bg-slate-400'}`}></div>
 
         <div className="relative z-10">
           <CardHeader className="text-center pb-8 pt-12">
             {/* Logo/Icon */}
             <div className="mb-6 mx-auto">
-              <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 shadow-2xl flex items-center justify-center transform hover:scale-110 hover:rotate-6 transition-all duration-300">
-                <i className="fas fa-user-circle text-white text-3xl"></i>
+              <div className={`w-20 h-20 mx-auto rounded-xl ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'} shadow-lg flex items-center justify-center transform hover:scale-105 transition-all duration-300`}>
+                <i className={`fas fa-user-circle text-3xl ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}></i>
               </div>
             </div>
 
             <CardTitle
-              className={`text-4xl font-black mb-4 ${
+              className={`text-3xl font-bold mb-4 ${
                 isDarkMode ? "text-white" : "text-gray-900"
-              } bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}
+              }`}
             >
               Selamat Datang
             </CardTitle>
             <p
-              className={`text-lg ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+              className={`text-base ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
             >
               Masuk untuk mengakses platform 
-              <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600"> DesaCerdas</span>
+              <span className={`font-semibold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}> DesaCerdas</span>
             </p>
           </CardHeader>
 
           <CardContent className="px-8 pb-8">
-            {/* Enhanced Error Display */}
+            {/* Error Display */}
             {loginError && (
-              <div className="mb-6 p-4 bg-gradient-to-r from-red-500/10 to-pink-500/10 border border-red-500/20 text-red-600 dark:text-red-400 rounded-2xl backdrop-blur-sm animate-shake">
+              <div className={`mb-6 p-4 rounded-lg border ${isDarkMode ? 'bg-red-900/20 border-red-700/50 text-red-400' : 'bg-red-50 border-red-200 text-red-600'} animate-shake`}>
                 <div className="flex items-center gap-3">
-                  <i className="fas fa-exclamation-triangle text-red-500"></i>
+                  <i className="fas fa-exclamation-circle"></i>
                   <span className="font-medium">{loginError}</span>
                 </div>
               </div>
             )}
             
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Enhanced Email Field */}
+              {/* Email Field */}
               <div className="space-y-2">
-                <label className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
-                  <i className="fas fa-envelope text-blue-500"></i>
+                <label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
+                  <i className={`fas fa-envelope ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}></i>
                   Email Address
                 </label>
                 <div className="relative">
@@ -169,27 +163,29 @@ const LoginPage = () => {
                     className={`${
                       errors.email 
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
-                        : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500/20"
-                    } text-base w-full pl-12 pr-4 py-4 rounded-2xl transition-all duration-300 ${
+                        : isDarkMode
+                          ? "border-gray-600 focus:border-slate-500 focus:ring-slate-500/20"
+                          : "border-gray-300 focus:border-slate-400 focus:ring-slate-400/20"
+                    } text-base w-full pl-11 pr-4 py-3 rounded-lg transition-all duration-200 ${
                       isDarkMode 
                         ? 'bg-gray-700/50 text-white placeholder-gray-400' 
                         : 'bg-white text-gray-900 placeholder-gray-500'
-                    } backdrop-blur-sm hover:shadow-lg focus:shadow-xl`}
+                    } hover:shadow-md focus:shadow-lg`}
                   />
-                  <i className="fas fa-at absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <i className={`fas fa-at absolute left-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}></i>
                 </div>
                 {errors.email && (
-                  <p className="text-red-500 text-sm font-medium flex items-center gap-2 animate-fadeInUp">
+                  <p className="text-red-500 text-sm font-medium flex items-center gap-2">
                     <i className="fas fa-times-circle"></i>
                     {errors.email.message}
                   </p>
                 )}
               </div>
 
-              {/* Enhanced Password Field */}
+              {/* Password Field */}
               <div className="space-y-2">
-                <label className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
-                  <i className="fas fa-lock text-purple-500"></i>
+                <label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
+                  <i className={`fas fa-lock ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}></i>
                   Password
                 </label>
                 <div className="relative">
@@ -200,24 +196,26 @@ const LoginPage = () => {
                     className={`${
                       errors.password 
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
-                        : "border-gray-300 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500/20"
-                    } text-base w-full pl-12 pr-16 py-4 rounded-2xl transition-all duration-300 ${
+                        : isDarkMode
+                          ? "border-gray-600 focus:border-slate-500 focus:ring-slate-500/20"
+                          : "border-gray-300 focus:border-slate-400 focus:ring-slate-400/20"
+                    } text-base w-full pl-11 pr-12 py-3 rounded-lg transition-all duration-200 ${
                       isDarkMode 
                         ? 'bg-gray-700/50 text-white placeholder-gray-400' 
                         : 'bg-white text-gray-900 placeholder-gray-500'
-                    } backdrop-blur-sm hover:shadow-lg focus:shadow-xl`}
+                    } hover:shadow-md focus:shadow-lg`}
                   />
-                  <i className="fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <i className={`fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}></i>
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200"
+                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'} transition-colors duration-200`}
                   >
                     <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-500 text-sm font-medium flex items-center gap-2 animate-fadeInUp">
+                  <p className="text-red-500 text-sm font-medium flex items-center gap-2">
                     <i className="fas fa-times-circle"></i>
                     {errors.password.message}
                   </p>
@@ -225,11 +223,15 @@ const LoginPage = () => {
               </div>
 
               {/* Remember Me & Forgot Password */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-3 cursor-pointer group">
+              {/* <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 cursor-pointer group">
                   <input 
                     type="checkbox" 
-                    className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 focus:ring-2 transition-all duration-200"
+                    className={`w-4 h-4 rounded focus:ring-2 transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'text-slate-500 focus:ring-slate-400 bg-gray-700 border-gray-600' 
+                        : 'text-slate-600 focus:ring-slate-500 bg-white border-gray-300'
+                    }`}
                   />
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300 group-hover:text-white' : 'text-gray-600 group-hover:text-gray-900'} transition-colors duration-200`}>
                     Ingat saya
@@ -238,88 +240,48 @@ const LoginPage = () => {
                 <button
                   type="button"
                   onClick={() => alert("Fitur lupa password akan segera tersedia")}
-                  className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200"
+                  className={`text-sm font-medium ${isDarkMode ? 'text-slate-400 hover:text-slate-300' : 'text-slate-600 hover:text-slate-800'} transition-colors duration-200`}
                 >
                   Lupa password?
                 </button>
-              </div>
+              </div> */}
 
-              {/* Enhanced Submit Button */}
+              {/* Submit Button */}
               <Button
                 type="submit"
                 disabled={isSubmitting || isLoading}
-                className="w-full py-4 text-lg font-bold rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 hover:from-blue-600 hover:via-purple-600 hover:to-cyan-600 text-white shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden"
+                className={`w-full py-3 text-base font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+                  isDarkMode 
+                    ? 'bg-slate-700 hover:bg-slate-600 text-white' 
+                    : 'bg-slate-800 hover:bg-slate-700 text-white'
+                }`}
               >
                 {isSubmitting || isLoading ? (
-                  <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center justify-center gap-2">
                     <i className="fas fa-spinner animate-spin"></i>
                     <span>Masuk...</span>
                   </div>
                 ) : (
-                  <>
-                    <span className="relative z-10 flex items-center justify-center gap-3">
-                      <i className="fas fa-sign-in-alt"></i>
-                      <span>Masuk ke Akun</span>
-                    </span>
-                    {/* Button shine effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -skew-x-12 -translate-x-full hover:translate-x-full transition-transform duration-1000"></div>
-                  </>
+                  <span className="flex items-center justify-center gap-2">
+                    <i className="fas fa-sign-in-alt"></i>
+                    <span>Masuk ke Akun</span>
+                  </span>
                 )}
               </Button>
             </form>
 
-            {/* Social Login Section */}
-            <div className="mt-8">
-              <div className="relative">
-                <div className={`absolute inset-0 flex items-center`}>
-                  <div className={`w-full border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className={`px-4 ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-white text-gray-500'} font-medium`}>
-                    Atau masuk dengan
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => alert("Login Google akan segera tersedia")}
-                  className={`flex items-center justify-center gap-3 px-4 py-3 rounded-xl border transition-all duration-300 hover:scale-105 ${
-                    isDarkMode 
-                      ? 'border-gray-600 bg-gray-700/50 text-white hover:bg-gray-600/50' 
-                      : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                  } backdrop-blur-sm shadow-lg hover:shadow-xl`}
-                >
-                  <i className="fab fa-google text-red-500"></i>
-                  <span className="font-medium">Google</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => alert("Login Facebook akan segera tersedia")}
-                  className={`flex items-center justify-center gap-3 px-4 py-3 rounded-xl border transition-all duration-300 hover:scale-105 ${
-                    isDarkMode 
-                      ? 'border-gray-600 bg-gray-700/50 text-white hover:bg-gray-600/50' 
-                      : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                  } backdrop-blur-sm shadow-lg hover:shadow-xl`}
-                >
-                  <i className="fab fa-facebook text-blue-500"></i>
-                  <span className="font-medium">Facebook</span>
-                </button>
-              </div>
-            </div>
 
             {/* Register Link */}
             <div className="mt-8 text-center">
               <p
-                className={`text-base ${
+                className={`text-sm ${
                   isDarkMode ? "text-gray-300" : "text-gray-600"
                 }`}
               >
                 Belum punya akun?{" "}
                 <button
                   onClick={() => handlePageChange("register")}
-                  className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all duration-300 hover:scale-105 inline-block"
+                  className={`font-semibold ${isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-900'} transition-colors duration-200`}
                 >
                   Daftar sekarang →
                 </button>

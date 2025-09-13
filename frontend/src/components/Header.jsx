@@ -53,9 +53,9 @@ const Header = () => {
   ];
 
   const featureItems = [
-    { page: "tanyahukum", label: "TanyaHukum", icon: "⚖️", desc: "Konsultasi hukum gratis", color: "hover:bg-blue-50 dark:hover:bg-blue-900/20" },
-    { page: "farmsmart", label: "FarmSmart", icon: "🌱", desc: "Pertanian cerdas", color: "hover:bg-green-50 dark:hover:bg-green-900/20" },
-    { page: "bantudesa", label: "BantuDesa", icon: "🤝", desc: "Platform donasi", color: "hover:bg-orange-50 dark:hover:bg-orange-900/20" }
+    { page: "tanyahukum", label: "TanyaHukum", icon: "⚖️", desc: "Konsultasi hukum gratis", color: "hover:bg-emerald-50 dark:hover:bg-emerald-900/20" },
+    { page: "farmsmart", label: "FarmSmart", icon: "🌱", desc: "Pertanian cerdas", color: "hover:bg-emerald-50 dark:hover:bg-emerald-900/20" },
+    { page: "bantudesa", label: "BantuDesa", icon: "🤝", desc: "Platform donasi", color: "hover:bg-emerald-50 dark:hover:bg-emerald-900/20" }
   ];
 
   return (
@@ -71,7 +71,7 @@ const Header = () => {
       >
         {/* Top accent line */}
         {isScrolled && (
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 via-emerald-500 to-purple-500 animate-gradient-x"></div>
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-600 animate-gradient-x"></div>
         )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -81,17 +81,17 @@ const Header = () => {
               className="flex items-center space-x-4 cursor-pointer group"
               onClick={() => handlePageChange("home")}
             >
-              <div className={`relative p-3 rounded-2xl bg-gradient-to-br from-cyan-500 via-emerald-500 to-blue-600 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 overflow-hidden`}>
+              <div className={`relative p-3 rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 overflow-hidden`}>
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <i className="fas fa-home text-white text-xl relative z-10"></i>
                 {/* Glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-50 blur-lg transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-emerald-600 opacity-0 group-hover:opacity-50 blur-lg transition-opacity duration-300"></div>
               </div>
               <div>
-                <span className={`text-2xl font-black ${isDarkMode ? "text-white" : "text-gray-900"} group-hover:bg-gradient-to-r group-hover:from-cyan-600 group-hover:to-blue-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300`}>
+                <span className={`text-2xl font-black ${isDarkMode ? "text-white" : "text-gray-900"} group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-emerald-700 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300`}>
                   DesaCerdas
                 </span>
-                <div className="text-xs text-cyan-600 font-bold tracking-wide">PLATFORM</div>
+                <div className="text-xs text-emerald-600 font-bold tracking-wide">PLATFORM</div>
               </div>
             </div>
 
@@ -101,7 +101,7 @@ const Header = () => {
                 <button
                   key={page}
                   onClick={() => handlePageChange(page)}
-                  className={`relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 group ${
+                  className={`relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 group focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:outline-none ${
                     isDarkMode
                       ? "text-gray-300 hover:text-white hover:bg-gray-800/50"
                       : "text-gray-700 hover:text-gray-900 hover:bg-gray-100/50"
@@ -112,9 +112,9 @@ const Header = () => {
                     <span>{label}</span>
                   </span>
                   {/* Animated underline */}
-                  <span className="absolute inset-x-2 bottom-1 h-0.5 bg-gradient-to-r from-cyan-400 to-emerald-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-full"></span>
+                  <span className="absolute inset-x-2 bottom-1 h-0.5 bg-gradient-to-r from-emerald-400 to-emerald-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-full"></span>
                   {/* Hover glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-emerald-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
                 </button>
               ))}
 
@@ -122,19 +122,19 @@ const Header = () => {
               <div className="relative dropdown-container">
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 group backdrop-blur-sm ${
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 group backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:outline-none ${
                     isDarkMode
                       ? "text-gray-300 hover:text-white hover:bg-gray-800/50"
                       : "text-gray-700 hover:text-gray-900 hover:bg-gray-100/50"
-                  } ${showDropdown ? 'bg-gradient-to-r from-cyan-500/20 to-emerald-500/20' : ''}`}
+                  } ${showDropdown ? 'bg-gradient-to-r from-emerald-500/20 to-emerald-600/20' : ''}`}
                 >
                   <span className="flex items-center gap-2">
                     <span className="transform group-hover:scale-110 transition-transform duration-200">🚀</span>
                     <span>Fitur</span>
                   </span>
-                  <i className={`fas fa-chevron-down text-xs transition-all duration-300 ${showDropdown ? 'rotate-180 text-cyan-500' : 'group-hover:text-emerald-500'}`}></i>
+                  <i className={`fas fa-chevron-down text-xs transition-all duration-300 ${showDropdown ? 'rotate-180 text-emerald-500' : 'group-hover:text-emerald-500'}`}></i>
                   {/* Animated underline */}
-                  <span className="absolute inset-x-2 bottom-1 h-0.5 bg-gradient-to-r from-cyan-400 to-emerald-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-full"></span>
+                  <span className="absolute inset-x-2 bottom-1 h-0.5 bg-gradient-to-r from-emerald-400 to-emerald-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-full"></span>
                 </button>
                 
                 {/* Enhanced Dropdown Menu */}
@@ -147,7 +147,7 @@ const Header = () => {
                     } py-3 z-50 overflow-hidden`}
                   >
                     {/* Gradient top accent */}
-                    <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-emerald-500"></div>
+                    <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-emerald-600"></div>
                     
                     <div className="px-4 py-2 border-b border-gray-200/20">
                       <h4 className={`font-bold text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} uppercase tracking-wider`}>
@@ -166,14 +166,14 @@ const Header = () => {
                         } ${color} relative overflow-hidden`}
                       >
                         {/* Hover background effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/5 to-emerald-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         
                         <div className="flex items-center gap-4 relative z-10">
                           <div className="text-2xl transform group-hover:scale-125 group-hover:rotate-12 transition-all duration-300">
                             {icon}
                           </div>
                           <div className="flex-1">
-                            <div className="font-bold text-base group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors duration-300">
+                            <div className="font-bold text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300">
                               {label}
                             </div>
                             <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} group-hover:text-gray-600 dark:group-hover:text-gray-300`}>
@@ -201,21 +201,21 @@ const Header = () => {
               {/* Enhanced Theme Toggle */}
               <button
                 onClick={toggleTheme}
-                className={`relative p-4 rounded-2xl transition-all duration-500 transform hover:scale-110 group overflow-hidden ${
+                className={`relative p-4 rounded-2xl transition-all duration-500 transform hover:scale-110 group overflow-hidden focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:outline-none ${
                   isDarkMode
                     ? "text-yellow-400 hover:bg-gray-800/50 bg-gray-700/30"
                     : "text-gray-600 hover:bg-gray-100/50 bg-gray-100/30"
                 } shadow-lg hover:shadow-xl backdrop-blur-sm border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`}
               >
                 {/* Animated background */}
-                <div className={`absolute inset-0 bg-gradient-to-r ${isDarkMode ? 'from-yellow-400/20 to-orange-400/20' : 'from-blue-400/20 to-purple-400/20'} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-r ${isDarkMode ? 'from-emerald-400/10 to-emerald-600/10' : 'from-emerald-200/20 to-emerald-400/20'} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
                 
                 <div className="relative z-10 flex items-center justify-center">
                   <i className={`fas ${isDarkMode ? "fa-sun" : "fa-moon"} text-lg transform group-hover:rotate-180 transition-transform duration-500`}></i>
                 </div>
                 
                 {/* Glow effect */}
-                <div className={`absolute inset-0 ${isDarkMode ? 'bg-yellow-400' : 'bg-blue-400'} opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-300`}></div>
+                <div className={`absolute inset-0 ${isDarkMode ? 'bg-emerald-500' : 'bg-emerald-400'} opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-300`}></div>
               </button>
 
               {/* Enhanced Auth Section */}
@@ -230,14 +230,14 @@ const Header = () => {
                           : "bg-white/30 hover:bg-gray-50/50 text-gray-700 border-gray-200/50 hover:border-gray-300/50"
                       }`}
                     >
-                      <Avatar className="h-10 w-10 mr-3 ring-2 ring-gradient-to-r from-cyan-400 to-emerald-400 group-hover:ring-4 transition-all duration-300">
+                      <Avatar className="h-10 w-10 mr-3 ring-2 ring-gradient-to-r from-emerald-400 to-emerald-500 group-hover:ring-4 transition-all duration-300">
                         <AvatarImage src={user?.avatarUrl} alt={user?.name} />
-                        <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-emerald-500 text-white font-bold">
+                        <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white font-bold">
                           {user?.name?.[0]?.toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="text-left">
-                        <div className="text-sm font-bold truncate max-w-24 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors duration-300">
+                        <div className="text-sm font-bold truncate max-w-24 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300">
                           {user?.name}
                         </div>
                         <div className="flex items-center gap-1 text-xs text-emerald-500">
@@ -254,12 +254,12 @@ const Header = () => {
                       isDarkMode ? 'bg-gray-800/95 border-gray-700/50' : 'bg-white/95 border-gray-200/50'
                     } animate-slideDown`}
                   >
-                    <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-emerald-500"></div>
+                    <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-emerald-600"></div>
                     <DropdownMenuItem 
                       onClick={() => alert("Fitur Profil belum tersedia")}
-                      className="px-4 py-3 cursor-pointer hover:bg-gradient-to-r hover:from-cyan-50 hover:to-emerald-50 dark:hover:from-cyan-900/20 dark:hover:to-emerald-900/20"
+                      className="px-4 py-3 cursor-pointer hover:bg-gradient-to-r hover:from-emerald-50 hover:to-emerald-100/70 dark:hover:from-emerald-900/20 dark:hover:to-emerald-800/20"
                     >
-                      <i className="fas fa-user mr-3 text-cyan-500"></i>
+                      <i className="fas fa-user mr-3 text-emerald-500"></i>
                       <span className="font-medium">Profil Saya</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem 
@@ -286,7 +286,7 @@ const Header = () => {
                   </Button>
                   <Button
                     onClick={() => handlePageChange("register")}
-                    className="px-6 py-3 rounded-xl font-bold bg-gradient-to-r from-cyan-500 via-emerald-500 to-blue-500 hover:from-cyan-400 hover:via-emerald-400 hover:to-blue-400 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden"
+                    className="px-6 py-3 rounded-xl font-bold bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-400 hover:via-emerald-500 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden"
                   >
                     {/* Shine effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -skew-x-12 -translate-x-full hover:translate-x-full transition-transform duration-1000"></div>
@@ -318,18 +318,18 @@ const Header = () => {
               : "bg-white/95 border-gray-200/30"
           } animate-slideDown shadow-2xl`}>
             {/* Top gradient accent */}
-            <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-emerald-500"></div>
+            <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-emerald-600"></div>
             
             <div className="max-w-7xl mx-auto px-4 py-8 space-y-2">
               {navItems.map(({ page, label, icon }) => (
                 <button
                   key={page}
                   onClick={() => handlePageChange(page)}
-                  className={`flex items-center w-full px-6 py-4 rounded-2xl font-semibold transition-all duration-300 group ${
+                  className={`flex items-center w-full px-6 py-4 rounded-2xl font-semibold transition-all duration-300 group focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:outline-none ${
                     isDarkMode
                       ? "text-gray-300 hover:text-white hover:bg-gray-800/50"
                       : "text-gray-700 hover:text-gray-900 hover:bg-gray-100/50"
-                  } backdrop-blur-sm border border-transparent hover:border-cyan-500/30`}
+                  } backdrop-blur-sm border border-transparent hover:border-emerald-500/30`}
                 >
                   <span className="text-xl mr-4 transform group-hover:scale-125 group-hover:rotate-12 transition-all duration-300">{icon}</span>
                   <span>{label}</span>
@@ -338,7 +338,7 @@ const Header = () => {
               ))}
               
               <div className={`border-t pt-6 mt-6 ${isDarkMode ? 'border-gray-700/30' : 'border-gray-200/30'}`}>
-                <div className="text-sm font-semibold text-cyan-600 mb-4 px-6 uppercase tracking-wider">🚀 Fitur Unggulan</div>
+                <div className="text-sm font-semibold text-emerald-600 mb-4 px-6 uppercase tracking-wider">🚀 Fitur Unggulan</div>
                 {featureItems.map(({ page, label, icon, desc }) => (
                   <button
                     key={page}

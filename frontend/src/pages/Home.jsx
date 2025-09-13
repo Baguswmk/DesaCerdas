@@ -10,6 +10,7 @@ const Home = () => {
   return (
     <div className={`min-h-screen ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
       <Header />
+
       <Hero />
       <Fitur />
       <Footer />

@@ -27,7 +27,6 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [currentStep, setCurrentStep] = useState(1);
 
   const {
     register,
@@ -50,13 +49,13 @@ const Register = () => {
 
   const getPasswordStrength = (password) => {
     if (!password) return { strength: 0, text: "", color: "" };
-    
+
     let strength = 0;
     if (password.length >= 8) strength += 25;
     if (/[a-z]/.test(password)) strength += 25;
     if (/[A-Z]/.test(password)) strength += 25;
     if (/[0-9]/.test(password)) strength += 25;
-    
+
     if (strength <= 25) return { strength, text: "Lemah", color: "bg-red-500" };
     if (strength <= 50) return { strength, text: "Cukup", color: "bg-yellow-500" };
     if (strength <= 75) return { strength, text: "Baik", color: "bg-blue-500" };
@@ -70,9 +69,9 @@ const Register = () => {
       setRegisterError("");
       setRegisterSuccess("");
       setIsLoading(true);
-      
+
       const result = await registerUser(data);
-      
+
       if (result.success) {
         setRegisterSuccess("Registrasi berhasil! Silakan login.");
         setTimeout(() => {
@@ -97,37 +96,31 @@ const Register = () => {
 
   return (
     <div
-      className={`min-h-screen flex items-center justify-center py-20 px-4 relative overflow-hidden ${
-        isDarkMode ? "bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900" : "bg-gradient-to-br from-purple-50 via-white to-pink-50"
-      }`}
+      className={`min-h-screen flex items-center justify-center py-20 px-4 relative overflow-hidden ${isDarkMode ? "bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900" : "bg-gradient-to-br from-gray-50 via-slate-100 to-gray-100"
+        }`}
     >
-      {/* Enhanced Background Elements */}
+      {/* Subtle Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Dynamic gradient orbs */}
-        <div 
-          className="absolute w-96 h-96 bg-gradient-to-br from-purple-400/30 to-pink-400/30 rounded-full blur-3xl animate-pulse-slow"
+        <div
+          className="absolute w-96 h-96 bg-slate-400/10 rounded-full blur-3xl animate-pulse-slow"
           style={{
-            left: `${25 + mousePosition.x * 0.02}%`,
-            top: `${15 + mousePosition.y * 0.02}%`,
+            left: `${25 + mousePosition.x * 0.01}%`,
+            top: `${15 + mousePosition.y * 0.01}%`,
           }}
         ></div>
-        <div 
-          className="absolute w-80 h-80 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse-slow delay-1000"
+        <div
+          className="absolute w-80 h-80 bg-gray-400/10 rounded-full blur-3xl animate-pulse-slow delay-1000"
           style={{
-            right: `${20 + mousePosition.x * 0.015}%`,
-            bottom: `${25 + mousePosition.y * 0.015}%`,
+            right: `${20 + mousePosition.x * 0.01}%`,
+            bottom: `${25 + mousePosition.y * 0.01}%`,
           }}
         ></div>
-        
-        {/* Floating particles */}
-        {[...Array(25)].map((_, i) => (
+
+        {/* Fewer, more subtle floating particles */}
+        {[...Array(12)].map((_, i) => (
           <div
             key={i}
-            className={`absolute w-2 h-2 rounded-full animate-float ${
-              i % 4 === 0 ? 'bg-purple-400/40' : 
-              i % 4 === 1 ? 'bg-pink-400/40' : 
-              i % 4 === 2 ? 'bg-blue-400/40' : 'bg-cyan-400/40'
-            }`}
+            className="absolute w-1 h-1 bg-slate-400/30 rounded-full animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -139,66 +132,61 @@ const Register = () => {
       </div>
 
       <Card
-        className={`w-full max-w-lg relative z-10 shadow-2xl backdrop-blur-xl border-0 overflow-hidden ${
-          isDarkMode ? "bg-gray-800/80" : "bg-white/80"
-        }`}
+        className={`w-full max-w-lg relative z-10 shadow-xl backdrop-blur-xl border overflow-hidden ${isDarkMode ? "bg-gray-800/90 border-gray-700/50" : "bg-white/90 border-gray-200/50"
+          }`}
       >
-        {/* Card glow effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 rounded-3xl blur opacity-20 animate-pulse"></div>
-        
-        {/* Top gradient accent */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 animate-gradient-x"></div>
+        {/* Subtle top accent */}
+        <div className={`absolute top-0 left-0 right-0 h-1 ${isDarkMode ? 'bg-slate-600' : 'bg-slate-400'}`}></div>
 
         <div className="relative z-10">
           <CardHeader className="text-center pb-8 pt-12">
             {/* Logo/Icon */}
             <div className="mb-6 mx-auto">
-              <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 shadow-2xl flex items-center justify-center transform hover:scale-110 hover:rotate-6 transition-all duration-300">
-                <i className="fas fa-user-plus text-white text-3xl"></i>
+              <div className={`w-20 h-20 mx-auto rounded-xl ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'} shadow-lg flex items-center justify-center transform hover:scale-105 transition-all duration-300`}>
+                <i className={`fas fa-user-plus text-3xl ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}></i>
               </div>
             </div>
 
             <CardTitle
-              className={`text-4xl font-black mb-4 ${
-                isDarkMode ? "text-white" : "text-gray-900"
-              } bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}
+              className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"
+                }`}
             >
               Bergabunglah
             </CardTitle>
             <p
-              className={`text-lg ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+              className={`text-base ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
             >
-              Daftar dan jadilah bagian dari komunitas 
-              <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"> DesaCerdas</span>
+              Daftar dan jadilah bagian dari komunitas
+              <span className={`font-semibold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}> DesaCerdas</span>
             </p>
           </CardHeader>
 
           <CardContent className="px-8 pb-8">
-            {/* Enhanced Error Display */}
+            {/* Error Display */}
             {registerError && (
-              <div className="mb-6 p-4 bg-gradient-to-r from-red-500/10 to-pink-500/10 border border-red-500/20 text-red-600 dark:text-red-400 rounded-2xl backdrop-blur-sm animate-shake">
+              <div className={`mb-6 p-4 rounded-lg border ${isDarkMode ? 'bg-red-900/20 border-red-700/50 text-red-400' : 'bg-red-50 border-red-200 text-red-600'} animate-shake`}>
                 <div className="flex items-center gap-3">
-                  <i className="fas fa-exclamation-triangle text-red-500"></i>
+                  <i className="fas fa-exclamation-triangle"></i>
                   <span className="font-medium">{registerError}</span>
                 </div>
               </div>
             )}
-            
-            {/* Enhanced Success Display */}
+
+            {/* Success Display */}
             {registerSuccess && (
-              <div className="mb-6 p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 text-green-600 dark:text-green-400 rounded-2xl backdrop-blur-sm animate-bounce-gentle">
+              <div className={`mb-6 p-4 rounded-lg border ${isDarkMode ? 'bg-green-900/20 border-green-700/50 text-green-400' : 'bg-green-50 border-green-200 text-green-600'} animate-bounce-gentle`}>
                 <div className="flex items-center gap-3">
-                  <i className="fas fa-check-circle text-green-500"></i>
+                  <i className="fas fa-check-circle"></i>
                   <span className="font-medium">{registerSuccess}</span>
                 </div>
               </div>
             )}
-            
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Enhanced Name Field */}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Name Field */}
               <div className="space-y-2">
-                <label className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
-                  <i className="fas fa-user text-purple-500"></i>
+                <label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
+                  <i className={`fas fa-user ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}></i>
                   Nama Lengkap
                 </label>
                 <div className="relative">
@@ -206,30 +194,30 @@ const Register = () => {
                     type="text"
                     placeholder="Masukkan nama lengkap"
                     {...register("name")}
-                    className={`${
-                      errors.name 
-                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
-                        : "border-gray-300 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500/20"
-                    } text-base w-full pl-12 pr-4 py-4 rounded-2xl transition-all duration-300 ${
-                      isDarkMode 
-                        ? 'bg-gray-700/50 text-white placeholder-gray-400' 
+                    className={`${errors.name
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                      : isDarkMode
+                        ? "border-gray-600 focus:border-slate-500 focus:ring-slate-500/20"
+                        : "border-gray-300 focus:border-slate-400 focus:ring-slate-400/20"
+                      } text-base w-full pl-11 pr-4 py-3 rounded-lg transition-all duration-200 ${isDarkMode
+                        ? 'bg-gray-700/50 text-white placeholder-gray-400'
                         : 'bg-white text-gray-900 placeholder-gray-500'
-                    } backdrop-blur-sm hover:shadow-lg focus:shadow-xl`}
+                      } hover:shadow-md focus:shadow-lg`}
                   />
-                  <i className="fas fa-id-card absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <i className={`fas fa-id-card absolute left-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}></i>
                 </div>
                 {errors.name && (
-                  <p className="text-red-500 text-sm font-medium flex items-center gap-2 animate-fadeInUp">
+                  <p className="text-red-500 text-sm font-medium flex items-center gap-2">
                     <i className="fas fa-times-circle"></i>
                     {errors.name.message}
                   </p>
                 )}
               </div>
 
-              {/* Enhanced Email Field */}
+              {/* Email Field */}
               <div className="space-y-2">
-                <label className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
-                  <i className="fas fa-envelope text-blue-500"></i>
+                <label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
+                  <i className={`fas fa-envelope ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}></i>
                   Email Address
                 </label>
                 <div className="relative">
@@ -237,30 +225,30 @@ const Register = () => {
                     type="email"
                     placeholder="nama@email.com"
                     {...register("email")}
-                    className={`${
-                      errors.email 
-                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
-                        : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500/20"
-                    } text-base w-full pl-12 pr-4 py-4 rounded-2xl transition-all duration-300 ${
-                      isDarkMode 
-                        ? 'bg-gray-700/50 text-white placeholder-gray-400' 
+                    className={`${errors.email
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                      : isDarkMode
+                        ? "border-gray-600 focus:border-slate-500 focus:ring-slate-500/20"
+                        : "border-gray-300 focus:border-slate-400 focus:ring-slate-400/20"
+                      } text-base w-full pl-11 pr-4 py-3 rounded-lg transition-all duration-200 ${isDarkMode
+                        ? 'bg-gray-700/50 text-white placeholder-gray-400'
                         : 'bg-white text-gray-900 placeholder-gray-500'
-                    } backdrop-blur-sm hover:shadow-lg focus:shadow-xl`}
+                      } hover:shadow-md focus:shadow-lg`}
                   />
-                  <i className="fas fa-at absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <i className={`fas fa-at absolute left-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}></i>
                 </div>
                 {errors.email && (
-                  <p className="text-red-500 text-sm font-medium flex items-center gap-2 animate-fadeInUp">
+                  <p className="text-red-500 text-sm font-medium flex items-center gap-2">
                     <i className="fas fa-times-circle"></i>
                     {errors.email.message}
                   </p>
                 )}
               </div>
 
-              {/* Enhanced Password Field */}
+              {/* Password Field */}
               <div className="space-y-2">
-                <label className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
-                  <i className="fas fa-lock text-pink-500"></i>
+                <label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
+                  <i className={`fas fa-lock ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}></i>
                   Password
                 </label>
                 <div className="relative">
@@ -268,62 +256,61 @@ const Register = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Buat password yang kuat"
                     {...register("password")}
-                    className={`${
-                      errors.password 
-                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
-                        : "border-gray-300 dark:border-gray-600 focus:border-pink-500 focus:ring-pink-500/20"
-                    } text-base w-full pl-12 pr-16 py-4 rounded-2xl transition-all duration-300 ${
-                      isDarkMode 
-                        ? 'bg-gray-700/50 text-white placeholder-gray-400' 
+                    className={`${errors.password
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                      : isDarkMode
+                        ? "border-gray-600 focus:border-slate-500 focus:ring-slate-500/20"
+                        : "border-gray-300 focus:border-slate-400 focus:ring-slate-400/20"
+                      } text-base w-full pl-11 pr-12 py-3 rounded-lg transition-all duration-200 ${isDarkMode
+                        ? 'bg-gray-700/50 text-white placeholder-gray-400'
                         : 'bg-white text-gray-900 placeholder-gray-500'
-                    } backdrop-blur-sm hover:shadow-lg focus:shadow-xl`}
+                      } hover:shadow-md focus:shadow-lg`}
                   />
-                  <i className="fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <i className={`fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}></i>
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200"
+                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'} transition-colors duration-200`}
                   >
                     <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                   </button>
                 </div>
-                
+
                 {/* Password Strength Indicator */}
                 {password && (
                   <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-                        <div 
+                      <div className={`flex-1 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full h-2 overflow-hidden`}>
+                        <div
                           className={`h-full transition-all duration-300 ${passwordStrength.color}`}
                           style={{ width: `${passwordStrength.strength}%` }}
                         ></div>
                       </div>
-                      <span className={`text-xs font-medium ${
-                        passwordStrength.strength <= 25 ? 'text-red-500' :
+                      <span className={`text-xs font-medium ${passwordStrength.strength <= 25 ? 'text-red-500' :
                         passwordStrength.strength <= 50 ? 'text-yellow-500' :
-                        passwordStrength.strength <= 75 ? 'text-blue-500' : 'text-green-500'
-                      }`}>
+                          passwordStrength.strength <= 75 ? 'text-blue-500' : 'text-green-500'
+                        }`}>
                         {passwordStrength.text}
                       </span>
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       Password harus mengandung huruf besar, kecil, angka (min. 8 karakter)
                     </div>
                   </div>
                 )}
 
                 {errors.password && (
-                  <p className="text-red-500 text-sm font-medium flex items-center gap-2 animate-fadeInUp">
+                  <p className="text-red-500 text-sm font-medium flex items-center gap-2">
                     <i className="fas fa-times-circle"></i>
                     {errors.password.message}
                   </p>
                 )}
               </div>
 
-              {/* Enhanced Confirm Password Field */}
+              {/* Confirm Password Field */}
               <div className="space-y-2">
-                <label className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
-                  <i className="fas fa-lock text-cyan-500"></i>
+                <label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} flex items-center gap-2`}>
+                  <i className={`fas fa-lock ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}></i>
                   Konfirmasi Password
                 </label>
                 <div className="relative">
@@ -331,136 +318,65 @@ const Register = () => {
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Ulangi password"
                     {...register("confirmPassword")}
-                    className={`${
-                      errors.confirmPassword 
-                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
-                        : "border-gray-300 dark:border-gray-600 focus:border-cyan-500 focus:ring-cyan-500/20"
-                    } text-base w-full pl-12 pr-16 py-4 rounded-2xl transition-all duration-300 ${
-                      isDarkMode 
-                        ? 'bg-gray-700/50 text-white placeholder-gray-400' 
+                    className={`${errors.confirmPassword
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                      : isDarkMode
+                        ? "border-gray-600 focus:border-slate-500 focus:ring-slate-500/20"
+                        : "border-gray-300 focus:border-slate-400 focus:ring-slate-400/20"
+                      } text-base w-full pl-11 pr-12 py-3 rounded-lg transition-all duration-200 ${isDarkMode
+                        ? 'bg-gray-700/50 text-white placeholder-gray-400'
                         : 'bg-white text-gray-900 placeholder-gray-500'
-                    } backdrop-blur-sm hover:shadow-lg focus:shadow-xl`}
+                      } hover:shadow-md focus:shadow-lg`}
                   />
-                  <i className="fas fa-check-double absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <i className={`fas fa-check-double absolute left-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}></i>
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200"
+                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'} transition-colors duration-200`}
                   >
                     <i className={`fas ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm font-medium flex items-center gap-2 animate-fadeInUp">
+                  <p className="text-red-500 text-sm font-medium flex items-center gap-2">
                     <i className="fas fa-times-circle"></i>
                     {errors.confirmPassword.message}
                   </p>
                 )}
               </div>
 
-              {/* Terms & Conditions */}
-              <div className="flex items-start gap-3">
-                <input 
-                  type="checkbox" 
-                  required
-                  className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500 focus:ring-2 transition-all duration-200 mt-0.5"
-                />
-                <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
-                  Saya menyetujui{" "}
-                  <button
-                    type="button"
-                    onClick={() => handlePageChange("terms")}
-                    className="text-purple-600 hover:text-purple-500 font-medium underline"
-                  >
-                    Syarat & Ketentuan
-                  </button>
-                  {" "}dan{" "}
-                  <button
-                    type="button"
-                    onClick={() => handlePageChange("privacy")}
-                    className="text-purple-600 hover:text-purple-500 font-medium underline"
-                  >
-                    Kebijakan Privasi
-                  </button>
-                </span>
-              </div>
-
-              {/* Enhanced Submit Button */}
+              {/* Submit Button */}
               <Button
                 type="submit"
                 disabled={isSubmitting || isLoading}
-                className="w-full py-4 text-lg font-bold rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 hover:from-purple-600 hover:via-pink-600 hover:to-blue-600 text-white shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden"
+                className={`w-full py-3 text-base font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${isDarkMode
+                  ? 'bg-slate-700 hover:bg-slate-600 text-white'
+                  : 'bg-slate-800 hover:bg-slate-700 text-white'
+                  }`}
               >
                 {isSubmitting || isLoading ? (
-                  <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center justify-center gap-2">
                     <i className="fas fa-spinner animate-spin"></i>
                     <span>Mendaftarkan...</span>
                   </div>
                 ) : (
-                  <>
-                    <span className="relative z-10 flex items-center justify-center gap-3">
-                      <i className="fas fa-user-plus"></i>
-                      <span>Daftar Akun Baru</span>
-                    </span>
-                    {/* Button shine effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -skew-x-12 -translate-x-full hover:translate-x-full transition-transform duration-1000"></div>
-                  </>
+                  <span className="flex items-center justify-center gap-2">
+                    <i className="fas fa-user-plus"></i>
+                    <span>Daftar Akun Baru</span>
+                  </span>
                 )}
               </Button>
             </form>
-
-            {/* Social Register Section */}
-            <div className="mt-8">
-              <div className="relative">
-                <div className={`absolute inset-0 flex items-center`}>
-                  <div className={`w-full border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className={`px-4 ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-white text-gray-500'} font-medium`}>
-                    Atau daftar dengan
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => alert("Register Google akan segera tersedia")}
-                  className={`flex items-center justify-center gap-3 px-4 py-3 rounded-xl border transition-all duration-300 hover:scale-105 ${
-                    isDarkMode 
-                      ? 'border-gray-600 bg-gray-700/50 text-white hover:bg-gray-600/50' 
-                      : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                  } backdrop-blur-sm shadow-lg hover:shadow-xl`}
-                >
-                  <i className="fab fa-google text-red-500"></i>
-                  <span className="font-medium">Google</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => alert("Register Facebook akan segera tersedia")}
-                  className={`flex items-center justify-center gap-3 px-4 py-3 rounded-xl border transition-all duration-300 hover:scale-105 ${
-                    isDarkMode 
-                      ? 'border-gray-600 bg-gray-700/50 text-white hover:bg-gray-600/50' 
-                      : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                  } backdrop-blur-sm shadow-lg hover:shadow-xl`}
-                >
-                  <i className="fab fa-facebook text-blue-500"></i>
-                  <span className="font-medium">Facebook</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Login Link */}
+            {/* Register Link */}
             <div className="mt-8 text-center">
               <p
-                className={`text-base ${
-                  isDarkMode ? "text-gray-300" : "text-gray-600"
-                }`}
+                className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"
+                  }`}
               >
                 Sudah punya akun?{" "}
                 <button
                   onClick={() => handlePageChange("login")}
-                  className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 transition-all duration-300 hover:scale-105 inline-block"
+                  className={`font-semibold ${isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-900'} transition-colors duration-200`}
                 >
                   Masuk sekarang →
                 </button>
@@ -471,9 +387,8 @@ const Register = () => {
             <div className="mt-6 text-center">
               <button
                 onClick={() => handlePageChange("home")}
-                className={`text-sm font-medium ${
-                  isDarkMode ? "text-gray-400 hover:text-gray-300" : "text-gray-500 hover:text-gray-700"
-                } transition-colors duration-200 flex items-center justify-center gap-2 mx-auto`}
+                className={`text-sm font-medium ${isDarkMode ? "text-gray-400 hover:text-gray-300" : "text-gray-500 hover:text-gray-700"
+                  } transition-colors duration-200 flex items-center justify-center gap-2 mx-auto`}
               >
                 <i className="fas fa-home"></i>
                 <span>Kembali ke Beranda</span>
@@ -485,45 +400,31 @@ const Register = () => {
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
-          33% { transform: translateY(-10px) rotate(5deg); opacity: 1; }
-          66% { transform: translateY(-5px) rotate(-5deg); opacity: 0.8; }
+          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+          33% { transform: translateY(-8px) rotate(2deg); opacity: 0.7; }
+          66% { transform: translateY(-4px) rotate(-2deg); opacity: 0.6; }
         }
         
         @keyframes pulse-slow {
-          0%, 100% { transform: scale(1); opacity: 0.8; }
-          50% { transform: scale(1.05); opacity: 1; }
-        }
-        
-        @keyframes gradient-x {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          0%, 100% { transform: scale(1); opacity: 0.6; }
+          50% { transform: scale(1.02); opacity: 0.8; }
         }
         
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
-          10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-          20%, 40%, 60%, 80% { transform: translateX(2px); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-1px); }
+          20%, 40%, 60%, 80% { transform: translateX(1px); }
         }
         
         @keyframes bounce-gentle {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+          50% { transform: translateY(-2px); }
         }
         
         .animate-float { animation: float linear infinite; }
         .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
-       .animate-gradient-x { 
-          background-size: 200% 200%; 
-          animation: gradient-x 3s ease infinite; 
-        }
         .animate-shake { animation: shake 0.5s ease-in-out; }
-        .animate-fadeInUp { animation: fadeInUp 0.3s ease-out; }
+        .animate-bounce-gentle { animation: bounce-gentle 2s ease-in-out infinite; }
       `}</style>
     </div>
   );
