@@ -66,7 +66,6 @@ export const useDetailKegiatan = (id) => {
         )
       };
 
-      console.log('Parsed kegiatan in hook:', parsedKegiatan);
       return parsedKegiatan;
     },
     staleTime: 2 * 60 * 1000, // 2 menit

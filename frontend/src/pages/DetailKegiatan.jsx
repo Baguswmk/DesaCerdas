@@ -32,7 +32,6 @@ const DetailKegiatanPage = () => {
   const { data: kegiatan, isLoading, error } = useDetailKegiatan(id);
 
   // Debug log
-  console.log('Detail kegiatan data:', kegiatan);
 
   const handleBack = () => {
     navigate(-1); // Go back to previous page

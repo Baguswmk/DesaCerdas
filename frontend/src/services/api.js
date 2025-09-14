@@ -38,8 +38,6 @@ axiosInstance.interceptors.response.use(
     
     if (error.response?.status === 403 && 
         error.response?.data?.code === 'INVALID_CSRF_TOKEN') {
-      console.log('🔄 CSRF token invalid, refreshing...');
-      
       localStorage.removeItem("csrfToken");
     }
     

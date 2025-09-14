@@ -4,9 +4,30 @@ import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { Badge } from "../ui/badge";
-import { Loader2, Search, Calendar, Users, Target, MapPin, Clock, Filter, RefreshCw, Heart, Info, TrendingUp, Activity, AlertCircle } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  Calendar,
+  Users,
+  Target,
+  MapPin,
+  Clock,
+  Filter,
+  RefreshCw,
+  Heart,
+  Info,
+  TrendingUp,
+  Activity,
+  AlertCircle,
+} from "lucide-react";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { useKegiatanAktif } from "@/hooks/bantuDesa/useKegiatan";
 import useThemeStore from "@/store/theme";
 
@@ -14,7 +35,7 @@ function formatCurrency(amount) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-    minimumFractionDigits: 0
+    minimumFractionDigits: 0,
   }).format(amount);
 }
 
@@ -38,38 +59,42 @@ const getCategoryIcon = (kategori) => {
   return icons[kategori] || "📋";
 };
 
-
 const BantuDesaKegiatan = () => {
   const { isDarkMode } = useThemeStore();
   const [filters, setFilters] = useState({
     status: "AKTIF",
     search: "",
     page: 1,
-    limit: 9
+    limit: 9,
   });
 
-  const { data: response, isLoading, error, refetch } = useKegiatanAktif(filters);
-  
+  const {
+    data: response,
+    isLoading,
+    error,
+    refetch,
+  } = useKegiatanAktif(filters);
+
   // Properly handle the response structure
   const activities = response?.data?.data || [];
   const total = response?.total || 0;
   const totalPages = Math.ceil(total / filters.limit);
 
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [key]: value,
-      page: 1 // Reset ke halaman 1 saat filter berubah
+      page: 1, // Reset ke halaman 1 saat filter berubah
     }));
   };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setFilters(prev => ({ ...prev, page: 1 }));
+    setFilters((prev) => ({ ...prev, page: 1 }));
   };
 
   const handlePageChange = (newPage) => {
-    setFilters(prev => ({ ...prev, page: newPage }));
+    setFilters((prev) => ({ ...prev, page: newPage }));
   };
 
   // Calculate statistics
@@ -78,38 +103,49 @@ const BantuDesaKegiatan = () => {
     aktif: activities.filter((k) => k.status === "AKTIF").length,
     selesai: activities.filter((k) => k.status === "SELESAI").length,
     totalTarget: activities.reduce((sum, k) => sum + (k.target_dana || 0), 0),
-    totalTerkumpul: activities.reduce((sum, k) => sum + (k.dana_terkumpul || 0), 0),
+    totalTerkumpul: activities.reduce(
+      (sum, k) => sum + (k.dana_terkumpul || 0),
+      0
+    ),
   };
 
   return (
-    <section id="kegiatan-section" className={`py-20 ${
-      isDarkMode 
-        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
-        : 'bg-gradient-to-br from-emerald-50/30 via-white to-green-50/20'
-    }`}>
+    <section
+      id="kegiatan-section"
+      className={`py-12 sm:py-16 lg:py-20 ${
+        isDarkMode
+          ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+          : "bg-gradient-to-br from-emerald-50/30 via-white to-green-50/20"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Enhanced Header */}
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="p-3 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl shadow-lg">
-              <Activity className="h-8 w-8 text-white" />
+        <div className="text-center mb-12 sm:mb-16">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4 sm:mb-6">
+            <div className="p-2 sm:p-3 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl shadow-lg">
+              <Activity className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
             </div>
             <div>
-              <h2 className={`text-5xl py-4 md:text-6xl font-black bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent`}>
+              <h2
+                className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl py-2 sm:py-4 font-black bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent`}
+              >
                 Kegiatan Desa
               </h2>
-              <div className="h-1 w-24 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full mx-auto mt-2" />
+              <div className="h-0.5 sm:h-1 w-16 sm:w-24 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full mx-auto mt-2" />
             </div>
           </div>
-          <p className={`text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed ${
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
-          }`}>
-            Bergabunglah dalam berbagai kegiatan desa yang sedang berlangsung dan butuh dukungan Anda untuk kemajuan bersama
+          <p
+            className={`text-base sm:text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed ${
+              isDarkMode ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
+            Bergabunglah dalam berbagai kegiatan desa yang sedang berlangsung
+            dan butuh dukungan Anda untuk kemajuan bersama
           </p>
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
           {[
             {
               title: "Total Kegiatan",
@@ -141,7 +177,9 @@ const BantuDesaKegiatan = () => {
             },
             {
               title: "Dana Terkumpul",
-              value: formatCurrency(stats.totalTerkumpul).replace("Rp", "").trim(),
+              value: formatCurrency(stats.totalTerkumpul)
+                .replace("Rp", "")
+                .trim(),
               icon: Users,
               color: "from-emerald-400 to-green-500",
               bgColor: "bg-emerald-100",
@@ -165,33 +203,37 @@ const BantuDesaKegiatan = () => {
                 className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
               ></div>
 
-              <CardContent className="p-6 relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
+              <CardContent className="p-3 sm:p-4 lg:p-6 relative z-10">
+                <div className="flex flex-col sm:flex-row items-center justify-between mb-3 sm:mb-4">
+                  <div className="text-center sm:text-left mb-2 sm:mb-0">
                     <p
                       className={`text-xs font-bold uppercase tracking-wide ${
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                        isDarkMode ? "text-gray-300" : "text-gray-500"
                       }`}
                     >
                       {stat.title}
                     </p>
                     <p
-                      className={`text-xl md:text-2xl font-black mt-2 ${stat.textColor} group-hover:scale-110 transition-transform duration-300`}
+                      className={`text-lg sm:text-xl lg:text-2xl font-black mt-1 sm:mt-2 ${stat.textColor} group-hover:scale-110 transition-transform duration-300`}
                     >
-                      {stat.isAmount ? `${stat.value}` : stat.value.toLocaleString()}
+                      {stat.isAmount
+                        ? `${stat.value}`
+                        : stat.value.toLocaleString()}
                     </p>
                     <p
                       className={`text-xs mt-1 font-medium ${
-                        isDarkMode ? "text-gray-500" : "text-gray-400"
+                        isDarkMode ? "text-gray-400" : "text-gray-400"
                       }`}
                     >
                       {stat.description}
                     </p>
                   </div>
                   <div
-                    className={`p-3 rounded-2xl ${stat.bgColor} transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-lg`}
+                    className={`p-2 sm:p-3 rounded-2xl ${stat.bgColor} transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-lg`}
                   >
-                    <stat.icon className={`h-6 w-6 ${stat.textColor}`} />
+                    <stat.icon
+                      className={`h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 ${stat.textColor}`}
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -201,57 +243,81 @@ const BantuDesaKegiatan = () => {
 
         {/* Enhanced Filter Section */}
         <Card
-          className={`border-0 shadow-xl mb-8 ${
+          className={`border-0 shadow-xl mb-6 sm:mb-8 ${
             isDarkMode
               ? "bg-gray-800/50 backdrop-blur-sm"
               : "bg-white/80 backdrop-blur-sm"
           }`}
         >
-          <CardContent className="p-8">
-            <div className="flex flex-col lg:flex-row gap-6 items-center">
-              <div className="flex items-center gap-3">
+          <CardContent className="p-4 sm:p-6 lg:p-8">
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 items-start lg:items-center">
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                 <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl">
-                  <Filter className="h-5 w-5 text-white" />
+                  <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                 </div>
-                <h3 className={`text-lg font-bold ${
-                  isDarkMode ? 'text-white' : 'text-gray-900'
-                }`}>
+                <h3
+                  className={`text-base sm:text-lg font-bold text-center sm:text-left ${
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
                   Filter & Pencarian
                 </h3>
               </div>
 
-              <form onSubmit={handleSearchSubmit} className="flex gap-3 flex-1 max-w-md">
+              <form
+                onSubmit={handleSearchSubmit}
+                className="flex gap-2 sm:gap-3 flex-1 max-w-md w-full"
+              >
                 <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   <Input
-                    placeholder="🔍 Cari kegiatan berdasarkan judul, deskripsi, atau lokasi..."
+                    placeholder="🔍 Cari kegiatan..."
                     value={filters.search}
-                    onChange={(e) => handleFilterChange('search', e.target.value)}
-                    className={`pl-12 pr-4 py-3 text-base !rounded-xl border-2 transition-all duration-200 ${
+                    onChange={(e) =>
+                      handleFilterChange("search", e.target.value)
+                    }
+                    className={`pl-10 sm:pl-12 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base !rounded-xl border-2 transition-all duration-200 ${
                       isDarkMode
                         ? "bg-gray-700 border-gray-600 focus:border-emerald-500"
                         : "bg-white border-gray-300 focus:border-emerald-500"
                     } shadow-lg focus:shadow-xl`}
                   />
                 </div>
-                <Button type="submit" className="!rounded-xl px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700">
-                  <Search className="h-4 w-4" />
+                <Button
+                  type="submit"
+                  className="!rounded-xl px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
+                >
+                  <Search className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </form>
-              
-              <div className="flex gap-3">
-                <Select 
-                  value={filters.status} 
-                  onValueChange={(value) => handleFilterChange('status', value)}
+
+              <div className="flex gap-2 sm:gap-3 w-full lg:w-auto">
+                <Select
+                  value={filters.status}
+                  onValueChange={(value) => handleFilterChange("status", value)}
                 >
-                  <SelectTrigger className={`w-48 !rounded-xl py-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'} shadow-lg`}>
+                  <SelectTrigger
+                    className={`w-full sm:w-48 !rounded-xl py-2 sm:py-3 border-2 shadow-lg
+      ${
+        isDarkMode
+          ? "bg-gray-700 border-gray-600 text-white"
+          : "bg-white border-gray-300 text-gray-900"
+      }`}
+                  >
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+
+                  <SelectContent
+                    className={`${
+                      isDarkMode
+                        ? "bg-gray-800 text-white"
+                        : "bg-white text-gray-900"
+                    }`}
+                  >
                     <SelectItem value="AKTIF">
                       <span className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                         🚀 Aktif
+                        🚀 Aktif
                       </span>
                     </SelectItem>
                     <SelectItem value="SELESAI">
@@ -268,15 +334,19 @@ const BantuDesaKegiatan = () => {
                     </SelectItem>
                   </SelectContent>
                 </Select>
-                
+
                 <Button
                   variant="outline"
                   onClick={() => refetch()}
                   disabled={isLoading}
-                  className="!rounded-xl px-6 py-3 border-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  className="!rounded-xl px-4 sm:px-6 py-2 sm:py-3 border-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                 >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                  Refresh
+                  <RefreshCw
+                    className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 ${
+                      isLoading ? "animate-spin" : ""
+                    }`}
+                  />
+                  <span className="hidden sm:inline">Refresh</span>
                 </Button>
               </div>
             </div>
@@ -285,27 +355,49 @@ const BantuDesaKegiatan = () => {
 
         {/* Results Info */}
         {!isLoading && !error && (
-          <div className={`mb-8 p-6 rounded-2xl shadow-lg ${
-            isDarkMode ? 'bg-gray-800/50 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm'
-          }`}>
-            <div className="flex flex-wrap gap-6 items-center text-sm font-medium">
+          <div
+            className={`mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl shadow-lg ${
+              isDarkMode
+                ? "bg-gray-800/50 backdrop-blur-sm"
+                : "bg-white/80 backdrop-blur-sm"
+            }`}
+          >
+            <div className="flex flex-wrap gap-4 sm:gap-6 items-center text-xs sm:text-sm font-medium">
               <div className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-green-500" />
-                <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                  Total: <span className="font-bold text-green-600">{total}</span> kegiatan
+                <Target className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+                <span
+                  className={isDarkMode ? "text-gray-300" : "text-gray-600"}
+                >
+                  Total:{" "}
+                  <span className="font-bold text-green-600">{total}</span>{" "}
+                  kegiatan
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-green-500" />
-                <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                  Halaman: <span className="font-bold text-green-600">{filters.page}</span> dari <span className="font-bold text-green-600">{totalPages || 1}</span>
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+                <span
+                  className={isDarkMode ? "text-gray-300" : "text-gray-600"}
+                >
+                  Halaman:{" "}
+                  <span className="font-bold text-green-600">
+                    {filters.page}
+                  </span>{" "}
+                  dari{" "}
+                  <span className="font-bold text-green-600">
+                    {totalPages || 1}
+                  </span>
                 </span>
               </div>
               {filters.search && (
                 <div className="flex items-center gap-2">
-                  <Search className="h-5 w-5 text-emerald-500" />
-                  <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                    Hasil untuk: <span className="font-bold text-emerald-600">"{filters.search}"</span>
+                  <Search className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500" />
+                  <span
+                    className={isDarkMode ? "text-gray-300" : "text-gray-600"}
+                  >
+                    Hasil untuk:{" "}
+                    <span className="font-bold text-emerald-600">
+                      "{filters.search}"
+                    </span>
                   </span>
                 </div>
               )}
@@ -315,14 +407,18 @@ const BantuDesaKegiatan = () => {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="flex justify-center items-center py-20">
+          <div className="flex justify-center items-center py-16 sm:py-20">
             <div className="text-center">
-              <div className="relative mb-6">
-                <Loader2 className="animate-spin h-16 w-16 text-emerald-500 mx-auto mb-4" />
-                <div className="absolute inset-0 h-16 w-16 border-4 border-emerald-200 rounded-full animate-pulse mx-auto"></div>
+              <div className="relative mb-4 sm:mb-6">
+                <Loader2 className="animate-spin h-12 w-12 sm:h-16 sm:w-16 text-emerald-500 mx-auto mb-4" />
+                <div className="absolute inset-0 h-12 w-12 sm:h-16 sm:w-16 border-4 border-emerald-200 rounded-full animate-pulse mx-auto"></div>
               </div>
               <div className="space-y-2">
-                <span className={`text-xl font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                <span
+                  className={`text-lg sm:text-xl font-bold ${
+                    isDarkMode ? "text-gray-200" : "text-gray-800"
+                  }`}
+                >
                   Memuat data kegiatan...
                 </span>
                 <div className="flex items-center justify-center gap-1">
@@ -337,29 +433,37 @@ const BantuDesaKegiatan = () => {
 
         {/* Error State */}
         {error && (
-          <div className="flex justify-center items-center py-20">
+          <div className="flex justify-center items-center py-16 sm:py-20">
             <div className="text-center max-w-md">
-              <div className={`p-8 rounded-2xl shadow-2xl ${
-                isDarkMode 
-                  ? 'bg-gray-800/50 backdrop-blur-sm border border-red-800/20' 
-                  : 'bg-white/80 backdrop-blur-sm border border-red-200'
-              }`}>
-                <div className="relative mb-6">
-                  <div className="p-4 bg-gradient-to-r from-red-400 to-red-500 rounded-full mx-auto w-fit">
-                    <AlertCircle className="h-8 w-8 text-white" />
+              <div
+                className={`p-6 sm:p-8 rounded-2xl shadow-2xl ${
+                  isDarkMode
+                    ? "bg-gray-800/50 backdrop-blur-sm border border-red-800/20"
+                    : "bg-white/80 backdrop-blur-sm border border-red-200"
+                }`}
+              >
+                <div className="relative mb-4 sm:mb-6">
+                  <div className="p-3 sm:p-4 bg-gradient-to-r from-red-400 to-red-500 rounded-full mx-auto w-fit">
+                    <AlertCircle className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                <h3 className="text-lg sm:text-xl font-bold mb-3 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
                   Gagal Memuat Data
                 </h3>
-                <p className={`text-sm mb-6 leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  {error.response?.data?.message || error.message || "Terjadi kesalahan saat memuat data kegiatan"}
-                </p>
-                <Button 
-                  onClick={() => refetch()} 
-                  className="!rounded-xl px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:scale-105 transition-all duration-200"
+                <p
+                  className={`text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed ${
+                    isDarkMode ? "text-gray-300" : "text-gray-600"
+                  }`}
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" />
+                  {error.response?.data?.message ||
+                    error.message ||
+                    "Terjadi kesalahan saat memuat data kegiatan"}
+                </p>
+                <Button
+                  onClick={() => refetch()}
+                  className="!rounded-xl px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:scale-105 transition-all duration-200"
+                >
+                  <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                   Coba Lagi
                 </Button>
               </div>
@@ -369,29 +473,34 @@ const BantuDesaKegiatan = () => {
 
         {/* Empty State */}
         {!isLoading && !error && activities.length === 0 && (
-          <div className="text-center py-20">
-            <div className={`max-w-md mx-auto p-8 rounded-2xl shadow-2xl ${
-              isDarkMode 
-                ? 'bg-gray-800/50 backdrop-blur-sm border border-gray-700' 
-                : 'bg-white/80 backdrop-blur-sm border border-gray-200'
-            }`}>
-              <div className="text-6xl mb-6">🎯</div>
-              <h3 className={`text-xl font-bold mb-3 ${
-                isDarkMode ? 'text-white' : 'text-gray-900'
-              }`}>
+          <div className="text-center py-16 sm:py-20">
+            <div
+              className={`max-w-md mx-auto p-6 sm:p-8 rounded-2xl shadow-2xl ${
+                isDarkMode
+                  ? "bg-gray-800/50 backdrop-blur-sm border border-gray-700"
+                  : "bg-white/80 backdrop-blur-sm border border-gray-200"
+              }`}
+            >
+              <div className="text-4xl sm:text-6xl mb-4 sm:mb-6">🎯</div>
+              <h3
+                className={`text-lg sm:text-xl font-bold mb-3 ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
                 Tidak ada kegiatan ditemukan
               </h3>
-              <p className={`text-sm mb-6 leading-relaxed ${
-                isDarkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}>
-                {filters.search 
+              <p
+                className={`text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed ${
+                  isDarkMode ? "text-gray-300" : "text-gray-600"
+                }`}
+              >
+                {filters.search
                   ? `Tidak ada kegiatan yang cocok dengan pencarian "${filters.search}"`
-                  : "Belum ada kegiatan yang tersedia saat ini"
-                }
+                  : "Belum ada kegiatan yang tersedia saat ini"}
               </p>
               {filters.search && (
-                <Button 
-                  onClick={() => handleFilterChange('search', '')}
+                <Button
+                  onClick={() => handleFilterChange("search", "")}
                   variant="outline"
                   className="!rounded-xl hover:scale-105 transition-all duration-200"
                 >
@@ -404,107 +513,142 @@ const BantuDesaKegiatan = () => {
 
         {/* Enhanced Kegiatan Grid */}
         {!isLoading && !error && activities.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
             {activities.map((activity, index) => {
               const daysLeft = calculateDaysLeft(activity.tanggal_selesai);
-              const progressPercentage = activity.progress_percentage || 
-                (activity.target_dana > 0 ? Math.round((activity.dana_terkumpul / activity.target_dana) * 100) : 0);
-              
+              const progressPercentage =
+                activity.progress_percentage ||
+                (activity.target_dana > 0
+                  ? Math.round(
+                      (activity.dana_terkumpul / activity.target_dana) * 100
+                    )
+                  : 0);
+
               return (
-                <Card 
+                <Card
                   key={activity.id}
                   className={`overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group ${
-                    isDarkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' : 'bg-white hover:shadow-xl'
+                    isDarkMode
+                      ? "bg-gray-800 border-gray-700 hover:bg-gray-750"
+                      : "bg-white hover:shadow-xl"
                   }`}
                 >
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-40 sm:h-48 overflow-hidden">
                     <img
-                      src={activity.foto_url || `https://readdy.ai/api/search-image?query=Indonesian%20village%20community%20activity&width=400&height=200&seq=${activity.id}&orientation=landscape`}
+                      src={
+                        activity.foto_url ||
+                        `https://readdy.ai/api/search-image?query=Indonesian%20village%20community%20activity&width=400&height=200&seq=${activity.id}&orientation=landscape`
+                      }
                       alt={activity.judul}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       onError={(e) => {
                         e.target.src = `https://readdy.ai/api/search-image?query=Indonesian%20village%20community%20activity&width=400&height=200&seq=fallback&orientation=landscape`;
                       }}
                     />
-                    <div className="absolute top-3 right-3">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        activity.status === 'AKTIF' 
-                          ? 'bg-emerald-100 text-emerald-800' 
-                          : activity.status === 'SELESAI'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                    <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          activity.status === "AKTIF"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : activity.status === "SELESAI"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
                         {activity.status}
                       </span>
                     </div>
-                    {daysLeft > 0 && daysLeft <= 7 && activity.status === 'AKTIF' && (
-                      <div className="absolute top-3 left-3">
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800">
-                          Segera Berakhir
-                        </span>
-                      </div>
-                    )}
+                    {daysLeft > 0 &&
+                      daysLeft <= 7 &&
+                      activity.status === "AKTIF" && (
+                        <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800">
+                            Segera Berakhir
+                          </span>
+                        </div>
+                      )}
                   </div>
-                  
-                  <CardContent className="p-6">
-                    <h3 className={`text-xl font-bold mb-3 line-clamp-2 group-hover:text-emerald-600 transition-colors ${
-                      isDarkMode ? 'text-white' : 'text-gray-900'
-                    }`}>
+
+                  <CardContent className="p-4 sm:p-6">
+                    <h3
+                      className={`text-lg sm:text-xl font-bold mb-3 line-clamp-2 group-hover:text-emerald-600 transition-colors ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
                       {activity.judul}
                     </h3>
-                    
+
                     <div className="space-y-2 mb-4">
-                      <div className={`flex items-center text-sm ${
-                        isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        <Calendar className="h-4 w-4 mr-2" />
-                        {new Date(activity.tanggal_mulai).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
+                      <div
+                        className={`flex items-center text-xs sm:text-sm ${
+                          isDarkMode ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                        {new Date(activity.tanggal_mulai).toLocaleDateString(
+                          "id-ID",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          }
+                        )}
                       </div>
-                      
-                      <div className={`flex items-center text-sm ${
-                        isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        <Users className="h-4 w-4 mr-2" />
+
+                      <div
+                        className={`flex items-center text-xs sm:text-sm ${
+                          isDarkMode ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        <Users className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                         {activity.jumlah_donatur || 0} donatur
                       </div>
-                      
+
                       {daysLeft > 0 ? (
-                        <div className={`flex items-center text-sm ${
-                          daysLeft <= 7 ? 'text-orange-500' : isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                        }`}>
-                          <i className="fas fa-clock mr-2"></i>
+                        <div
+                          className={`flex items-center text-xs sm:text-sm ${
+                            daysLeft <= 7
+                              ? "text-orange-500"
+                              : isDarkMode
+                              ? "text-gray-400"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                           Sisa {daysLeft} hari
                         </div>
                       ) : (
-                        <div className="flex items-center text-sm text-red-500">
-                          <i className="fas fa-times-circle mr-2"></i>
+                        <div className="flex items-center text-xs sm:text-sm text-red-500">
+                          <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                           Sudah berakhir
                         </div>
                       )}
                     </div>
-                    
-                    <p className={`text-sm mb-4 line-clamp-3 ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
+
+                    <p
+                      className={`text-xs sm:text-sm mb-4 line-clamp-3 ${
+                        isDarkMode ? "text-gray-300" : "text-gray-700"
+                      }`}
+                    >
                       {activity.deskripsi}
                     </p>
-                    
-                    <div className="mb-6">
-                      <div className={`flex justify-between text-sm mb-2 ${
-                        isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
+
+                    <div className="mb-4 sm:mb-6">
+                      <div
+                        className={`flex justify-between text-xs sm:text-sm mb-2 ${
+                          isDarkMode ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
                         <span>Terkumpul:</span>
                         <span className="font-medium">
                           {formatCurrency(activity.dana_terkumpul || 0)}
                         </span>
                       </div>
-                      <div className={`flex justify-between text-sm mb-2 ${
-                        isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
+                      <div
+                        className={`flex justify-between text-xs sm:text-sm mb-2 ${
+                          isDarkMode ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
                         <span>Target:</span>
                         <span className="font-medium">
                           {formatCurrency(activity.target_dana)}
@@ -512,35 +656,47 @@ const BantuDesaKegiatan = () => {
                       </div>
                       <Progress
                         value={Math.min(progressPercentage, 100)}
-                        className="h-3 mb-2"
+                        className="h-2 sm:h-3 mb-2"
                       />
-                      <div className={`text-xs text-right ${
-                        progressPercentage >= 100 
-                          ? 'text-emerald-600 font-medium' 
-                          : isDarkMode ? 'text-gray-500' : 'text-gray-500'
-                      }`}>
+                      <div
+                        className={`text-xs text-right ${
+                          progressPercentage >= 100
+                            ? "text-emerald-600 font-medium"
+                            : isDarkMode
+                            ? "text-gray-500"
+                            : "text-gray-500"
+                        }`}
+                      >
                         {progressPercentage.toFixed(1)}% tercapai
                       </div>
                     </div>
-                    
-                    <div className="flex gap-3">
-                      <Link to={`/bantu-desa/detail/${activity.id}`} className="flex-1">
-                        <Button 
-                          className="w-full !rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700" 
+
+                    <div className="flex gap-2 sm:gap-3">
+                      <Link
+                        to={`/bantu-desa/detail/${activity.id}`}
+                        className="flex-1"
+                      >
+                        <Button
+                          className="w-full !rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-xs sm:text-sm"
                           size="sm"
-                          disabled={activity.status !== 'AKTIF'}
+                          disabled={activity.status !== "AKTIF"}
                         >
-                          <i className="fas fa-heart mr-2"></i>
-                          {activity.status === 'AKTIF' ? 'Donasi' : 'Lihat Detail'}
+                          <Heart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                          {activity.status === "AKTIF"
+                            ? "Donasi"
+                            : "Lihat Detail"}
                         </Button>
                       </Link>
-                      <Link to={`/bantu-desa/detail/${activity.id}`} className="flex-1">
-                        <Button 
-                          variant="outline" 
-                          className="w-full !rounded-xl border-2 hover:border-emerald-500" 
+                      <Link
+                        to={`/bantu-desa/detail/${activity.id}`}
+                        className="flex-1"
+                      >
+                        <Button
+                          variant="outline"
+                          className="w-full !rounded-xl border-2 hover:border-emerald-500 text-xs sm:text-sm"
                           size="sm"
                         >
-                          <i className="fas fa-info-circle mr-2"></i>
+                          <Info className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                           Detail
                         </Button>
                       </Link>
@@ -554,18 +710,18 @@ const BantuDesaKegiatan = () => {
 
         {/* Pagination */}
         {!isLoading && !error && activities.length > 0 && totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4">
             <Button
               variant="outline"
               disabled={filters.page <= 1}
               onClick={() => handlePageChange(filters.page - 1)}
-              className="!rounded-xl"
+              className="!rounded-xl w-full sm:w-auto"
             >
-              <i className="fas fa-chevron-left mr-2"></i>
+              <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 rotate-180" />
               Sebelumnya
             </Button>
-            
-            <div className="flex gap-1">
+
+            <div className="flex gap-1 overflow-x-auto pb-2 sm:pb-0">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 let pageNum;
                 if (totalPages <= 5) {
@@ -577,17 +733,17 @@ const BantuDesaKegiatan = () => {
                 } else {
                   pageNum = filters.page - 2 + i;
                 }
-                
+
                 return (
                   <Button
                     key={pageNum}
                     variant={filters.page === pageNum ? "default" : "outline"}
                     size="sm"
                     onClick={() => handlePageChange(pageNum)}
-                    className={`!rounded-xl w-10 ${
-                      filters.page === pageNum 
-                        ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
-                        : ''
+                    className={`!rounded-xl w-8 sm:w-10 ${
+                      filters.page === pageNum
+                        ? "bg-gradient-to-r from-emerald-500 to-emerald-600"
+                        : ""
                     }`}
                   >
                     {pageNum}
@@ -595,15 +751,15 @@ const BantuDesaKegiatan = () => {
                 );
               })}
             </div>
-            
+
             <Button
               variant="outline"
               disabled={filters.page >= totalPages}
               onClick={() => handlePageChange(filters.page + 1)}
-              className="!rounded-xl"
+              className="!rounded-xl w-full sm:w-auto"
             >
               Selanjutnya
-              <i className="fas fa-chevron-right ml-2"></i>
+              <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 ml-1 sm:ml-2" />
             </Button>
           </div>
         )}
@@ -612,19 +768,19 @@ const BantuDesaKegiatan = () => {
       {/* Enhanced floating background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Animated gradient orbs */}
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-emerald-400/5 via-green-500/5 to-emerald-600/5 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-green-400/5 via-emerald-500/5 to-green-600/5 rounded-full blur-3xl animate-pulse-slow delay-1000"></div>
-        
+        <div className="absolute top-20 left-10 w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-r from-emerald-400/5 via-green-500/5 to-emerald-600/5 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-20 right-10 w-48 h-48 sm:w-80 sm:h-80 bg-gradient-to-r from-green-400/5 via-emerald-500/5 to-green-600/5 rounded-full blur-3xl animate-pulse-slow delay-1000"></div>
+
         {/* Floating particles */}
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 bg-emerald-400/20 rounded-full animate-float"
+            className="absolute w-1 h-1 sm:w-2 sm:h-2 bg-emerald-400/20 rounded-full animate-float"
             style={{
               left: `${10 + Math.random() * 80}%`,
               top: `${10 + Math.random() * 80}%`,
               animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${4 + Math.random() * 4}s`
+              animationDuration: `${4 + Math.random() * 4}s`,
             }}
           />
         ))}
@@ -641,39 +797,41 @@ const BantuDesaKegiatan = () => {
             transform: translateY(0);
           }
         }
-        
+
         @keyframes float {
-          0%, 100% { 
-            transform: translateY(0px) rotate(0deg); 
-            opacity: 0.6; 
+          0%,
+          100% {
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0.6;
           }
-          33% { 
-            transform: translateY(-10px) rotate(5deg); 
-            opacity: 1; 
+          33% {
+            transform: translateY(-10px) rotate(5deg);
+            opacity: 1;
           }
-          66% { 
-            transform: translateY(-5px) rotate(-5deg); 
-            opacity: 0.8; 
+          66% {
+            transform: translateY(-5px) rotate(-5deg);
+            opacity: 0.8;
           }
         }
-        
+
         @keyframes pulse-slow {
-          0%, 100% { 
-            transform: scale(1); 
-            opacity: 0.6; 
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 0.6;
           }
-          50% { 
-            transform: scale(1.05); 
-            opacity: 0.8; 
+          50% {
+            transform: scale(1.05);
+            opacity: 0.8;
           }
         }
-        
-        .animate-float { 
-          animation: float linear infinite; 
+
+        .animate-float {
+          animation: float linear infinite;
         }
-        
-        .animate-pulse-slow { 
-          animation: pulse-slow 4s ease-in-out infinite; 
+
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
         }
       `}</style>
     </section>

@@ -24,7 +24,6 @@ export const createThread = async (title) => {
 
 export const sendMessage = async (threadId, message) => {
   const res = await axiosInstance.post(`/legal/${threadId}/messages`, { message });
-  console.log("Response from sendMessage:", res.data);
   return res.data;
 };
 

@@ -7,7 +7,6 @@ export const useWeatherForecast = (location, options = {}) => {
     queryKey: ["weather", location],
     queryFn: async () => {
       const res = await getWeather(location);
-      console.log("Weather Data:", res.data);
       return res.data; 
     },
     enabled: !!location,

@@ -26,8 +26,6 @@ const Kontak = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('Form submitted:', formData);
   };
 
   const contactInfo = [
@@ -74,7 +72,7 @@ const Kontak = () => {
     <div className={`min-h-screen pt-20 ${
       isDarkMode 
         ? 'bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950' 
-        : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
+           : "bg-gradient-to-br from-emerald-400/50 via-emerald-500/20 to-green-200/80"
     }`}>
       <Header />
       

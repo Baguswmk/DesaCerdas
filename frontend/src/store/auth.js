@@ -90,7 +90,6 @@ const useAuthStore = create(
       autoLogin: async () => {
         try {
           const { user } = await getMeAPI();
-          console.log("✅ Auto login success:", user);
           set({
             user,
             name: user.name,
@@ -98,7 +97,6 @@ const useAuthStore = create(
           });
           return true;
         } catch (err) {
-          console.log("❌ Auto login failed:", err.response?.data?.message || err.message);
           set({
             user: null,
             name: null,

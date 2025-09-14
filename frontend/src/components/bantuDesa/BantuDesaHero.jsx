@@ -15,7 +15,7 @@ const BantuDesaHero = () => {
     };
 
     return (
-        <section className="relative min-h-[700px] flex items-center overflow-hidden">
+        <section className="relative min-h-screen flex items-center overflow-hidden">
             {/* Enhanced Background with Emerald Theme */}
             <div className="absolute inset-0">
                 {/* Base Image */}
@@ -83,14 +83,14 @@ const BantuDesaHero = () => {
                         <Button 
                             size="lg" 
                             onClick={scrollToKegiatan}
-                            className="group !rounded-2xl px-8 py-4 text-lg font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-2xl hover:shadow-emerald-500/25 transform hover:scale-105 transition-all duration-300 border-0"
+                            className="group cursor-pointer !rounded-2xl px-8 py-4 text-lg font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-2xl hover:shadow-emerald-500/25 transform hover:scale-105 transition-all duration-300 border-0"
                         >
                             <Eye className="h-5 w-5 mr-3 transition-transform group-hover:scale-110" />
                             Lihat Kegiatan
                             <ArrowRight className="h-5 w-5 ml-3 transition-transform group-hover:translate-x-1" />
                         </Button>
                         
-                        <Button 
+                        {/* <Button 
                             variant="outline" 
                             size="lg" 
                             onClick={() => navigate('/admin/dashboard')}
@@ -98,7 +98,7 @@ const BantuDesaHero = () => {
                         >
                             <Plus className="h-5 w-5 mr-3 transition-transform group-hover:rotate-90" />
                             Kelola Kegiatan
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
             </div>

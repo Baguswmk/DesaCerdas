@@ -15,6 +15,7 @@ import PrivateRoute from "@/utils/PrivateRoute";
 const IndexRoute = () => {
   return (
     <Router>
+
       <ScrollToTop />
       <Routes>
         <Route path="/login" element={<Login />} />
