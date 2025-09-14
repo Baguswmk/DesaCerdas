@@ -300,10 +300,9 @@ const AdminDashboardKegiatan = () => {
   }
 
   const openDetailModal = (kegiatanItem) => {
-  setSelectedKegiatan(kegiatanItem);
-  setShowDetailModal(true);
-};
-
+    setSelectedKegiatan(kegiatanItem);
+    setShowDetailModal(true);
+  };
 
   return (
     <div
@@ -1251,26 +1250,45 @@ const AdminDashboardKegiatan = () => {
 
                   <div>
                     <Label
-                      htmlFor="foto_url"
+                      htmlFor="foto"
                       className={`text-sm sm:text-base font-semibold ${
                         isDarkMode ? "text-emerald-300" : "text-emerald-700"
                       }`}
                     >
-                      URL Foto
+                      Upload Foto
                     </Label>
                     <Input
-                      id="foto_url"
-                      value={formData.foto_url}
-                      onChange={(e) =>
-                        setFormData({ ...formData, foto_url: e.target.value })
-                      }
-                      placeholder="https://example.com/image.jpg"
-                      className={`mt-2 rounded-xl border-2 py-2 sm:py-3 text-sm sm:text-base ${
+                      id="foto"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setFormData({
+                              ...formData,
+                              foto_url: reader.result,
+                            }); 
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className={`mt-2 rounded-xl border-2 text-sm sm:text-base ${
                         isDarkMode
                           ? "bg-gray-700/50 border-emerald-500/30 focus:border-emerald-400 text-white"
                           : "bg-white border-emerald-300 focus:border-emerald-500"
                       }`}
                     />
+                    {formData.foto_url && (
+                      <div className="mt-3">
+                        <img
+                          src={formData.foto_url}
+                          alt="Preview"
+                          className="h-40 w-full object-cover rounded-xl border border-emerald-300/50"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

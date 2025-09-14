@@ -367,28 +367,7 @@ const Kontak = () => {
           </Card>
         </div>
 
-        {/* Enhanced CTA Section with Emerald Theme */}
-        <div className="text-center mt-16">
-          <div className={`inline-flex flex-col items-center gap-6 px-12 py-8 rounded-3xl ${
-            isDarkMode 
-              ? 'bg-gray-800/50 border border-gray-700/50' 
-              : 'bg-white/50 border border-gray-200/50'
-          } backdrop-blur-sm shadow-2xl`}>
-            <Users className="h-8 w-8 text-emerald-500" />
-            <div>
-              <h3 className={`text-xl font-black mb-2 ${
-                isDarkMode ? 'text-gray-200' : 'text-gray-700'
-              }`}>
-                Tim Support Berpengalaman
-              </h3>
-              <p className={`text-base ${
-                isDarkMode ? 'text-gray-300' : 'text-gray-600'
-              } max-w-md`}>
-                Tim kami terdiri dari profesional berpengalaman yang siap membantu menyelesaikan setiap pertanyaan dan kendala Anda
-              </p>
-            </div>
-          </div>
-        </div>
+    
       </div>
       
       <Footer />
