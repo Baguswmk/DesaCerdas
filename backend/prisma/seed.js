@@ -177,7 +177,7 @@ async function main() {
       foto_url: "https://placehold.co/600x400",
       target_dana: 5000000,
       tanggal_mulai: new Date(),
-      tanggal_selesai: new Date(Date.now() + 1000 * 60 * 60 * 24 * 15), // 15 hari ke depan
+      tanggal_selesai: new Date(Date.now() + 1000 * 60 * 60 * 24 * 15), 
       jadwal: JSON.stringify([
         { tanggal: "2025-09-05", kegiatan: "Mulai pengeboran" },
         { tanggal: "2025-09-10", kegiatan: "Pemasangan pipa" },

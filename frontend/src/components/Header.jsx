@@ -11,7 +11,6 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast } from "sonner";
 
 const Header = () => {
   const { isDarkMode, toggleTheme } = useThemeStore();
@@ -40,18 +39,16 @@ const Header = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
- const handlePageChange = (page) => {
-  setCurrentPage(page);
-  setShowDropdown(false);
-  setShowMobileMenu(false);
-  navigate(`/${page}`);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    setShowDropdown(false);
+    setShowMobileMenu(false);
+    navigate(`/${page}`);
 
-  // kalau beranda, langsung scroll ke atas
-  if (page === "home") {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-};
-
+    if (page === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   const navItems = [
     { page: "home", label: "Beranda", icon: "🏠" },

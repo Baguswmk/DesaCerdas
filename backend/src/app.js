@@ -16,20 +16,12 @@ import uploadRoutes from './routes/upload.js';
 
 const app = express();
 
-
 startWeatherScheduler();
 
-
 app.use(requestLogger);
-
-
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-
 app.use(cookieParser());
-
-
 app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
@@ -37,18 +29,16 @@ app.use(helmet({
 
 app.use(cors({
   origin: [
-    process.env.CLIENT_URL || "http://localhost:5174",  // Changed from 5173 to 5174
-    "http://localhost:5173",  // Keep this for compatibility
-    "http://localhost:3000"   // Add other possible ports
+    process.env.CLIENT_URL || "http://localhost:5174", 
+    "http://localhost:5173", 
+    "http://localhost:3000"
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token', 'X-CSRF-Token']
 }));
 
-
 app.use('/uploads', express.static('uploads'));
-
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

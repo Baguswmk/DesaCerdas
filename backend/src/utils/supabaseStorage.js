@@ -1,46 +1,100 @@
-// utils/supabaseStorage.js
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import path from 'path';
 
-// Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Use service role key for server-side operations
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-/**
- * Upload single file to Supabase Storage
- * @param {Buffer} fileBuffer - File buffer
- * @param {string} originalName - Original file name
- * @param {string} bucket - Supabase storage bucket name
- * @param {string} folder - Folder path in bucket (optional)
- * @returns {Promise<{success: boolean, data?: object, error?: string}>}
- */
-export const uploadFile = async (fileBuffer, originalName, bucket = 'bantu-desa', folder = '') => {
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error('Missing Supabase configuration in environment variables');
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
+
+const STORAGE_CONFIG = {
+  buckets: {
+    BANTU_DESA: 'bantu-desa',
+    IMAGES: 'images',
+    DOCUMENTS: 'documents'
+  },
+  folders: {
+    KEGIATAN: 'kegiatan',
+    BUKTI_TRANSFER: 'bukti-transfer',
+    GALERI: 'galeri',
+    QRIS: 'qris',
+    PROFILE: 'profile'
+  }
+};
+
+
+export const initializeStorage = async () => {
   try {
-    // Generate unique filename
+    for (const bucketName of Object.values(STORAGE_CONFIG.buckets)) {
+      const { data: bucket, error: checkError } = await supabase.storage
+        .getBucket(bucketName);
+      
+      if (checkError && checkError.message.includes('Bucket not found')) {
+        const { data, error: createError } = await supabase.storage
+          .createBucket(bucketName, {
+            public: true,
+            allowedMimeTypes: [
+              'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+              'application/pdf'
+            ],
+            fileSizeLimit: 5242880 
+          });
+        
+        if (createError) {
+          console.error(`❌ Failed to create bucket ${bucketName}:`, createError.message);
+        } else {
+          console.log(`✅ Created storage bucket: ${bucketName}`);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('❌ Storage initialization error:', error.message);
+  }
+};
+
+
+export const uploadFile = async (fileBuffer, originalName, bucket = STORAGE_CONFIG.buckets.BANTU_DESA, folder = '') => {
+  try {
+    if (!fileBuffer || fileBuffer.length === 0) {
+      throw new Error('File buffer is empty or invalid');
+    }
+
     const uniqueId = crypto.randomUUID();
     const timestamp = Date.now();
-    const extension = path.extname(originalName);
-    const filename = `${timestamp}-${uniqueId}${extension}`;
+    const extension = path.extname(originalName).toLowerCase();
+    const baseName = path.basename(originalName, extension);
+    const sanitizedBaseName = baseName.replace(/[^a-zA-Z0-9-_]/g, '-');
+    const filename = `${timestamp}-${uniqueId}-${sanitizedBaseName}${extension}`;
     
-    // Create full path
     const filePath = folder ? `${folder}/${filename}` : filename;
     
-    // Upload to Supabase Storage
+    const contentType = getContentType(extension);
+    if (!contentType) {
+      throw new Error(`Unsupported file type: ${extension}`);
+    }
+
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(filePath, fileBuffer, {
-        contentType: getContentType(extension),
-        upsert: false
+        contentType,
+        upsert: false,
+        cacheControl: '3600' 
       });
 
     if (error) {
       console.error('Supabase upload error:', error);
-      return { success: false, error: error.message };
+      throw new Error(`Upload failed: ${error.message}`);
     }
 
-    // Get public URL
     const { data: { publicUrl } } = supabase.storage
       .from(bucket)
       .getPublicUrl(filePath);
@@ -51,39 +105,55 @@ export const uploadFile = async (fileBuffer, originalName, bucket = 'bantu-desa'
         path: data.path,
         filename: filename,
         publicUrl: publicUrl,
-        fullPath: filePath
+        fullPath: filePath,
+        bucket: bucket,
+        size: fileBuffer.length,
+        contentType: contentType
       }
     };
   } catch (error) {
     console.error('Upload file error:', error);
-    return { success: false, error: error.message };
+    return { 
+      success: false, 
+      error: error.message,
+      code: 'UPLOAD_FAILED'
+    };
   }
 };
 
-/**
- * Upload multiple files to Supabase Storage
- * @param {Array} files - Array of file objects with buffer and originalname
- * @param {string} bucket - Supabase storage bucket name
- * @param {string} folder - Folder path in bucket (optional)
- * @returns {Promise<{success: boolean, data?: Array, errors?: Array}>}
- */
-export const uploadMultipleFiles = async (files, bucket = 'bantu-desa', folder = '') => {
+
+export const uploadMultipleFiles = async (files, bucket = STORAGE_CONFIG.buckets.BANTU_DESA, folder = '') => {
   const results = [];
   const errors = [];
+  let successCount = 0;
 
-  for (const file of files) {
-    const result = await uploadFile(file.buffer, file.originalname, bucket, folder);
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
     
-    if (result.success) {
-      results.push({
-        ...result.data,
-        originalName: file.originalname,
-        size: file.size
-      });
-    } else {
+    try {
+      console.log(`📤 Uploading file ${i + 1}/${files.length}: ${file.originalname}`);
+      
+      const result = await uploadFile(file.buffer, file.originalname, bucket, folder);
+      
+      if (result.success) {
+        results.push({
+          ...result.data,
+          originalName: file.originalname,
+          index: i
+        });
+        successCount++;
+      } else {
+        errors.push({
+          filename: file.originalname,
+          error: result.error,
+          index: i
+        });
+      }
+    } catch (error) {
       errors.push({
         filename: file.originalname,
-        error: result.error
+        error: error.message,
+        index: i
       });
     }
   }
@@ -91,25 +161,42 @@ export const uploadMultipleFiles = async (files, bucket = 'bantu-desa', folder =
   return {
     success: errors.length === 0,
     data: results,
-    errors: errors.length > 0 ? errors : undefined
+    errors: errors.length > 0 ? errors : undefined,
+    stats: {
+      total: files.length,
+      success: successCount,
+      failed: errors.length
+    }
   };
 };
 
-/**
- * Delete file from Supabase Storage
- * @param {string} filePath - File path in storage
- * @param {string} bucket - Supabase storage bucket name
- * @returns {Promise<{success: boolean, error?: string}>}
- */
-export const deleteFile = async (filePath, bucket = 'bantu-desa') => {
+
+export const deleteFile = async (filePath, bucket = STORAGE_CONFIG.buckets.BANTU_DESA) => {
   try {
+    if (!filePath) {
+      throw new Error('File path is required');
+    }
+
+    const { data: file, error: checkError } = await supabase.storage
+      .from(bucket)
+      .list(path.dirname(filePath), {
+        search: path.basename(filePath)
+      });
+
+    if (checkError) {
+      throw new Error(`Failed to check file existence: ${checkError.message}`);
+    }
+
+    if (!file || file.length === 0) {
+      return { success: false, error: 'File not found' };
+    }
+
     const { error } = await supabase.storage
       .from(bucket)
       .remove([filePath]);
 
     if (error) {
-      console.error('Supabase delete error:', error);
-      return { success: false, error: error.message };
+      throw new Error(`Delete failed: ${error.message}`);
     }
 
     return { success: true };
@@ -119,11 +206,39 @@ export const deleteFile = async (filePath, bucket = 'bantu-desa') => {
   }
 };
 
-/**
- * Get file content type based on extension
- * @param {string} extension - File extension
- * @returns {string} - MIME type
- */
+
+export const getFileInfo = async (filePath, bucket = STORAGE_CONFIG.buckets.BANTU_DESA) => {
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .list(path.dirname(filePath), {
+        search: path.basename(filePath)
+      });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    const file = data.find(f => f.name === path.basename(filePath));
+    if (!file) {
+      throw new Error('File not found');
+    }
+
+    return {
+      success: true,
+      data: {
+        name: file.name,
+        size: file.metadata?.size || 0,
+        lastModified: file.updated_at,
+        contentType: file.metadata?.mimetype,
+        path: filePath
+      }
+    };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
 const getContentType = (extension) => {
   const types = {
     '.jpg': 'image/jpeg',
@@ -131,49 +246,70 @@ const getContentType = (extension) => {
     '.png': 'image/png',
     '.gif': 'image/gif',
     '.webp': 'image/webp',
+    '.svg': 'image/svg+xml',
+    '.ico': 'image/x-icon',
+    
     '.pdf': 'application/pdf',
     '.doc': 'application/msword',
-    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.xls': 'application/vnd.ms-excel',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    
+    '.txt': 'text/plain',
+    '.json': 'application/json',
+    '.csv': 'text/csv'
   };
   
-  return types[extension.toLowerCase()] || 'application/octet-stream';
+  return types[extension.toLowerCase()] || null;
 };
 
-/**
- * Validate file type
- * @param {string} mimetype - File MIME type
- * @param {Array} allowedTypes - Array of allowed MIME types
- * @returns {boolean}
- */
+
 export const validateFileType = (mimetype, allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']) => {
-  return allowedTypes.includes(mimetype);
+  if (!mimetype) return false;
+  return allowedTypes.includes(mimetype.toLowerCase());
 };
 
-/**
- * Validate file size
- * @param {number} size - File size in bytes
- * @param {number} maxSize - Maximum allowed size in bytes (default 5MB)
- * @returns {boolean}
- */
 export const validateFileSize = (size, maxSize = 5 * 1024 * 1024) => {
-  return size <= maxSize;
+  return size > 0 && size <= maxSize;
 };
 
-/**
- * Extract file path from Supabase public URL
- * @param {string} publicUrl - Supabase public URL
- * @returns {string} - File path
- */
+
 export const extractFilePathFromUrl = (publicUrl) => {
   try {
+    if (!publicUrl || typeof publicUrl !== 'string') {
+      return null;
+    }
+
     const url = new URL(publicUrl);
-    const pathSegments = url.pathname.split('/');
-    // Remove '/storage/v1/object/public/bucket-name/' from path
-    return pathSegments.slice(5).join('/');
+    const pathSegments = url.pathname.split('/').filter(Boolean);
+    
+    if (pathSegments.length >= 5 && pathSegments[0] === 'storage') {
+      return pathSegments.slice(4).join('/');
+    }
+    
+    return null;
   } catch (error) {
     console.error('Extract file path error:', error);
     return null;
   }
 };
 
+
+export const generateSignedUrl = async (filePath, bucket = STORAGE_CONFIG.buckets.BANTU_DESA, expiresIn = 3600) => {
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .createSignedUrl(filePath, expiresIn);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return { success: true, data: { signedUrl: data.signedUrl } };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export { STORAGE_CONFIG };
 export default supabase;

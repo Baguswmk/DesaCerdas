@@ -2,9 +2,6 @@
 import cron from "node-cron";
 import { storeWeatherFromBMKG } from "../utils/storeWeatherFromBMKG.js";
 
-
-
-
 const REGION_CODES = {
   "18.10.01": "Pringsewu",
   "18.10.02": "Gading Rejo",
@@ -16,8 +13,6 @@ const REGION_CODES = {
   "18.10.08": "Sukoharjo",
   "18.10.09": "Pagelaran Utara",
 };
-
-
 
 export const startWeatherScheduler = () => {
   cron.schedule("0 6 * * *", async () => {

@@ -32,7 +32,7 @@ const fileFilter = (allowedTypes) => {
 export const createUploader = (options = {}) => {
   const {
     destination = 'uploads/',
-    maxSize = 5 * 1024 * 1024, // 5MB
+    maxSize = 5 * 1024 * 1024, 
     allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
   } = options;
   
