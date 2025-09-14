@@ -31,6 +31,7 @@ app.use(cors({
   origin: [
     process.env.CLIENT_URL || "http://localhost:5174", 
     "http://localhost:5173", 
+    "https://desa-cerdas.vercel.app/",
     "http://localhost:3000"
   ],
   credentials: true,
